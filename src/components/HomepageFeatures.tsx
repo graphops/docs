@@ -57,7 +57,7 @@ const FeatureList: FeatureItem[] = [
     alt: "Image copyright LAFS, courtesy of the Noun Project",
     description: (
       <>
-        A collection of resources to support Indexers in The Graph's ongoing incentivised [MIPs Program](https://thegraph.com/blog/mips-multi-chain-indexing-incentivized-program)
+        A collection of resources to support Indexers in The Graph's ongoing incentivised <Link to={"https://thegraph.com/blog/mips-multi-chain-indexing-incentivized-program"}>MIPs Program</Link>
       </>
     ),
     link: "/mips-resources/intro",
