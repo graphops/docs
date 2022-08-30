@@ -95,19 +95,19 @@ const config = {
         // },
         links: [
           {
-            title: 'Community',
+            title: 'Graph Community',
             items: [
               {
-                label: 'Twitter',
-                href: 'https://twitter.com/graphopsxyz',
-              },
-              {
-                label: 'Graph Protocol Discord',
+                label: 'Discord',
                 href: 'https://discord.com/invite/graphprotocol',
               },
               {
+                label: 'Twitter',
+                href: 'https://twitter.com/graphprotocol',
+              },
+              {
                 label: 'GitHub',
-                href: 'https://github.com/graphopsxyz/',
+                href: 'https://github.com/graphprotocol',
               },
             ],
           },
@@ -125,6 +125,23 @@ const config = {
               {
                 label: 'All Prior Calls & Agendas',
                 href: 'https://graphops.notion.site/Indexer-Office-Hours-952e0b50a65144768aab922e2c9d102a',
+              },
+            ],
+          },
+          {
+            title: 'GraphOps',
+            items: [
+              {
+                label: 'Twitter',
+                href: 'https://twitter.com/graphopsxyz',
+              },
+              {
+                label: 'GitHub',
+                href: 'https://github.com/graphopsxyz/',
+              },
+              {
+                label: 'Website',
+                href: 'https://graphops.xyz',
               },
             ],
           },
