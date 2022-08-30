@@ -62,18 +62,19 @@ const config = {
             position: 'left',
             label: 'MIPs Resources',
           },
-          {
-            type: 'doc',
-            docId: 'launchpad/intro',
-            position: 'left',
-            label: 'Launchpad',
-          },
-          {
-            type: 'doc',
-            docId: 'gossip-network/intro',
-            position: 'left',
-            label: 'Gossip Network',
-          },
+          // Commented out while these sections are in progress
+          // {
+          //   type: 'doc',
+          //   docId: 'launchpad/intro',
+          //   position: 'left',
+          //   label: 'Launchpad',
+          // },
+          // {
+          //   type: 'doc',
+          //   docId: 'gossip-network/intro',
+          //   position: 'left',
+          //   label: 'Gossip Network',
+          // },
           // {to: 'blog', label: 'Blog', position: 'left'},
           {
             href: 'https://github.com/graphops/docs',

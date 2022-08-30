@@ -18,17 +18,17 @@ type FeatureItem = {
 };
 
 const FeatureList: FeatureItem[] = [
-  {
-    title: "Indexers: Participate in the Gossip Network by running Radios",
-    image: "/img/noun_gn_EkoPurnomo.svg",
-    alt: "Image copyright Eko Purnomo, courtesy of the Noun Project",
-    description: (
-      <>
-        Run Gossip Radios in your stack to coordinate with other Indexers via the Gossip Network
-      </>
-    ),
-    link: "/gossip-network/intro",
-  },
+  // {
+  //   title: "Indexers: Run Gossip Radios to join the Gossip Network",
+  //   image: "/img/noun_gn_EkoPurnomo.svg",
+  //   alt: "Image copyright Eko Purnomo, courtesy of the Noun Project",
+  //   description: (
+  //     <>
+  //       Run Gossip Radios in your stack to coordinate with other Indexers via the Gossip Network
+  //     </>
+  //   ),
+  //   link: "/gossip-network/intro",
+  // },
   // {
   //   title: "Build a Radio for your application on the Gossip Network",
   //   image: "/img/noun_radio.svg",
@@ -40,16 +40,27 @@ const FeatureList: FeatureItem[] = [
   //   ),
   //   link: "/gossip-network/intro",
   // },
+  // {
+  //   title: "Indexers: Deploy, monitor and scale your Indexer on Kubernetes using Launchpad",
+  //   image: "/img/noun_launchpad.svg",
+  //   alt: "Image copyright Eko Purnomo, courtesy of the Noun Project",
+  //   description: (
+  //     <>
+  //       Launchpad provides a toolbox for operating your Indexer on Kubernetes, whether you have 1 machine, or 100.
+  //     </>
+  //   ),
+  //   link: "/launchpad/intro",
+  // },
   {
-    title: "Indexers: Deploy, monitor and scale your Indexer on Kubernetes using Launchpad",
-    image: "/img/noun_launchpad.svg",
-    alt: "Image copyright Eko Purnomo, courtesy of the Noun Project",
+    title: "View resources for The Graph's MIPs Program",
+    image: "/img/noun_testnet.svg",
+    alt: "Image copyright LAFS, courtesy of the Noun Project",
     description: (
       <>
-        Launchpad provides a toolbox for operating your Indexer on Kubernetes, whether you have 1 machine, or 100.
+        A collection of resources to support Indexers in The Graph's ongoing incentivised [MIPs Program](https://thegraph.com/blog/mips-multi-chain-indexing-incentivized-program)
       </>
     ),
-    link: "/launchpad/intro",
+    link: "/mips-resources/intro",
   },
 ];
 
