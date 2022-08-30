@@ -58,6 +58,12 @@ const config = {
         items: [
           {
             type: 'doc',
+            docId: 'mips-resources/intro',
+            position: 'left',
+            label: 'MIPs Resources',
+          },
+          {
+            type: 'doc',
             docId: 'launchpad/intro',
             position: 'left',
             label: 'Launchpad',
