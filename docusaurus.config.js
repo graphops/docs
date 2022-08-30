@@ -105,18 +105,26 @@ const config = {
                 label: 'Graph Protocol Discord',
                 href: 'https://discord.com/invite/graphprotocol',
               },
-            ],
-          },
-          {
-            title: 'More',
-            items: [
-              {
-                label: 'Blog',
-                href: '/blog',
-              },
               {
                 label: 'GitHub',
                 href: 'https://github.com/graphopsxyz/',
+              },
+            ],
+          },
+          {
+            title: 'Indexer Office Hours',
+            items: [
+              {
+                label: 'Twitter',
+                href: 'https://twitter.com/TheGraphIOH',
+              },
+              {
+                label: 'YouTube Recordings',
+                href: 'https://www.youtube.com/channel/UCQ7G_cCufIVUdUUUf-jdoVA',
+              },
+              {
+                label: 'All Prior Calls & Agendas',
+                href: 'https://graphops.notion.site/Indexer-Office-Hours-952e0b50a65144768aab922e2c9d102a',
               },
             ],
           },
