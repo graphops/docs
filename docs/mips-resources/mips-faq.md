@@ -61,3 +61,7 @@ Is Indexer allocating efficiently, contributing to the overall health of the net
 - Is Indexer collaborating with fellow Indexers to help them get set up for multi-chain?
 
 - Is Indexer providing feedback to core devs throughout the program or sharing information with Indexers in the Forum? 
+
+## KYC Questions?
+
+Please email info@thegraph.foundation
