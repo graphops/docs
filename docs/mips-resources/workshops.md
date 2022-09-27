@@ -21,7 +21,7 @@ Some highlights from the call:
     - Then, participants start indexing Gnosis chain and new chains are added one by one. While the schedule is chain-dependent, overall, MIPs is designed to be a 6 months program.
 
 - Program Overview and Workshops:
-    ![MIPs Workshop List](/img/workshops/mips-workshops-list.png)
+    ![MIPs Workshop List](/img/workshops/mips-workshop-list-presentation-screenshot.png)
 
 - Missions:
     - MIPs will consist of 5 phases: Phase 0, Phase 1, Phase 2, Optional Phase, and Phase 3. Check out the [MIPs Notion page](https://thegraphfoundation.notion.site/MIPs-Home-911e1187f1d94d12b247317265f81059) for more details.
