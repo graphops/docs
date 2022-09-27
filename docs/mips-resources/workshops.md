@@ -12,7 +12,7 @@ On 20 September 2022, MIPs started with [MIPs Kickoff Call](https://www.youtube.
 
 ![MIPs Kickoff Call Agenda](/img/workshops/mips-kickoff-agenda.png)
 
-### Highlights of The Call
+### Highlights of the Call
 
 - **MIPs Overview:**
     - 4 weeks: Applications for MIPs
