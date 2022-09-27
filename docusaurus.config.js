@@ -137,7 +137,7 @@ const config = {
               },
               {
                 label: 'GitHub',
-                href: 'https://github.com/graphopsxyz/',
+                href: 'https://github.com/graphops',
               },
               {
                 label: 'Website',
