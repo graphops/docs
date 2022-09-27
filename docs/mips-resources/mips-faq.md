@@ -3,7 +3,7 @@ sidebar_position: 1
 description: desc
 ---
 
-# MIPs FAQs
+# MIPs FAQs 
 
 ### 1. Is it possible to generate a valid proof of indexing (POI) even if a subgraph has failed? 
 
