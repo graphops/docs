@@ -94,6 +94,6 @@ To be decided. Please return to this page periodically for more details on this 
 
 No. The options are: you can delegate one to the other one or run two separate indexers.
 
-## 18. KYC Questions?
+### 18. KYC Questions?
 
 Please email info@thegraph.foundation
