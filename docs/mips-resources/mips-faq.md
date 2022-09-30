@@ -100,7 +100,7 @@ Please email info@thegraph.foundation
 
 ### 19. Do we need to index all the chains in the MIPs program or can we pick just one chain and index that? 
 
-For every chain, there are phases from testnet to mainnet. You are free to pick chains to index but make sure to complete all the phases for the chains you are indexing. See The MIPs notion page to learn more about the phases.
+For every chain, there are phases from testnet to mainnet. You are free to pick chains to index but make sure to complete all the phases for the chains you are indexing. See [The MIPs notion page](https://thegraphfoundation.notion.site/MIPs-Home-911e1187f1d94d12b247317265f81059) to learn more about the phases.
 
 ### 20. I am not ready to index Gnosis chain, can I jump in and start indexing from another chain when I am ready? 
 
