@@ -30,9 +30,10 @@ The Graph Foundation will be monitoring QoS performance metrics, network perform
 Given that chains vary in their requirements for syncing nodes, and they differ in query volume and adoption, rewards per chain will be decided at the end of that chain's cycle to ensure that all feedback and learnings are captured. However, at all times Indexers will also be able to earn query fees and indexing rewards once the chain is supported on the network.
 
 
-### 6. What if I don’t want to support all chains in the MIPs program?
+### 6. Do we need to index all the chains in the MIPs program or can we pick just one chain and index that? 
 
-You can run whichever nodes you want! The goal of MIPs is to bootstrap Indexers to support the chains they want to index data for and the web3 ecosystems they are interested in supporting.
+You are welcome to index whichever chain you'd like! The goal of the MIPs program is to equip Indexers with the tools & knowledge to index the chains they desire and support the web3 ecosystems they are interested in. However, for every chain, there are phases from testnet to mainnet. Make sure to complete all the phases for the chains you are indexing. See [The MIPs notion page](https://thegraphfoundation.notion.site/MIPs-Home-911e1187f1d94d12b247317265f81059) to learn more about the phases.
+
 
 ### 7. When will rewards be distributed?
 
