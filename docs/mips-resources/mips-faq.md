@@ -97,3 +97,19 @@ No. The options are: you can delegate one to the other one or run two separate i
 ### 18. KYC Questions?
 
 Please email info@thegraph.foundation
+
+### 19. Do we need to index all the chains in the MIPs program or can we pick just one chain and index that? 
+
+For every chain, there are phases from testnet to mainnet. You are free to pick chains to index but make sure to complete all the phases for the chains you are indexing. See The MIPs notion page to learn more about the phases.
+
+### 20. I am not ready to index Gnosis chain, can I jump in and start indexing from another chain when I am ready? 
+
+Yes 
+
+### 21. Are there recommended regions to run the servers?
+
+We do not give recommendations on regions. When picking locations you might want to think about where the major markets are for cryptocurrencies. 
+
+### 22. What is “handler gas cost”?
+
+It is the deterministic measure of the cost of executing a handler. Contrary to what the name might suggest, it is not related to the gas cost on blockchains. 
