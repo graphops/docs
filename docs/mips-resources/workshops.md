@@ -5,7 +5,7 @@ description: desc
 
 # MIPs Workshops 
 
-All the calls and workshops are recorded and can be found in [this](https://github.com/graphops/docs/pull/6) playlist. 
+All the calls and workshops are recorded and can be found in [this](https://www.youtube.com/playlist?list=PLTqyKgxaGF3SvYpAaIFAj9Gr-Rp0l7gUa) playlist. 
 
 ## MIPs Kickoff Call
 
