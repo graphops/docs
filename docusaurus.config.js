@@ -153,11 +153,11 @@ const config = {
         darkTheme: customDarkTheme,
         additionalLanguages: ['solidity', 'json5', 'toml'],
       },
-      metadata: [ // TODO: Take screenshot for rendering previews
-        {property: "og:image", content: "/img/image.png"},
-        {property: "og:image:width", content: "1200"},
-        {property: "og:image:height", content: "630"}
-      ]
+      // metadata: [ // TODO: Take screenshot for rendering previews
+      //   {property: "og:image", content: "/img/image.png"},
+      //   {property: "og:image:width", content: "1200"},
+      //   {property: "og:image:height", content: "630"}
+      // ]
     }),
 };
 
