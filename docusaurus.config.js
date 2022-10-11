@@ -69,11 +69,12 @@ const config = {
           //   position: 'left',
           //   label: 'Launchpad',
           // },
+          //// Not ready but uncomment to view in dev
           // {
           //   type: 'doc',
-          //   docId: 'gossip-network/intro',
+          //   docId: 'graphcast/intro',
           //   position: 'left',
-          //   label: 'Gossip Network',
+          //   label: 'Graphcast',
           // },
           // {to: 'blog', label: 'Blog', position: 'left'},
           {

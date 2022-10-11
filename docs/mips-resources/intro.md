@@ -14,10 +14,11 @@ The MIPs program has allocated 0.75% of the GRT supply (75M GRT), with 0.5% to r
 
 
 ## Useful Resources
-- [The Graph Allocation Optimization](https://github.com/anyblockanalytics/thegraph-allocation-optimization/)
 - [Indexer 2ools from Vincent (Victor) Taglia](https://indexer-2ools.vincenttaglia.com/#/)
 - [How to Become an Effective Indexer on The Graph Network](https://thegraph.com/blog/how-to-become-indexer/)
 - [Indexer Knowledge Hub](https://thegraph.academy/indexers/)
+- [Allocation Optimiser](https://github.com/graphprotocol/allocationopt.jl)
+- [Allocation Optimization Tooling](https://github.com/anyblockanalytics/thegraph-allocation-optimization/)
 
 
 

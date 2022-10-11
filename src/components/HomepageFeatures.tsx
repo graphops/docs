@@ -35,7 +35,7 @@ const FeatureList: FeatureItem[] = [
   //   alt: "Image copyright Eko Purnomo, courtesy of the Noun Project",
   //   description: (
   //     <>
-  //       Run Gossip Radios in your stack to participate in the Gossip Network. Learn more about how this benefits your operation.
+  //       Build Gossip Radios in your stack to participate in the Gossip Network. Learn more about how this benefits your operation.
   //     </>
   //   ),
   //   link: "/gossip-network/intro",
