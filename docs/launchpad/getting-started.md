@@ -139,7 +139,7 @@ task launchpad:pull-upstream-starter
 
 ## Contributing
 
-We welcome and appreciate your contributions! Please see the [Contributor Guide](/CONTRIBUTING.md), [Code Of Conduct](/CODE_OF_CONDUCT.md) and [Security Notes](/SECURITY.md) for this repository.
+We welcome and appreciate your contributions! Please see the [Contributor Guide]([/CONTRIBUTING.md](https://github.com/graphops/launchpad-starter/blob/main/CONTRIBUTING.md)), [Code Of Conduct](https://github.com/graphops/launchpad-starter/blob/main/CODE_OF_CONDUCT.md) and [Security Notes]((https://github.com/graphops/launchpad-starter/blob/main/SECURITY.md)) for this repository.
 
 ## See also
 
