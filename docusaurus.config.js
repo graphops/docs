@@ -63,12 +63,12 @@ const config = {
             label: 'MIPs Resources',
           },
           // Commented out while these sections are in progress
-          // {
-          //   type: 'doc',
-          //   docId: 'launchpad/intro',
-          //   position: 'left',
-          //   label: 'Launchpad',
-          // },
+          {
+            type: 'doc',
+            docId: 'launchpad/intro',
+            position: 'left',
+            label: 'Launchpad',
+          },
           // {
           //   type: 'doc',
           //   docId: 'gossip-network/intro',

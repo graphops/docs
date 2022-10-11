@@ -1,18 +1,18 @@
-
-```yaml
-<<: *template-default-ingress-releases
-```
+---
+sidebar_position: 4
+description: Steps to get override an existing release on Launchpad, the Kubernetes toolkit for Graph Protocol Indexers
+---
+# Defining Releases
 
 ## LEVEL 1 CUSTOMISATION - overriding release name
 
 ```yaml
 releases:
   - name: ingress-nginx-some-release-name # override the release name
+    <<: *launchpad-release-template-ingress-nginx
+    values:
+      - ../release-values/{{`{{ .Release.Namespace }}`}}/{{`{{ .Release.Name }}`}}.yaml
     version: v100.0.0 # override the Chart version
-    <<: *template-default-release-ingress-nginx # inject defaults
-  - name: ingress-nginx-some-other-release-name  # override the release name
-    version: v100.0.0 # override the Chart version
-    <<: *template-default-release-ingress-nginx # inject defaults
 ```
 
 ## LEVEL 2 CUSTOMISATION
