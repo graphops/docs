@@ -5,11 +5,7 @@ description: Steps to migrate already synced blockchain node data to launchpad-s
 
 # How to migrate a currently running testnet/mainnet indexer to launchpad?
 
-## Prerequisites
-
-This guide describes the steps to migrate blockchain node data that was setup using docker-compose or otherwise into a Kubernetes cluster created using the *launchpad* project
-
-## Why migrate existing data?
+This guide describes the steps to migrate blockchain node data that was setup using docker-compose or otherwise into a Kubernetes cluster created using the *launchpad* project.
 
 ## State to migrate
 
