@@ -19,13 +19,13 @@ Launchpad has a large number of tooling dependencies that will run on your local
 
 Follow the [installation instructions](https://taskfile.dev/installation/) for your environment and install Taskfile before continuing.
 
-### 2. Use this starter for your new infra repo
+### 2. Use launchpad-starter for your new infra repo
 
 Next, we are going to create the repository that will contain your new infrastructure's configuration.
 
 First, prepare a new empty repository to hold your infrastructure repo. This could be a new repository on GitHub, GitLab, BitBucket, etc.
 
-Next, we're going to clone `launchpad-starter`, and then replace the existing `origin` remote with your new remote repository. This allows us to retain the commit history of `launchpad-starter`.. A shared commit history will make future rebases against the upstream `launchpad-starter` much easier.
+Next, we're going to clone `launchpad-starter`, and then replace the existing `origin` remote with your new remote repository. This allows us to retain the commit history of `launchpad-starter`. A shared commit history will make future rebases against the upstream `launchpad-starter` much easier.
 
 ```shell
 # Clone the starter into my-new-infra and cd into it

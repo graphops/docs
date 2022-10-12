@@ -5,7 +5,7 @@ description: Steps to get override an existing release on Launchpad, the Kuberne
 
 # Defining Releases
 
-## LEVEL 1 CUSTOMISATION - overriding release name
+## LEVEL 1 CUSTOMISATION - overriding release name
 
 ```yaml
 releases:
