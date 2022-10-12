@@ -11,7 +11,7 @@ This guide describes the steps to migrate blockchain node data that was setup us
 
 When thinking about the stateful data that would be worth migrating it can be split in 3 buckets:
 
-1. **blockchain node data to migrate** - to migrate this data fire up `launchpad` from scratch and when you get to deploying the full gnosis namespace you would instead edit the following configuration in your `launchpad-starter` to point at the existing blockchain data. For example to point a `nethermind` deployment to an existing snapshot you would append the below in [`<your-private-copy-of-launchpad-starter>/helmfiles/release-names/gnosis-mainnet/nethermind-archive-trace-gnosis-mainnet-0.yaml`](https://github.com/graphops/launchpad-starter/blob/main/helmfiles/release-values/gnosis-mainnet/nethermind-archive-trace-gnosis-mainnet-0.yaml) before deploying the chart
+1. **blockchain node data snapshote** - to migrate this data fire up `launchpad` from scratch and when you get to deploying the full gnosis namespace you would instead edit the following configuration in your `launchpad-starter` to point at the existing blockchain data. For example to point a `nethermind` deployment to an existing snapshot you would append the below in [`<your-private-copy-of-launchpad-starter>/helmfiles/release-names/gnosis-mainnet/nethermind-archive-trace-gnosis-mainnet-0.yaml`](https://github.com/graphops/launchpad-starter/blob/main/helmfiles/release-values/gnosis-mainnet/nethermind-archive-trace-gnosis-mainnet-0.yaml) before deploying the chart
 ```yaml
 nethermind:
   restoreSnapshot:
