@@ -17,7 +17,7 @@ description: Steps to get started with Launchpad, the Kubernetes toolkit for Gra
 
 Launchpad has a large number of tooling dependencies that will run on your local machine. The most important dependency is [Taskfile](https://taskfile.dev).
 
-Follow the [installation instructions](https://taskfile.dev/installation/) for your environment and install Taskfile before continuing.
+Follow the [installation instructions](https://taskfile.dev/installation/) for your environment and install Taskfile on your local machine before continuing.
 
 ### 2. Use launchpad-starter for your new infra repo
 
@@ -66,7 +66,12 @@ git commit -m "feat: added launchpad-core submodule"
 
 ### 4. Update the configuration with your values
 
-Next we need to fill out `inventory/inventory.yaml`. This file contains our host definitions. You can find sample configurations in `inventory/samples`.
+Next we need to fill out `inventory/inventory.yaml`. This file contains our host definitions. You can find sample configurations in `inventory/samples`. Some details of the different sammple inventory files available:
+* [`single-node.sample.yaml`](https://github.com/graphops/launchpad-starter/blob/main/inventory/samples/single-node.sample.yaml) - shows an example of a cluster running on one host only, the host acting as both a `k0s Kubernetes controller` and a `k0s Kubernetes worker`
+* [`single-node-lvm.sample.yaml`](https://github.com/graphops/launchpad-starter/blob/main/inventory/samples/single-node.sample.yaml) - shows an example of a cluster running on one host only, the host acting as both a `k0s Kubernetes controller` and a `k0s Kubernetes worker` with lvm storage. Here LVM is being used to create single logical volumes of multiple physical volumes, allowing for dynamic volume resizing that Kubernetes will use when managing various [`persistent-volumes`](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) resources.
+* [`single-controller.sample.yaml`](https://github.com/graphops/launchpad-starter/blob/main/inventory/samples/single-node.sample.yaml) - shows an example of a cluster running on two hosts, one host acting as a `k0s Kubernetes controller` and the other as `k0s Kubernetes worker`.
+* [`multi-node.sample.yaml`](https://github.com/graphops/launchpad-starter/blob/main/inventory/samples/single-node.sample.yaml) - shows an example of a HA cluster comprised of three `k0s Kubernetes controllers` and three `k0s Kubernetes workers`.
+* [`multi-node-zfs.sample.yaml`](https://github.com/graphops/launchpad-starter/blob/main/inventory/samples/single-node.sample.yaml) - shows an example of a HA cluster comprised of three `k0s Kubernetes controllers` and three `k0s Kubernetes workers` with `zfs` storage. Using this inventory we create [`zfs`](https://wiki.archlinux.org/title/ZFS) pools on `k0s Kubernetes workers` that will act as an advanced filesystem on each worker node which Kubernetes will use when managing various [`persistent-volumes`](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) resources.
 
 ### 5. Bootstrap your hosts with Kubernetes
 
