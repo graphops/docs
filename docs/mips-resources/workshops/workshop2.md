@@ -1,3 +1,7 @@
+---
+sidebar_position: 3
+---
+
 # Workshop 2: Infrastructure Orchestration from the Ground Up
 
 All the calls and workshops are recorded and can be found in [this](https://www.youtube.com/playlist?list=PLTqyKgxaGF3SvYpAaIFAj9Gr-Rp0l7gUa) playlist. 

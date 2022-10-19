@@ -1,3 +1,7 @@
+---
+sidebar_position: 1
+---
+
 # Kickoff Call
 
 All the calls and workshops are recorded and can be found in [this](https://www.youtube.com/playlist?list=PLTqyKgxaGF3SvYpAaIFAj9Gr-Rp0l7gUa) playlist. 
