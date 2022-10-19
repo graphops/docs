@@ -22,12 +22,9 @@ Here is what is covered in the workshop:
 
 ## Highlights of the Workshop
 
-- **Ecosystem Tools for Indexer Stack**
-    - [Docker-compose setup](https://github.com/StakeSquid/graphprotocol-testnet-docker) from StakeSquid
-    - [Kubernetes Launchpad](https://github.com/graphops/launchpad-starter) from GraphOps
-    - [Bare metal install suite](https://github.com/MindHeartSoul/Graph-InstallSuite) from MindHeartSoul
-    - [Ansible install suite](https://github.com/stakemachine/thegraph-ansible) from Stake-machine
-    - Build your own setup… but why reinvent the wheel?
+- **How the Docker setup came to be**
+
+    StakeSquid built this toolkit two years ago during [Mission Control Testnet](https://thegraph.com/blog/testnet-announcement/), a MIPs like incentivized program. After some time the tool became public and lots of indexers started using it. 
 
 - **Prerequisites for Docker toolkit**
     - Stake on the Network
