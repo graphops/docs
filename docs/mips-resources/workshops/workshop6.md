@@ -30,20 +30,13 @@ Here is what is covered in the workshop:
     - Build your own setup… but why reinvent the wheel?
 
 - **Prerequisites for Docker toolkit**
-
-: stake on the network and set up an operator
     - Stake on the Network
     - Set your Operator
-    - RAM: 8GB
-    - Disk: 3TB+ SSD
-    - Docker: v18.06.0+
-    - Docker-compose: v3.7
+    - Ethereum Archive Node Specs
+    - Software Prerequisites
 
-- **How to run an archive node on Gnosis post-merge**
-    - Run a version of the Execution Layer client (e.g. Nethermind) that supports the Merge for GnosisChain
-    - Make sure that the Execution Layer client is fully synced 
-    - Deploy a Consensus Layer node, see instructions at [this link](https://docs.gnosischain.com/node/consensus-layer-validator)
-    - Get prepared for the Merge, see recommendations from the [Prysm](https://docs.prylabs.network/docs/prepare-for-merge) team and the [Nethermind team](https://docs.nethermind.io/nethermind/first-steps-with-nethermind/running-nethermind-post-merge)
+- **What is the importance of using an operator wallet?**
 
+    Operator wallet takes care of the transactions in the network like managing allocations, but it does not have access to the funds in your staking wallet. Even if someone breaks into your server, they won't have access to your staked GRT, but only to a small amount of ETH you would keep in your operator wallet for transaction costs. 
 
 *Note that this is not a comprehensive summary. Please watch the full workshop to make sure you do not miss any important information.*
