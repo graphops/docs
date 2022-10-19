@@ -9,7 +9,7 @@ All the calls and workshops are recorded and can be found in [this](https://www.
 In [Indexer Office Hours](https://www.youtube.com/channel/UCQ7G_cCufIVUdUUUf-jdoVA) 80, Ana Calin and Chris Wessels from GraphOps gave a workshop on [Launchpad](https://www.youtube.com/watch?v=v82mKAq46K8&list=PLTqyKgxaGF3SvYpAaIFAj9Gr-Rp0l7gUa&index=6), a tool for orchestrating the indexer stack.
 
 
-[Here](https://docs.google.com/presentation/u/1/d/1Pd0RuH8Hwq3Y62fMycM6Z6yW4uYsOWNlGBTZmIh9dTE/edit?usp=sharing) is the slides of the workshop. 
+[Here](https://docs.google.com/presentation/u/1/d/1Pd0RuH8Hwq3Y62fMycM6Z6yW4uYsOWNlGBTZmIh9dTE/edit?usp=sharing) are the slides of the workshop. 
 
 Here is what is covered in the workshop: 
 
@@ -18,7 +18,7 @@ Here is what is covered in the workshop:
 
 **Why Launchpad?**
 
-Launchpad is designed to meet tomorrow’s needs. It provides a strong foundation for long-term multi-chain indexing and encodes our beliefs and principles about how large-scale infrastructure should be architected and operated.
+Launchpad is designed to meet tomorrow’s needs. It provides a strong foundation for long-term multi-chain indexing and encodes GraphOps' beliefs and principles about how large-scale infrastructure should be architected and operated.
 
 ![MIPs Workshop #4 Agenda](/img/workshops/mips-workshop4-why-launchpad.png)
        
@@ -33,15 +33,9 @@ An opinionated stack of software running on your host machines, orchestrated wit
 
 ![MIPs Workshop #4 Agenda](/img/workshops/mips-workshop4-what-launchpad2.png)
 
-The core of Launchpad consists of 2 repositories: launchpad-starter and launchpad-core. Another public repository indexers should run is helm-charts.
+The core of Launchpad consists of 2 repositories: [`launchpad-starter`](https://github.com/graphops/launchpad-starter) and [`launchpad-core`](https://github.com/graphops/launchpad-core). It also deploys releases defined at [helm-charts repo](https://github.com/graphops/helm-charts).
 
 ![MIPs Workshop #4 Agenda](/img/workshops/mips-workshop4-what-launchpad3.png)
-
-See the following links for each repository: 
- - https://github.com/graphops/launchpad-starter
- - https://github.com/graphops/launchpad-core
- - https://github.com/graphops/helm-charts
-
 
 **What is next?**
  - Visit the [Launchpad Docs](https://docs.graphops.xyz/launchpad/intro) and watch the full workshop for a step-by-step guide to get started with Launchpad

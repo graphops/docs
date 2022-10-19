@@ -8,7 +8,7 @@ All the calls and workshops are recorded and can be found in [this](https://www.
 
 In [Indexer Office Hours](https://www.youtube.com/channel/UCQ7G_cCufIVUdUUUf-jdoVA) 77, Chris Wessels from GraphOps gave a workshop on [Indexer Best Practices](https://www.youtube.com/watch?v=5NhPFJgCJFA&list=PLTqyKgxaGF3SvYpAaIFAj9Gr-Rp0l7gUa&index=2).
 
-[Here](https://docs.google.com/presentation/d/1RAbMj6xz5Lj1gowLO8cetO-YPHKo0qq_mE8li2NItfE/edit#slide=id.g139aa651c2c_1_6) is the slides for the workshop. 
+[Here](https://docs.google.com/presentation/d/1RAbMj6xz5Lj1gowLO8cetO-YPHKo0qq_mE8li2NItfE/edit#slide=id.g139aa651c2c_1_6) are the slides for the workshop. 
 
 Here is what is covered in the workshop: 
 
