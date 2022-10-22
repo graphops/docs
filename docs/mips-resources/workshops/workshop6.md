@@ -9,7 +9,7 @@ All the calls and workshops are recorded and can be found in [this](https://www.
 In [Indexer Office Hours](https://www.youtube.com/channel/UCQ7G_cCufIVUdUUUf-jdoVA) 81, Payne from StakeSquid gave a workshop on [Docker Toolkit for indexer stack](https://www.youtube.com/watch?v=85Tw5dCMrwo).
 
 
-[Here](https://github.com/StakeSquid/graphprotocol-testnet-docker) is the docs used in the workshop. 
+[Here](https://github.com/StakeSquid/graphprotocol-testnet-docker) are the docs used in the workshop. 
 
 Here is what is covered in the workshop: 
 

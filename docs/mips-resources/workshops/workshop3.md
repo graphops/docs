@@ -8,7 +8,7 @@ All the calls and workshops are recorded and can be found in [this](https://www.
 
 As the third workshop, Riccardo from Gnosis gave a workshop on [Running a Gnosis Chain Archive Node with Nethermind](https://www.youtube.com/watch?v=qNYlHs9fKik&list=PLTqyKgxaGF3SvYpAaIFAj9Gr-Rp0l7gUa&index=4).
 
-[Here](https://docs.google.com/presentation/d/10itnSUaEcm7cBp4_k9B9n9vk7ZvVSse5v4vuN6xAJTU/edit#slide=id.p) is the slides for the workshop. 
+[Here](https://docs.google.com/presentation/d/10itnSUaEcm7cBp4_k9B9n9vk7ZvVSse5v4vuN6xAJTU/edit#slide=id.p) are the slides for the workshop. 
 
 Here is what is covered in the workshop: 
 
