@@ -46,7 +46,7 @@ All work on your infrastructure will take place in this new repo. We recommend c
 
 Next, we need to install the `launchpad-core` submodule, which contains Taskfile definitions, Helm Release templates and other useful things we will use. We also need to install all of the local tooling dependencies (like Helm or Kubectl) that we will need.
 
-We can easily do both of these things by running the launchpad:setup command.
+We can easily do both of these things by running the `launchpad:setup` command.
 
 ```shell
 # You may need to use sudo for this command
@@ -66,9 +66,9 @@ git commit -m "feat: added launchpad-core submodule"
 
 ### 4. Update the configuration with your values
 
-Next we need to fill out `inventory/inventory.yaml`. This file contains our host definitions. You can find sample configurations in `inventory/samples`. Some details of the different sammple inventory files available:
+Next we need to fill out `inventory/inventory.yaml`. This file contains our host definitions. You can find sample configurations in `inventory/samples`. Some details of the different sample inventory files available:
 * [`single-node.sample.yaml`](https://github.com/graphops/launchpad-starter/blob/main/inventory/samples/single-node.sample.yaml) - shows an example of a cluster running on one host only, the host acting as both a `k0s Kubernetes controller` and a `k0s Kubernetes worker`
-* [`single-node-lvm.sample.yaml`](https://github.com/graphops/launchpad-starter/blob/main/inventory/samples/single-node.sample.yaml) - shows an example of a cluster running on one host only, the host acting as both a `k0s Kubernetes controller` and a `k0s Kubernetes worker` with lvm storage. Here LVM is being used to create single logical volumes of multiple physical volumes, allowing for dynamic volume resizing that Kubernetes will use when managing various [`persistent-volumes`](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) resources.
+* [`single-node-lvm.sample.yaml`](https://github.com/graphops/launchpad-starter/blob/main/inventory/samples/single-node.sample.yaml) - shows an example of a cluster running on one host only, the host acting as both a `k0s Kubernetes controller` and a `k0s Kubernetes worker` with LVM storage. Here LVM is being used to create single logical volumes of multiple physical volumes, allowing for dynamic volume resizing that Kubernetes will use when managing various [`persistent-volumes`](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) resources.
 * [`single-controller.sample.yaml`](https://github.com/graphops/launchpad-starter/blob/main/inventory/samples/single-node.sample.yaml) - shows an example of a cluster running on two hosts, one host acting as a `k0s Kubernetes controller` and the other as `k0s Kubernetes worker`.
 * [`multi-node.sample.yaml`](https://github.com/graphops/launchpad-starter/blob/main/inventory/samples/single-node.sample.yaml) - shows an example of a HA cluster comprised of three `k0s Kubernetes controllers` and three `k0s Kubernetes workers`.
 * [`multi-node-zfs.sample.yaml`](https://github.com/graphops/launchpad-starter/blob/main/inventory/samples/single-node.sample.yaml) - shows an example of a HA cluster comprised of three `k0s Kubernetes controllers` and three `k0s Kubernetes workers` with `zfs` storage. Using this inventory we create [`zfs`](https://wiki.archlinux.org/title/ZFS) pools on `k0s Kubernetes workers` that will act as an advanced filesystem on each worker node which Kubernetes will use when managing various [`persistent-volumes`](https://kubernetes.io/docs/concepts/storage/persistent-volumes/) resources.
