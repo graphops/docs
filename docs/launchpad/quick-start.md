@@ -1,15 +1,10 @@
 ---
-sidebar_position: 4
-description: Steps to get started with Launchpad, the Kubernetes toolkit for Graph Protocol Indexers
+sidebar_position: 3
 ---
 
-# Getting Started
+# Quick Start
 
-## Prerequisites
-
-- At least one host running Ubuntu 22.04 LTS
-- SSH access to that host on your local machine using public key authentication. **Password authentication is not supported**
-- If you're on a Mac, Homebrew must be installed to use `launchpad:deps`
+Make sure you have all the [Prerequisites](prerequisites) before starting.
 
 ## Quickstart
 

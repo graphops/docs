@@ -1,13 +1,16 @@
 ---
-sidebar_position: 4
-description: Steps to migrate already synced blockchain node data to launchpad-starter
+sidebar_position: 90
 ---
 
-# How to migrate a currently running testnet/mainnet indexer to launchpad?
+# Frequently Asked Questions
 
-This guide describes the steps to migrate blockchain node data that was setup using docker-compose or otherwise into a Kubernetes cluster created using the *launchpad* project.
+## Do I need a machine for launchpad-starter?
 
-## State to migrate
+No! The [Client Side Tooling](client-side-tooling) that comes with Launchpad should be run on your local machine. These tools are only used to instruct your cluster of services what to do.
+
+## Can I migrate my existing Indexer into Launchpad?
+
+Yes!
 
 When thinking about the stateful data that would be worth migrating it can be split in 3 buckets:
 
