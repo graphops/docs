@@ -1,10 +1,14 @@
+---
+sidebar_position: 3
+---
+
 # Workshop 2: Infrastructure Orchestration from the Ground Up
 
 All the calls and workshops are recorded and can be found in [this](https://www.youtube.com/playlist?list=PLTqyKgxaGF3SvYpAaIFAj9Gr-Rp0l7gUa) playlist. 
 
-As the secong workshop, Ana Calin from GraphOps gave a workshop on [Infrastructure Orchestration from the Ground Up](https://www.youtube.com/watch?v=27m-fD3TEMo&list=PLTqyKgxaGF3SvYpAaIFAj9Gr-Rp0l7gUa&index=3).
+As the second workshop, Ana Calin from GraphOps gave a workshop on [Infrastructure Orchestration from the Ground Up](https://www.youtube.com/watch?v=27m-fD3TEMo&list=PLTqyKgxaGF3SvYpAaIFAj9Gr-Rp0l7gUa&index=3).
 
-[Here](https://docs.google.com/presentation/d/1VJ09Bz4NQ6ud3XIH_0RMWrC3THqt1A-iZhoKgjo-FN8/edit#slide=id.p) is the slides for the workshop. 
+[Here](https://docs.google.com/presentation/d/1VJ09Bz4NQ6ud3XIH_0RMWrC3THqt1A-iZhoKgjo-FN8/edit#slide=id.p) are the slides for the workshop. 
 
 Here is what is covered in the workshop: 
 

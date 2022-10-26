@@ -70,12 +70,12 @@ const config = {
           //   label: 'Launchpad',
           // },
           //// Not ready but uncomment to view in dev
-          // {
-          //   type: 'doc',
-          //   docId: 'graphcast/intro',
-          //   position: 'left',
-          //   label: 'Graphcast',
-          // },
+          {
+            type: 'doc',
+            docId: 'graphcast/intro',
+            position: 'left',
+            label: 'Graphcast',
+          },
           // {to: 'blog', label: 'Blog', position: 'left'},
           {
             href: 'https://github.com/graphops/docs',

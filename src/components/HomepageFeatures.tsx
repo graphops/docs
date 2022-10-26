@@ -40,17 +40,17 @@ const FeatureList: FeatureItem[] = [
   //   ),
   //   link: "/gossip-network/intro",
   // },
-  // {
-  //   title: "Indexers: Deploy, monitor and scale your Indexer on Kubernetes using Launchpad",
-  //   image: "/img/noun_launchpad.svg",
-  //   alt: "Image copyright Eko Purnomo, courtesy of the Noun Project",
-  //   description: (
-  //     <>
-  //       Launchpad provides a toolbox for operating your Indexer on Kubernetes, whether you have 1 machine, or 100.
-  //     </>
-  //   ),
-  //   link: "/launchpad/intro",
-  // },
+  {
+    title: "Deploy, monitor and scale your Indexer on Kubernetes using Launchpad",
+    image: "/img/noun_launchpad.svg",
+    alt: "Image copyright Eko Purnomo, courtesy of the Noun Project",
+    description: (
+      <>
+        Launchpad provides a toolbox for smoothly operating your Graph Protocol Indexer on Kubernetes
+      </>
+    ),
+    link: "/launchpad/intro",
+  },
   {
     title: "View resources for The Graph's MIPs Program",
     image: "/img/noun_testnet.svg",

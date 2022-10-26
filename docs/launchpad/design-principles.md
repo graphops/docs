@@ -1,12 +1,11 @@
 ---
-sidebar_position: 2
+sidebar_position: 4
 ---
+
 # Design Principles
 
-- containers
-- host abstraction + orchestration
-- kubernetes
-- bring your own host, irrespective of type
-- abstract but educate
-- declarative workflow
-- extensible
+![Design Principles](/img/design-principles-slide.svg)
+
+## Launchpad components
+
+![Launchpad components](/img/launchpad-repos-slide.svg)
