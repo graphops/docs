@@ -35,3 +35,7 @@ TODO
 ### Kubectl
 
 TODO
+
+## Understanding the flow
+
+TODO diagram showing the relationship between helmfiles, helm releases, kubernetes resources
