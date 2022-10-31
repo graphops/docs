@@ -18,28 +18,6 @@ type FeatureItem = {
 };
 
 const FeatureList: FeatureItem[] = [
-  // {
-  //   title: "Indexers: Run Gossip Radios to join the Gossip Network",
-  //   image: "/img/noun_gn_EkoPurnomo.svg",
-  //   alt: "Image copyright Eko Purnomo, courtesy of the Noun Project",
-  //   description: (
-  //     <>
-  //       Run Gossip Radios in your stack to coordinate with other Indexers via the Gossip Network
-  //     </>
-  //   ),
-  //   link: "/gossip-network/intro",
-  // },
-  // {
-  //   title: "Build a Radio for your application on the Gossip Network",
-  //   image: "/img/noun_radio.svg",
-  //   alt: "Image copyright Eko Purnomo, courtesy of the Noun Project",
-  //   description: (
-  //     <>
-  //       Build Gossip Radios in your stack to participate in the Gossip Network. Learn more about how this benefits your operation.
-  //     </>
-  //   ),
-  //   link: "/gossip-network/intro",
-  // },
   {
     title: "Deploy, monitor and scale your Indexer on Kubernetes using Launchpad",
     image: "/img/noun_launchpad.svg",
@@ -62,6 +40,28 @@ const FeatureList: FeatureItem[] = [
     ),
     link: "/mips-resources/intro",
   },
+  {
+    title: "Run a Radio and join the Graphcast network",
+    image: "/img/noun_gn_EkoPurnomo.svg",
+    alt: "Image copyright Eko Purnomo, courtesy of the Noun Project",
+    description: (
+      <>
+        Run Radios (p2p messaging apps) in your stack to coordinate with other Indexers via the Graphcast
+      </>
+    ),
+    link: "/graphcast/intro",
+  },
+  // {
+  //   title: "Build a Radio for your application, leveraging Graphcast",
+  //   image: "/img/noun_radio.svg",
+  //   alt: "Image copyright Eko Purnomo, courtesy of the Noun Project",
+  //   description: (
+  //     <>
+  //       Build Radios in your stack to participate in Graphcast. Learn more about how this benefits your operation.
+  //     </>
+  //   ),
+  //   link: "/gossip-network/intro",
+  // },
 ];
 
 function Feature({ title, image, description, alt, link }: FeatureItem) {

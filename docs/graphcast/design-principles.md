@@ -1,22 +1,28 @@
 ---
 sidebar_position: 2
 ---
-# 🟦 Design Principles
+
+# ⚙️ Design Principles
 
 There are two main components of Graphcast
-- Graphcast SDK: The base layer sdk which abstracts interaction with The Graph stack and Waku network. (Ethereum client, Graph node client, indexer management server client, network subgraph, registry subgraph, waku node)
-- Radio: Customizable radio application which defines the specific message formats and logic around constructing and handling the messages.  
 
-## 1️⃣ Base layer (SDK)
-The base layer is used to abstract all the necessary components of each Radio away from the user. That includes:
+- The Graphcast SDK: The base layer SDK which interfaces with The Graph stack and the Waku network. This includes interactions with an Ethereum client, a Graph node client, a client for the Indexer management server, the Network subgraph and the Registry subgraph).
+- Radios: Highly customizable gossip applications, built with the help of the Graphcast SDK, which define the specific message formats and logic around constructing and handling the messages.
+
+## The Graphcast SDK
+
+The SDK is the base layer which is used to abstract all the necessary components of each Radio away from the user. That includes:
+
 - Connection to Graphcast by spinning up a [Waku](https://waku.org/) node. It also provides an interface to subscribe to receive messages on specific topics and to broadcast messages onto the network.
-- Interactions with an Ethereum node, Graph node, Indexer management server.
-- Queries to network subgraph and registry subgraph. 
-- Checks message validity for past message injections, nonexistent blocks, expired timestamps, and signatured by the operator of an on-chain active indexer (can be used to trace reputations). 
+- Interactions with an Ethereum node, a Graph node and a client for the Indexer management server.
+- Queries to Network and Registry subgraphs.
+- Checks message validity for past message injections, nonexistent blocks and expired timestamps. It also guarantees that messages are signed by an authorised operator address of an active on-chain Indexer (this can be used as a basis for a reputation system).
 
-## 2️⃣ Radio agent (Application: POI cross-checker)
-Our first example radio is built for real-time cross-checking of Indexer Proofs of Indexing (POIs). Indexers must generate valid POIs to earn indexing rewards. Indexers find it benefiting to indexing operations to alert each other on subgraph health in community discussions. To alleviate the manual workload, this Radio agent
+## Radios
+
+Our first example Radio is built for real-time cross-checking of Indexer Proof of Indexing attestations (POIs). Indexers must generate valid POIs to earn indexing rewards. Indexers find it beneficial to alert each other on the health status of subgraphs in community discussions. To alleviate the manual workload, the POI cross-checker Radio:
+
 - Defines message types and topics
-- Collects POIs from graph node and send as a message
-- Observes relevant messages and aggregates POIs sent from operators with 
-- Monitors the network for conflicts and update the stack. In this case, the agent sets indexer's cost model to a high constant to avoid query volume.
+- Collects POIs from the Graph node and sends them inside of Graphcast messages along with other useful metadata
+- Observes relevant messages and aggregates POIs sent from other Indexers, in order to compare _local_ POIs to _remote_ POIs
+- Monitors the network for conflicts and makes updates to the Indexer stack if needed. In the case of the POI cross-checker Radio, the agent sets the Indexer's cost model to a high constant to avoid query volume.
