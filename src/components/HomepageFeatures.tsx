@@ -57,7 +57,7 @@ const FeatureList: FeatureItem[] = [
     alt: "Image copyright Eko Purnomo, courtesy of the Noun Project",
     description: (
       <>
-        Build Radios in your stack to participate in Graphcast. Learn more about how this benefits your operation.
+        Build Radios in your stack to participate in Graphcast
       </>
     ),
     link: "/graphcast/radio-dev",
