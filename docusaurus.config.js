@@ -65,19 +65,17 @@ const config = {
         },
         items: [
           {
+            type: 'doc',
+            docId: 'launchpad/intro',
+            position: 'left',
+            label: 'Launchpad',
+          },
+          {
             type: "doc",
             docId: "mips-resources/intro",
             position: "left",
             label: "MIPs Resources",
           },
-          // Commented out while these sections are in progress
-          // {
-          //   type: 'doc',
-          //   docId: 'launchpad/intro',
-          //   position: 'left',
-          //   label: 'Launchpad',
-          // },
-          //// Not ready but uncomment to view in dev
           {
             type: "doc",
             docId: "graphcast/intro",
