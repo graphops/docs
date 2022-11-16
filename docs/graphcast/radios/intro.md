@@ -1,16 +1,19 @@
 ---
-sidebar_position: 5
+sidebar_position: 4
 ---
 
-# 🧑‍💻 Radio Development
+# 🧑‍💻 Radio Development Intro
 
 Do you want to build robust, peer-to-peer messaging apps that automatically exchanges valuable data with other Indexers in real time? Do you have an idea for what data could be useful to share that could lead to greater communication efficiency in The Graph network as a whole? Then you want to build a Radio on top of the Graphcast network.
 
 :::warning
-As of today, the Graphcast SDK is not a separate npm package, but the examples below will clearly illustrate how functions and classes would be imported from it and used once it gets published. It should be treated as pseudocode for the time being and will not work properly if you try to run it on its own.
+As of today, the [Graphcast SDK npm package](https://www.npmjs.com/package/@graphops/graphcast) is early in development stage, but the examples below will clearly illustrate how functions and classes would be imported from it and used once it gets published. It should be treated as pseudocode for the time being and will not work properly if you try to run it on its own.
 :::
 
 For a more complex and full example of the Graphcast SDK being used to create a POI cross-checker Radio, take a look at this [implementation in the POC repo](https://github.com/graphops/graphcast-poc/tree/main/src/examples/poi-crosschecker).
+
+
+Here's a list of Radios we've implemented and an explanation of how they work.
 
 ## A simple ping pong example
 

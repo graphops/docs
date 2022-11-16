@@ -51,17 +51,6 @@ const FeatureList: FeatureItem[] = [
     ),
     link: "/graphcast/intro",
   },
-  {
-    title: "Build a Radio for your application, leveraging Graphcast",
-    image: "/img/noun_radio.svg",
-    alt: "Image copyright Eko Purnomo, courtesy of the Noun Project",
-    description: (
-      <>
-        Build Radios in your stack to participate in Graphcast
-      </>
-    ),
-    link: "/graphcast/radio-dev",
-  },
 ];
 
 function Feature({ title, image, description, alt, link }: FeatureItem) {

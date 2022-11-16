@@ -1,12 +1,8 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
 ---
 
-# 📻 Radios
-
-Here's a list of Radios we've implemented and an explanation of how they work.
-
-## POI cross-checker
+# 📟 POI cross-checker 
 
 ### Introduction
 
