@@ -22,4 +22,6 @@ If you want to find out more about the initial idea behind Graphcast, as well as
 
 ## Contributing
 
-We welcome and appreciate your contributions! 🤝 ➡️ [Proof of Concept repo](https://github.com/graphops/graphcast-poc)
+We welcome and appreciate your contributions! 🤝 
+➡️ [Proof of Concept repo](https://github.com/graphops/graphcast-poc)
+➡️ [SDK repo](https://github.com/graphops/graphcast-sdk)

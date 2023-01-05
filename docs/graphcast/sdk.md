@@ -4,7 +4,7 @@ sidebar_position: 3
 
 # 🧰 SDK
 
-As mentioned before, the SDK is the base layer which is used to abstract all the necessary components of each Radio away from the
+As mentioned before, the [SDK](https://www.npmjs.com/package/@graphops/graphcast) is the base layer which is used to abstract all the necessary components of each Radio away from the
 user. In the current Graphcast POC implementation that's achieved by a few classes that hold the needed functionality, we'll take
 a deeper look at those classes below.
 
