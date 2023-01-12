@@ -25,4 +25,4 @@ Our first example Radio is built for real-time cross-checking of Indexer Proof o
 - Defines message types and topics
 - Collects POIs from the Graph node and sends them inside of Graphcast messages along with other useful metadata
 - Observes relevant messages and aggregates POIs sent from other Indexers, in order to compare _local_ POIs to _remote_ POIs
-- Monitors the network for conflicts and makes updates to the Indexer stack if needed. In the case of the POI cross-checker Radio, the agent sets the Indexer's cost model to a high constant to avoid query volume.
+- Monitors the network for conflicts and takes certain actions if needed, for instance Indexers can configure an alert system to send messages to a custom channel in their Slack workspace (support for Discord and email notifications coming soon).
