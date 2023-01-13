@@ -1,19 +1,16 @@
 ---
-sidebar_position: 4
+sidebar_position: 1
 ---
 
-# 🧑‍💻 Radio Development Intro
+# 🧑‍💻 Radio Development
 
 Do you want to build robust, peer-to-peer messaging apps that automatically exchanges valuable data with other Indexers in real time? Do you have an idea for what data could be useful to share that could lead to greater communication efficiency in The Graph network as a whole? Then you want to build a Radio on top of the Graphcast network.
 
 :::warning
-As of today, the [Graphcast SDK npm package](https://www.npmjs.com/package/@graphops/graphcast) is early in development stage, but the examples below will clearly illustrate how functions and classes would be imported from it and used once it gets published. It should be treated as pseudocode for the time being and will not work properly if you try to run it on its own.
+As of today, the Graphcast SDK is not published to [crates.io](https://crates.io), but the examples below will clearly illustrate how functions and structs would be imported from it and used once it gets published. It should be treated as pseudocode for the time being and will not work properly if you try to run it on its own.
 :::
 
 For a more complex and full example of the Graphcast SDK being used to create a POI cross-checker Radio, take a look at this [implementation in the POC repo](https://github.com/graphops/graphcast-poc/tree/main/src/examples/poi-crosschecker).
-
-
-Here's a list of Radios we've implemented and an explanation of how they work.
 
 ## A simple ping pong example
 
@@ -31,251 +28,220 @@ Once that's done, you can start building your very first Radio.
 
 ### Populate your `.env` file
 
-You now need to specify five essential variables in your `.env` file, here's the `.env.example`:
-
-```bash
-ETH_NODE=
-RADIO_OPERATOR_PRIVATE_KEY=
-NETWORK_SUBGRAPH=
-INDEXER_MANAGEMENT_SERVER=
-GRAPH_NODE=
-```
+You now need to export two environment variables, `ETH_NODE` (url to an Ethereum node) and `PRIVATE_KEY` (your operator address private key).
 
 Please use a Goerli ETH node for this example (doesn't need to be a full node).
 
 ### A few dependencies
 
-For this example you need to have the `@graphops/graphcast`, `dotenv` and `@graphprotocol/common-ts` npm packages installed.
+Start off with a new Rust project (`cargo new ping-pong`). Then add the following dependencies to you `Cargo.toml` file:
+
+```
+[dependencies]
+graphcast_sdk = "0.0.1"
+once_cell = "1.15"
+tokio = { version = "1.1.1", features = ["full"] }
+anyhow = "1.0.39"
+ethers = "1.0.0"
+```
 
 ### The imports
 
-Create a new file, for instance we'll be using `index.ts`, and import the following packages:
+Open your `main.rs` file and add the following imports:
 
-```typescript
-import "dotenv/config";
-import { ClientManager, GossipAgent } from "@graphops";
-import { createLogger } from "@graphprotocol/common-ts";
+```Rust
+//These allow for communicating with Ethereum nodes using the JSON-RPC protocol over HTTP
+use ethers::{
+    providers::{Http, Middleware, Provider},
+    types::U64,
+};
+
+//Provides the main structs that are used to create, send, receive and keep track of messages and other global state
+use graphcast_sdk::gossip_agent::{message_typing::GraphcastMessage, GossipAgent};
+
+//The OnceCell struct which can be used to ensure that a value is initialized only once and can be safely shared between threads
+use once_cell::sync::OnceCell;
+
+//This provides functions for interacting with the environment, such as getting and setting environment variables
+use std::env;
+
+//Provides the Arc and Mutex structs which can be used for shared memory concurrency
+use std::sync::{Arc, Mutex};
+
+//The leep function which can be used to make the current thread sleep for a specified duration and the Duration struct which can be used to represent time intervals
+use std::{thread::sleep, time::Duration};
+
+//Provides the AsyncMutex struct which is an asynchronous version of the Mutex struct and can be used for shared memory concurrency in asynchronous contexts
+use tokio::sync::Mutex as AsyncMutex;
+
+
 ```
-
-:::tip
-If you need a refresher on what `ClientManager` and `GossipAgent` do, refer to [this earlier section of the Graphcast docs](http://docs.graphops.xyz/graphcast/sdk#gossip-agent).
-:::
-
-### Set up a few constants
-
-Add these constants right after the imports:
-
-```typescript
-const RADIO_PAYLOAD_TYPES = [{ name: "content", type: "string" }];
-const DOMAIN = "ping-pong";
-
-const logger = createLogger({
-  name: DOMAIN,
-  async: false,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  level: process.env.logLevel as any,
-});
-```
-
-`RADIO_PAYLOAD_TYPES` defines the types for our Radio-specific message payload.
-`DOMAIN` is the unique name of the Radio, which is used in many places, but mainly to construct message topics.
-
-:::info
-Topics in the Graphcast network use the following format - `/graphcast/{version}/{domain}/{subtopic}/proto}`. In our ping pong example we won't need a `subtopic`, which is an optional field where the topics need to branch out (as is the case in the POI cross-checker radio, where a subgraph hash is provided as a `subtopic`, because rarely an Indexer would want to listen for POIs for **all** the subgraphs). But in the current case our topic will look like this - `/graphcast/0/ping-pong/proto`.
-:::
-
-`logger` will be used to structure logs in a better way than the good ol' `console.log` (very important if we want to have better tracing and metrics in the future).
 
 ### Structure
 
-The most basic structure of our ping pong code that we can have is to put everything below the imports and the constants in one `run()` function, which can looks something like this:
+Everything we need will be inside the `main()` function. And since we'll be using async code we have to annotate it with `#[tokio::main]`, we can start off with something as simple as:
 
-```typescript
-const run = async () => {
-  // TODO: Ping pong 🏓
-};
-
-run()
-  .then()
-  .catch((err) => {
-    logger.error(`❌ Oh no! An error occurred: ${err.message}`);
-    process.exit(1);
-  });
 ```
-
-From here on out everything we write will reside in the `run()` function.
+#[tokio::main]
+async fn main() {
+  // TODO: Radio logic
+}
+```
 
 ### Instantiate the essentials
 
-Let's instantiate a few classes that will do all the heavy lifting for us:
+Let's instantiate a few variables that will do all the heavy lifting for us.
 
-```typescript
-const clientManager = new ClientManager({
-  operatorPrivateKey: process.env.RADIO_OPERATOR_PRIVATE_KEY,
-  ethNodeUrl: process.env.ETH_NODE,
-  registry: process.env.REGISTRY_SUBGRAPH,
-  graphNodeStatus: process.env.GRAPH_NODE,
-  indexerManagementServer: process.env.INDEXER_MANAGEMENT_SERVER,
-  graphNetworkUrl: process.env.NETWORK_SUBGRAPH,
-});
+First is the vector we'll use to store incoming messages:
 
-const gossipAgent = new GossipAgent(logger, clientManager);
+```Rust
+pub static MESSAGES: OnceCell<Arc<Mutex<Vec<GraphcastMessage>>>> = OnceCell::new();
 ```
 
-:::info
-Don't worry about the environment variables that you see there which we haven't added to the `.env`, they will reside in the `Dockerfile` that we'll create at the end.
-:::
+This vector keeps tracks of already validated messages and allows Radios to freely process the messages separately (at a later time, not at the exact time that they are received).
 
-### Making sure everything works
+Next is an instance of `GossipAgent`:
+dddd
 
-This next segment will make sure that our operator gets resolved to an on-chain Indexer address and that we're ready to start sending and receiving message via Graphcast.
-
-```typescript
-const indexerAddress = await gossipAgent.init();
-
-logger.info(`🔦 Radio operator resolved to indexer address ${indexerAddress}`);
-
-logger.info(`👂 Initialize ping pong Radio with operator status: `, {
-  indexerAddress:
-    indexerAddress ??
-    "Graphcast agent is not registered as an indexer operator",
-  topic: DOMAIN,
-});
+```Rust
+pub static GOSSIP_AGENT: OnceCell<GossipAgent> = OnceCell::new();
 ```
+
+This is also a global static definition, because the Radio handler requires a static immutable context and the handler itself is being passed into the GossipAgent, so it needs to be static as well.
+
+We also need to load our environment variables:
+
+```Rust
+let private_key = env::var("PRIVATE_KEY").expect("No operator private key provided.");
+let eth_node = env::var("ETH_NODE").expect("No ETH URL provided.");
+```
+
+Using the Ethereum node we can now set up a provider instance that will help us read on-chain data:
+
+```Rust
+let provider: Provider<Http> = Provider::<Http>::try_from(eth_node.clone()).unwrap();
+```
+
+Next, we will set our Radio name (can be any string) and instantiate a `GossipAgent`:
+
+```Rust
+let radio_name: &str = "ping-pong";
+
+let gossip_agent = GossipAgent::new(
+    private_key,
+    eth_node,
+    radio_name,
+    Some(vec!["ping-pong-content-topic"]),
+    None,
+    None
+)
+.await
+.unwrap();
+```
+
+`GossipAgent` takes in an optional vector for content topics. Here we explicitly provide a singleton vector of "ping-pong-content-topic", but you can define topics based on the radio's use case needs. If you leave the field as None, then the agent will automatically fetch your indexer's active allocations and create a list of topics in the format of `radio application name` + the allocated subgraph deployments' IPFS hash.
+
+And lastly for the setup part, we need to run two one-off setters for `GossipAgent` and for the incomingthe messages store:
+
+```Rust
+_ = GOSSIP_AGENT.set(gossip_agent);
+_ = MESSAGES.set(Arc::new(Mutex::new(vec![])));
+```
+
+Awesome, we're all set to start with the actual Radio logic now!
 
 ### Sending messages
 
-Next, we will define a helper function (still inside of the `run` function) which will take care of sending messages to the network.
+We'll define a helper function that holds the logic of sending messages to the Graphcast network:
 
-```typescript
-const sendMessage = async (radioPayload) => {
-  const provider = gossipAgent.clientManager.ethClient.provider;
-
-  const block = await provider.getBlockNumber();
-  const blockObject = await provider.getBlock(block);
-
-  logger.info("Sending message with payload: ", radioPayload);
-
-  const encodedMessage = await gossipAgent.messenger.writeMessage({
-    radioPayload,
-    types: RADIO_PAYLOAD_TYPES,
-    block: blockObject,
-  });
-
-  await gossipAgent.messenger.sendMessage(encodedMessage, DOMAIN);
-};
+```Rust
+async fn send_message(content: String, block_number: u64) {
+        match GOSSIP_AGENT
+            .get()
+            .unwrap()
+            .send_message(
+                "ping-pong-content-topic".to_string(),
+                block_number,
+                content,
+            )
+            .await
+        {
+            Ok(sent) => println!("Sent message id:: {}", sent),
+            Err(e) => println!("Failed to send message: {}", e),
+        };
+    }
 ```
 
-The function accepts `radioPaylaod`, which currently can be any arbitrary TS object (this will certainly change in the future). It uses an Ethereum provider from `gossipAgent` to fetch the latest block, along with its metadata. Then we encode the message using `writeMessage` and propagate it onto the network with `sendMessage`.
-
-:::info
-We are setting the message topic to be the same as the `DOMAIN` constant.
-:::
+Again, the `identifier` that we define as `ping-pong-content-topic` can be any string that suits your Radio logic, if it doesn't really matter for your use case (like in the ping-pong Radio case) you can just use a UUID or a hardcoded string.
 
 ### Receiving and handling messages
 
 We now know how to send message, but how do we receive and handle message from other network participants?
 
-```typescript
-const handler = async (msg: Uint8Array, topic: string) => {
-  try {
-    logger.info(`📮 A new message has been received! Handling the message`);
-    const message = await gossipAgent.processMessage({
-      msg,
-      topic,
-      types: RADIO_PAYLOAD_TYPES,
-    });
+After `GossipAgent` validates the incoming messages, we provide a custom callback handler that specifies what to do with the message. In this handler we cache the message for later aggregation and processing, but depending on your Radio use case you are free any data storage option - a database, a custom data structure or a simple vector.
 
-    logger.info(`Message: `, { message });
-    const radioPayload = JSON.parse(message.radioPayload);
+Here is a simple handler that does just that:
 
-    if (radioPayload.content === "Ping") {
-      const radioPayload = {
-        content: "Pong",
-      };
+```Rust
+let radio_handler = |msg: Result<GraphcastMessage, anyhow::Error>| match msg {
+        Ok(msg) => {
+            println!("New message received! {:?}\n Saving to message store.", msg);
+            MESSAGES.get().unwrap().lock().unwrap().push(msg);
+        }
+        Err(err) => {
+            println!("{}", err);
+        }
+    };
 
-      await sendMessage(radioPayload);
-    }
-  } catch (error) {
-    logger.info(`Failed to handle the message, moving on. ${error}`);
-  }
-};
-
-await gossipAgent.establishTopics(DOMAIN, handler);
+GOSSIP_AGENT
+    .get()
+    .unwrap()
+    .register_handler(Arc::new(Mutex::new(radio_handler)));
 ```
-
-The `handler` function accepts a message of type `Uint8Array` (bytes), and of course the topic it was received on. At this point, the message is still encoded, but we can decode it using the SDK helper method `processMessage` with the `RADIO_PAYLOAD_TYPES` variable we defined before (because it was also used to encode it on the sender side). After it's decoded we can inspect the incoming `radioPayload` and read the `content` variable. Right after the function definition we can pass it to `establishTopics`. We've now started listening to messages 👂.
 
 ### The main loop
 
-Great, we're almost there! We have a way to pass messages back and forth 🏓. But sending a one-off message is no fun, we want to create some sort of scheduled and continuous logic of message exchange, and perhaps the easiest way to do that is to use the Ethereum block number as cue. For instance we can set a schedule where the message is sent when we hit a block that is divisible by 5.
+Great, we're almost there! We have a way to pass messages back and forth 🏓. But sending a one-off message is no fun, we want to create some sort of scheduled and continuous logic of message exchange, and perhaps the easiest way to do that is to use the Ethereum block number as cue.
 
-```typescript
-gossipAgent.clientManager.ethClient.provider.on("block", async (block) => {
-  logger.info(`🔗 Block: ${block}`);
+We'll start listening to Ethereum blocks and on each block we'll do a simple check - if the block number is even we'll send a "Ping" message, and if it's odd we'll process the messages we've received. After processing the messages we'll clear our store.
 
-  if (block % 5 === 0) {
-    logger.info("Ping pong block!");
+```Rust
+loop {
+    let block_number = U64::as_u64(&provider.get_block_number().await.unwrap());
+    println!("🔗 Block number: {}", block_number);
 
-    const radioPayload = {
-      content: "Ping",
+    if block_number & 2 == 0 {
+        send_message("Ping".to_string(), block_number).await;
+    } else {
+        let messages = AsyncMutex::new(MESSAGES.get().unwrap().lock().unwrap());
+        for msg in messages.lock().await.iter() {
+            if msg.content == *"Ping" {
+                send_message("Pong".to_string(), block_number).await;
+            }
+        }
+
+        messages.lock().await.clear();
     };
 
-    await sendMessage(radioPayload);
-  }
-});
+    sleep(Duration::from_secs(5));
+}
 ```
 
 ### The finished Radio
 
-Congratulations, you've now written you first full Graphcast Radio! The finished code is also available in [this repo](https://github.com/graphops/graphcast-poc/tree/main/src/examples/ping-pong), the only important difference is in the imports.
+Congratulations, you've now written you first full Graphcast Radio! The finished code is also available in [this repo](https://github.com/graphops/graphcast-sdk/tree/main/examples/ping-pong), the only important difference is in the dependencies.
 
 ### That's awesome. But how do we run it?
 
-We can of course run this as a standalone NodeJS process, but let's take it a step further and put it into a Docker container, using the following `Dockerfile`:
+You can start up the ping-pong Radio using `cargo run boot`.
 
-```Docker
-FROM alpine:latest
+:::note
+Passing the "boot" flag will run the Radio in boot mode, meaning it will run on a full node instead of a light node. When the Radio starts in boot mode it writes the boot node's ID and address to a local file for later use.
+Not passing the "boot" flag will run the Radio in light mode. In that case it will read the running boot node's ID and address from the local file and connect to it, and after that it will subscribe to specific pubsub topics if provided, if not - it will subscribe to the default ones.
 
-RUN apk add --update nodejs npm
+To summarise - in order to run a light node, you need to have a boot node running. Once you have a boot node running, you can run as many light nodes as you want.
+:::
 
-WORKDIR /usr/app
-COPY package.json ./
-RUN npm install
-
-COPY . .
-RUN npm run build
-
-WORKDIR /usr/app/dist/src/examples/ping-pong
-
-ENV TERM "xterm-256color"
-ENV LOG_LEVEL "trace"
-ENV REGISTRY_SUBGRAPH "https://api.thegraph.com/subgraphs/name/hopeyen/gossip-registry-test"
-
-CMD node index.js
-```
-
-We can take it even a step further and make our lives easier by using a `docker-compose.yml` file.
-
-```yaml
-version: "3.8"
-
-services:
-  ping-pong:
-    build:
-      context: .
-      dockerfile: ./pingpong.Dockerfile
-    command: node index.js
-    env_file:
-      - .env
-```
-
-### OK. Here's the moment we've all been waiting for
-
-To start up our ping pong Radio, simply run the following command to spin up two instances of the Radio that will pass around the ball between each other _in perpetuum_.
-
-```bash
-docker-compose up ping-pong --scale ping-pong=2
-```
+After that, you can spawn more instances of the `ping-pong` Radio and examine how they interact with each other in the terminal logs by running more light nodes with `cargo run`.
 
 Now there's just one more thing to do - have fun examining the logs & be proud of yourself - you made it! 🥂 From here on out, the only limit to the Radios you can build is your own imagination.
