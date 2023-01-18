@@ -1,6 +1,4 @@
 ---
-sidebar_position: 1
-description: desc
 ---
 # Avalanche Archive Mainnet Node Guide
 
@@ -18,7 +16,7 @@ For avalanche workload you will need:
 
 ## If running a Kubernetes cluster using `Launchpad`
 
-1. Check that the cluster is running and healthy - review [Quick Start](../quick-start/) guide for more info.
+1. Check that the cluster is running and healthy - review [Quick Start](../quick-start) guide for more info.
 2. In your private infra repo pull in latest `launchpad-starter` changes
 ```shell
 task launchpad:pull-upstream-starter

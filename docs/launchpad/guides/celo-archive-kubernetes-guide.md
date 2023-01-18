@@ -1,6 +1,4 @@
 ---
-sidebar_position: 1
-description: desc
 ---
 # Celo Archive Mainnet Node Guide
 
