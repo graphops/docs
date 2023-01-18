@@ -155,7 +155,7 @@ You can now use `task indexer:forward-grafana` to securely access your remote cl
 If you have existing external blockchain nodes that you would like to use instead of deploying them into your cluster, you can skip this section, but make sure that you can access those nodes securely (e.g. via an internal network, or using HTTPS and authentication).
 :::
 
-Launchpad comes with namespace defitions for a number of blockchain networks, including Ethereum Mainnet, Ethereum Goerli Testnet, Gnosis Chain Mainnet, and others. Using these defintions, you can easily deploy blockchain nodes for the networks you want to index into your cluster. Namespace definitions are located in your `helmfiles/namespace-releases` folder.
+Launchpad comes with namespace defitions for a number of blockchain networks, including Ethereum Mainnet, Ethereum Goerli Testnet, Gnosis Chain Mainnet, Polygon mainnet, Abitrum Mainnet, Avalanche Mainnet, Celo Mainnet and others. Using these defintions, you can easily deploy blockchain nodes for the networks you want to index into your cluster. Namespace definitions are located in your `helmfiles/namespace-releases` folder.
 
 #### (optional, eth-goerli) Install Erigon, Nimbus and Proxyd for Ethereum Goerli
 
