@@ -27,7 +27,7 @@ task launchpad:pull-upstream-starter
 ```shell
 task launchpad:update-core
 ``` 
-4. Check default values- double-check values and update as needed in [`<your-private-copy-of-launchpad-starter>/helmfiles/release-names/arbitrum-mainnet/avalanche-archive-trace-mainnet-0.yaml`](https://github.com/graphops/launchpad-starter/blob/main/helmfiles/release-values/arbitrum-mainnet/avalanche-archive-trace-mainnet-0.yaml)
+4. Check default values- double-check values and update as needed in [`<your-private-copy-of-launchpad-starter>/helmfiles/release-names/arbitrum-mainnet/avalanche-archive-trace-mainnet-0.yaml`](https://github.com/graphops/launchpad-starter/blob/main/helmfiles/release-values/avalanche-mainnet/avalanche-archive-trace-mainnet-0.yaml)
 
 5. Deploy avalanche-mainnet namespace
 ```shell
