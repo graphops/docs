@@ -83,6 +83,10 @@ arbitrum:
 Deploy helm-chart:
 
 ```sh
+helm repo add graphops http://graphops.github.io/helm-charts
+```
+
+```sh
 helm install --dry-run arbitrum-classic graphops/arbitrum-classic:latest --namespace arbitrum-mainnet --value arbitrum-classic.yaml
 ```
 

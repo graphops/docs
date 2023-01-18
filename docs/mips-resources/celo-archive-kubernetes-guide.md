@@ -55,5 +55,9 @@ celo:
 Deploy helm-chart:
 
 ```sh
+helm repo add graphops http://graphops.github.io/helm-charts
+```
+
+```sh
 helm install --dry-run celo graphops/celo:latest --namespace celo-mainnet --values celo-mainnet.yaml
 ```

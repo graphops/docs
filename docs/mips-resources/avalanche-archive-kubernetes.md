@@ -62,5 +62,9 @@ configTemplate: |
 Override the above config by providing a new one in a values file and deploy:
 
 ```sh
+helm repo add graphops http://graphops.github.io/helm-charts
+```
+
+```sh
 helm install --dry-run avalanche graphops/avalanche:latest --namespace avalanche-mainnet --values avalanche-mainnet.yaml
 ```
