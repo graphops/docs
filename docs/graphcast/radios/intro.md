@@ -10,7 +10,7 @@ Do you want to build robust, peer-to-peer messaging apps that automatically exch
 As of today, the Graphcast SDK is not published to [crates.io](https://crates.io), but the examples below will clearly illustrate how functions and structs would be imported from it and used once it gets published. It should be treated as pseudocode for the time being and will not work properly if you try to run it on its own.
 :::
 
-For a more complex and full example of the Graphcast SDK being used to create a POI cross-checker Radio, take a look at this [implementation in the POC repo](https://github.com/graphops/graphcast-poc/tree/main/src/examples/poi-crosschecker).
+For a more complex and full example of the Graphcast SDK being used to create a POI Radio, take a look at this [implementation in the POC repo](https://github.com/graphops/poi-radio).
 
 ## A simple ping pong example
 
