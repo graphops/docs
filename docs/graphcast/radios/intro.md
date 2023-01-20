@@ -6,10 +6,6 @@ sidebar_position: 1
 
 Do you want to build robust, peer-to-peer messaging apps that automatically exchanges valuable data with other Indexers in real time? Do you have an idea for what data could be useful to share that could lead to greater communication efficiency in The Graph network as a whole? Then you want to build a Radio on top of the Graphcast network.
 
-:::warning
-As of today, the Graphcast SDK is not published to [crates.io](https://crates.io), but the examples below will clearly illustrate how functions and structs would be imported from it and used once it gets published. It should be treated as pseudocode for the time being and will not work properly if you try to run it on its own.
-:::
-
 For a more complex and full example of the Graphcast SDK being used to create a POI Radio, take a look at this [implementation in the POC repo](https://github.com/graphops/poi-radio).
 
 ## A simple ping pong example
@@ -18,10 +14,10 @@ Let's take a look at the simples possible example of a Radio, built on top of Gr
 
 ### Register an operator address
 
-First things first - before you can run any Radio on Graphcast, you need to register an operator address for your on-chain Indexer address. You can do that by using our [Registry smart contract](https://goerli.etherscan.io/address/0x1e408c2cf66fd3afcea0f49dc44c9f4db5575e79) (on the Goerli network).
+First things first - before you can run any Radio on Graphcast, you need to register a Graphcast operator address for your on-chain Indexer address.
 
 :::tip
-The easiest way to do that is through [Remix](https://remix.ethereum.org/) (you can check out [this guide](https://medium.com/blockchain-stories/interacting-with-an-ethereum-smart-contract-aa14401c30a0)). You need to use your Indexer wallet to call the `setGossipOperator` function, providing the address you wish to use as an operator (in all lower-case characters). You can find the contract abi [here](https://github.com/graphops/graphcast-poc/blob/main/registryAbi.json).
+You can connect a operator address to your Indexer address (with a 1:1 relationship) using our very own [Registry contract](https://goerli.etherscan.io/address/0x1e408c2cf66fd3afcea0f49dc44c9f4db5575e79) (on Goerli). The easiest way to do that is through [Remix](https://remix.ethereum.org/) (you can check out [this guide](https://medium.com/blockchain-stories/interacting-with-an-ethereum-smart-contract-aa14401c30a0)). You need to use your Indexer wallet to call the `setGossipOperator` function, providing the address you wish to use as an operator (in all lower-case characters). You can find the contract abi [here](https://github.com/graphops/graphcast-poc/blob/main/registryAbi.json).
 :::
 
 Once that's done, you can start building your very first Radio.
@@ -34,15 +30,32 @@ Please use a Goerli ETH node for this example (doesn't need to be a full node).
 
 ### A few dependencies
 
+Make sure you have the following installed:
+
+- [Rust](https://www.rust-lang.org/tools/install)
+- [Go](https://go.dev/doc/install)
+- Build tools (e.g. the `build-essentials` package for Debian-based Linux distributions or [Xcode Command Line Tools](https://mac.install.guide/commandlinetools/index.html) for MacOS)
+- C compiler (e.g. the `clang` package for Debian-based Linux distribution or [Xcode Command Line Tools](https://mac.install.guide/commandlinetools/index.html) for MacOS)
+- OpenSSL (e.g. the `libssl-dev` package for Debian-based Linux distribution or `openssl` for MacOS)
+- PostreSQL libraries and headers (e.g. the `libpq-dev` package for Debian-based Linux distribution or `postgresql` for MacOS)
+
 Start off with a new Rust project (`cargo new ping-pong`). Then add the following dependencies to you `Cargo.toml` file:
 
 ```
 [dependencies]
-graphcast_sdk = "0.0.1"
+graphcast_sdk = { package = "graphcast-sdk", git = "https://github.com/graphops/graphcast-sdk" }
 once_cell = "1.15"
 tokio = { version = "1.1.1", features = ["full"] }
 anyhow = "1.0.39"
 ethers = "1.0.0"
+dotenv = "0.15.0"
+tracing = "0.1"
+ethers-contract = "1.0.0"
+ethers-core = "1.0.0"
+ethers-derive-eip712 = "1.0.0"
+prost = "0.11"
+serde = "1.0.147"
+serde_derive = "1.0.114"
 ```
 
 ### The imports
@@ -50,31 +63,50 @@ ethers = "1.0.0"
 Open your `main.rs` file and add the following imports:
 
 ```Rust
-//These allow for communicating with Ethereum nodes using the JSON-RPC protocol over HTTP
+// These allow for communicating with Ethereum nodes using the JSON-RPC protocol over HTTP
 use ethers::{
     providers::{Http, Middleware, Provider},
     types::U64,
 };
 
-//Provides the main structs that are used to create, send, receive and keep track of messages and other global state
-use graphcast_sdk::gossip_agent::{message_typing::GraphcastMessage, GossipAgent};
+// This is used for encoding/decoding structs to/from Ethereum ABI
+use ethers_contract::EthAbiType;
 
-//The OnceCell struct which can be used to ensure that a value is initialized only once and can be safely shared between threads
+// This is used for encoding structs following EIP-712 standard
+use ethers_core::types::transaction::eip712::Eip712;
+
+// This is used to automatically derive EIP-712 implementation for structs
+use ethers_derive_eip712::*;
+
+// This is used to automatically implement protobuf encoding/decoding for structs
+use prost::Message;
+
+// This is used to automatically implement serialization/deserialization for structs
+use serde::{Deserialize, Serialize};
+
+// Provides the main structs that are used to create, send, receive and keep track of messages and other global state
+use graphcast_sdk::{gossip_agent::{message_typing::GraphcastMessage, GossipAgent}, init_tracing};
+
+// The OnceCell struct which can be used to ensure that a value is initialized only once and can be safely shared between threads
 use once_cell::sync::OnceCell;
 
-//This provides functions for interacting with the environment, such as getting and setting environment variables
+// This provides functions for interacting with the environment, such as getting and setting environment variables
 use std::env;
 
-//Provides the Arc and Mutex structs which can be used for shared memory concurrency
+// Provides the Arc and Mutex structs which can be used for shared memory concurrency
 use std::sync::{Arc, Mutex};
 
-//The leep function which can be used to make the current thread sleep for a specified duration and the Duration struct which can be used to represent time intervals
+// The leep function which can be used to make the current thread sleep for a specified duration and the Duration struct which can be used to represent time intervals
 use std::{thread::sleep, time::Duration};
 
-//Provides the AsyncMutex struct which is an asynchronous version of the Mutex struct and can be used for shared memory concurrency in asynchronous contexts
+// Provides the AsyncMutex struct which is an asynchronous version of the Mutex struct and can be used for shared memory concurrency in asynchronous contexts
 use tokio::sync::Mutex as AsyncMutex;
 
+// The `tracing` crate provides macros for structured logging
+use tracing::error;
 
+// To handle environment variables defined in .env
+use dotenv::dotenv;
 ```
 
 ### Structure
@@ -88,20 +120,68 @@ async fn main() {
 }
 ```
 
+Above the `main` function, we can define the type of message that our Radio will use:
+
+```Rust
+#[derive(Eip712, EthAbiType, Clone, Message, Serialize, Deserialize)]
+#[eip712(
+    name = "Graphcast Ping-Pong Radio",
+    version = "0",
+    chain_id = 1,
+    verifying_contract = "0xc944e90c64b2c07662a292be6244bdf05cda44a7"
+)]
+pub struct RadioPayloadMessage {
+    #[prost(string, tag = "1")]
+    pub identifier: String,
+    #[prost(string, tag = "2")]
+    pub content: String,
+}
+
+impl RadioPayloadMessage {
+    pub fn new(identifier: String, content: String) -> Self {
+        RadioPayloadMessage {
+            identifier,
+            content,
+        }
+    }
+}
+```
+
+This is the general structure that the Graphcast SDK expects from a type that will be used as a Radio payload.
+
+The struct is decorated with several macros - #[derive(Eip712, EthAbiType, Clone, Message, Serialize, Deserialize)], which automatically implement certain traits that are required in the SDK.
+
+The #[eip712] macro is used to define information that is used in EIP-712, a standard for structuring typed data in Ethereum transactions.
+
+All following code will be in the `main` function.
+
 ### Instantiate the essentials
 
-Let's instantiate a few variables that will do all the heavy lifting for us.
+First off, call these two functions:
+
+```Rust
+// Loads the environment variables from our .env file
+dotenv().ok();
+
+// Enables tracing, you can set your preferred log level in your .env file
+// You can choose one of: TRACE, DEBUG, INFO, WARN, ERROR
+// If none is provided, defaults to INFO
+init_tracing();
+```
+
+Now let's instantiate a few variables that will do all the heavy lifting for us.
 
 First is the vector we'll use to store incoming messages:
 
 ```Rust
-pub static MESSAGES: OnceCell<Arc<Mutex<Vec<GraphcastMessage>>>> = OnceCell::new();
+pub static MESSAGES: OnceCell<Arc<Mutex<Vec<GraphcastMessage<RadioPayloadMessage>>>>> =
+    OnceCell::new();
 ```
 
 This vector keeps tracks of already validated messages and allows Radios to freely process the messages separately (at a later time, not at the exact time that they are received).
 
 Next is an instance of `GossipAgent`:
-dddd
+
 
 ```Rust
 pub static GOSSIP_AGENT: OnceCell<GossipAgent> = OnceCell::new();
@@ -125,15 +205,32 @@ let provider: Provider<Http> = Provider::<Http>::try_from(eth_node.clone()).unwr
 Next, we will set our Radio name (can be any string) and instantiate a `GossipAgent`:
 
 ```Rust
+// This can be any string
 let radio_name: &str = "ping-pong";
 
+/// A constant defining the goerli registry subgraph endpoint.
+pub const REGISTRY_SUBGRAPH: &str =
+    "https://api.thegraph.com/subgraphs/name/hopeyen/gossip-registry-test";
+
+/// A constant defining the goerli network subgraph endpoint.
+pub const NETWORK_SUBGRAPH: &str = "https://gateway.testnet.thegraph.com/network";
+
 let gossip_agent = GossipAgent::new(
+    // private_key resolves into ethereum wallet and indexer identity.
     private_key,
     eth_node,
+    // radio_name is used as part of the content topic for the radio application
     radio_name,
+    REGISTRY_SUBGRAPH,
+    NETWORK_SUBGRAPH,
+    // subtopic optionally provided and used as the content topic identifier of the message subject,
+    // if not provided then they are generated based on indexer allocations
     Some(vec!["ping-pong-content-topic"]),
+    // Waku node address is set up by optionally providing a host and port, and an advertised address to be connected among the waku peers
+    // Advertised address can be any multiaddress that is self-describing and support addresses for any network protocol (tcp, udp, ip; tcp6, udp6, ip6 for IPv6)
     None,
-    None
+    None,
+    None,
 )
 .await
 .unwrap();
@@ -155,14 +252,14 @@ Awesome, we're all set to start with the actual Radio logic now!
 We'll define a helper function that holds the logic of sending messages to the Graphcast network:
 
 ```Rust
-async fn send_message(content: String, block_number: u64) {
+async fn send_message(payload: Option<RadioPayloadMessage>, block_number: u64) {
         match GOSSIP_AGENT
             .get()
             .unwrap()
             .send_message(
                 "ping-pong-content-topic".to_string(),
                 block_number,
-                content,
+                payload,
             )
             .await
         {
@@ -183,7 +280,7 @@ After `GossipAgent` validates the incoming messages, we provide a custom callbac
 Here is a simple handler that does just that:
 
 ```Rust
-let radio_handler = |msg: Result<GraphcastMessage, anyhow::Error>| match msg {
+let radio_handler = |msg: Result<GraphcastMessage<RadioPayloadMessage>, anyhow::Error>| match msg {
         Ok(msg) => {
             println!("New message received! {:?}\n Saving to message store.", msg);
             MESSAGES.get().unwrap().lock().unwrap().push(msg);
@@ -208,20 +305,30 @@ We'll start listening to Ethereum blocks and on each block we'll do a simple che
 ```Rust
 loop {
     let block_number = U64::as_u64(&provider.get_block_number().await.unwrap());
-    println!("🔗 Block number: {}", block_number);
+    debug!("🔗 Block number: {}", block_number);
 
     if block_number & 2 == 0 {
-        send_message("Ping".to_string(), block_number).await;
+        let msg = RadioPayloadMessage::new("table".to_string(), "Ping".to_string());
+        // If block number is even, send ping message
+        send_message(Some(msg), block_number).await;
     } else {
+        // If block number is odd, process received messages
         let messages = AsyncMutex::new(MESSAGES.get().unwrap().lock().unwrap());
         for msg in messages.lock().await.iter() {
-            if msg.content == *"Ping" {
-                send_message("Pong".to_string(), block_number).await;
-            }
+            let payload = msg
+                .payload
+                .as_ref()
+                .expect("Could not get radio payload payload");
+            if *payload.content == *"Ping" {
+                let replay_msg =
+                    RadioPayloadMessage::new("table".to_string(), "Pong".to_string());
+                send_message(Some(replay_msg), block_number).await;
+            };
         }
 
+        // Clear message store after processing
         messages.lock().await.clear();
-    };
+    }
 
     sleep(Duration::from_secs(5));
 }
@@ -233,15 +340,8 @@ Congratulations, you've now written you first full Graphcast Radio! The finished
 
 ### That's awesome. But how do we run it?
 
-You can start up the ping-pong Radio using `cargo run boot`.
+You can start up the ping-pong Radio using `cargo run`.
 
-:::note
-Passing the "boot" flag will run the Radio in boot mode, meaning it will run on a full node instead of a light node. When the Radio starts in boot mode it writes the boot node's ID and address to a local file for later use.
-Not passing the "boot" flag will run the Radio in light mode. In that case it will read the running boot node's ID and address from the local file and connect to it, and after that it will subscribe to specific pubsub topics if provided, if not - it will subscribe to the default ones.
-
-To summarise - in order to run a light node, you need to have a boot node running. Once you have a boot node running, you can run as many light nodes as you want.
-:::
-
-After that, you can spawn more instances of the `ping-pong` Radio and examine how they interact with each other in the terminal logs by running more light nodes with `cargo run`.
+You can spawn more instances of the `ping-pong` Radio and examine how they interact with each other in the terminal logs.
 
 Now there's just one more thing to do - have fun examining the logs & be proud of yourself - you made it! 🥂 From here on out, the only limit to the Radios you can build is your own imagination.
