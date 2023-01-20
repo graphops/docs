@@ -20,7 +20,7 @@ The SDK is the base layer which is used to abstract all the necessary components
 
 ## Radios
 
-Our first example Radio is built for real-time cross-checking of Indexer Proof of Indexing attestations (POIs). Indexers must generate valid POIs to earn indexing rewards. Indexers find it beneficial to alert each other on the health status of subgraphs in community discussions. To alleviate the manual workload, the POI cross-checker Radio:
+Our first example Radio is built for real-time cross-checking of Indexer Proof of Indexing attestations (POIs). Indexers must generate valid POIs to earn indexing rewards. Indexers find it beneficial to alert each other on the health status of subgraphs in community discussions. To alleviate the manual workload, the POI Radio:
 
 - Defines message types and topics
 - Collects POIs from the Graph node and sends them inside of Graphcast messages along with other useful metadata
