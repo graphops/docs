@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 1
 ---
 
 # 📟 POI Radio
@@ -12,30 +12,60 @@ The key requirement for an Indexer to earn indexing rewards is to submit a valid
 
 ## Getting Started
 
-Before you follow any of the instructions below, please make sure you have a Graphcast operator address registered for your on-chain Indexer address.
+Before you follow any of the instructions below, please make sure you have a Graphcast Operator address registered for your on-chain Indexer address.
 
 :::tip
-You can connect a operator address to your Indexer address (with a 1:1 relationship) using our very own [Registry contract](https://goerli.etherscan.io/address/0x1e408c2cf66fd3afcea0f49dc44c9f4db5575e79) (on Goerli). The easiest way to do that is through [Remix](https://remix.ethereum.org/) (you can check out [this guide](https://medium.com/blockchain-stories/interacting-with-an-ethereum-smart-contract-aa14401c30a0)). You need to use your Indexer wallet to call the `setGossipOperator` function, providing the address you wish to use as an operator (in all lower-case characters). You can find the contract abi [here](https://github.com/graphops/graphcast-poc/blob/main/registryAbi.json).
+You can connect a Graphcast Operator address to your Indexer address (with a 1:1 relationship) using our very own [Registry contract](https://goerli.etherscan.io/address/0xBFdA8191D1ec09bB8ADc138DAbf413d00DAfb6c8) (on Goerli). You need to use your Indexer wallet to call the `setGossipOperator` function, providing the address you wish to use as an operator.
 :::
 
 ### Docker
 
-#### Prerequisites
+#### Using pre-built image
+
+This is the option you should go for if you're just looking to run the POI Radio as part of your Indexing stack.
+
+##### Steps
+
+1. Pull the image
+
+```bash
+docker pull ghcr.io/graphops/poi-radio:latest
+```
+
+2. Run the image, providing the required environment variables
+
+```bash
+docker run -e REGISTRY_SUBGRAPH="https://api.thegraph.com/subgraphs/name/hopeyen/gossip-registry-test" -e NETWORK_SUBGRAPH="https://gateway.testnet.thegraph.com/network" -e GRAPH_NODE_STATUS_ENDPOINT="http://host.docker.internal:8030/graphql" -e PRIVATE_KEY="your operator address private key" -e ETH_NODE="an ethereum rpc node url" ghcr.io/graphops/poi-radio
+```
+
+:::tip
+The `PRIVATE_KEY` here is for your Graphcast Operator address, which is entirely separate from your Indexer Operator address. The Graphcast Operator address is authorised using our [Registry contract](https://goerli.etherscan.io/address/0xBFdA8191D1ec09bB8ADc138DAbf413d00DAfb6c8). You need to use your Indexer wallet to call the `setGossipOperator` function, providing the operator address.
+:::
+
+To see the full list of environment variables you can provide, check out the [Configuration](#configuration) section.
+
+#### Building the image using the Dockerfile locally
+
+If you want to make any changes to the POI Radio codebase, you can use this option.
+
+##### Prerequisites
+
 1. Clone this repo and `cd` into it
-2. Create a `.env` file that includes the environment variables:
+2. Create a `.env` file that includes at least the required environment variables. To see the full list of environment variables you can provide, check out the [Configuration](#configuration) section.
 
-- `GRAPH_NODE_STATUS_ENDPOINT` (if running **Graph Node** locally this should be set to `http://host.docker.internal:8030/graphql`)
-- `PRIVATE_KEY` for the operator wallet
-- `ETH_NODE` for the block provider
-3. Optionally, provide `SLACK_TOKEN` and `SLACK_WEBHOOK` for POI divergence notifications, and `WAKU_HOST` and `WAKU_PORT` for the Radio's gossip node instance.
-
-#### Running the POI Radio inside a Docker container
+##### Running the POI Radio inside a Docker container
 
 ```bash
 docker-compose up -d
 ```
 
+### Using a pre-built binary
+
+We also provide pre-built binaries for Ubuntu and MacOS, which you can find in the `Assets` section on each release in the [releases page](https://github.com/graphops/poi-radio/releases) on Github. Simply download the binary, make it executable (`chmod a+x ./poi-radio-{TAG}-{SYSTEM}`) and then run it (using `./poi-radio-{TAG}-{SYSTEM}`).
+
 ### Building POI Radio locally
+
+To have full control over the POI Radio code and run it directly on your machine (without Docker) you can use this option.
 
 #### Prerequisites
 
@@ -48,14 +78,9 @@ docker-compose up -d
 - C compiler (e.g. the `clang` package for Debian-based Linux distribution or [Xcode Command Line Tools](https://mac.install.guide/commandlinetools/index.html) for MacOS)
 - OpenSSL (e.g. the `libssl-dev` package for Debian-based Linux distribution or `openssl` for MacOS)
 - PostreSQL libraries and headers (e.g. the `libpq-dev` package for Debian-based Linux distribution or `postgresql` for MacOS)
+
 3. You have **Graph Node** syncing your indexer's on-chain allocations.
-4. You have created a `.env` file that includes the environment variables:
-
-- `GRAPH_NODE_STATUS_ENDPOINT` (if running **Graph Node** locally this will most likely be `http://localhost:8030/graphql`)
-- `PRIVATE_KEY` for the operator wallet
-- `ETH_NODE` for the block provider
-
-6. Optionally, provide `SLACK_TOKEN` and `SLACK_WEBHOOK` for POI divergence notifications, and `WAKU_HOST` and `WAKU_PORT` for the Radio's gossip node instance.
+4. You have created a `.env` file that includes at least the required environment variables. To see the full list of environment variables you can provide, check out the [Configuration](#configuration) section.
 
 #### Running the POI Radio natively
 
@@ -63,7 +88,31 @@ docker-compose up -d
 cargo run
 ```
 
+## Configuration
+
+### Testnet (Goerli)
+
+| Name                         | Example                                                                   |
+| ---------------------------- | ------------------------------------------------------------------------- |
+| `ETH_NODE`                   | `https://goerli.infura.io/v3/<PROJECT_ID>`                                |
+| `PRIVATE_KEY`                | `0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef`      |
+| `GRAPH_NODE_STATUS_ENDPOINT` | `http://localhost:8030/graphql`                                         |
+| `REGISTRY_SUBGRAPH`          | `https://api.thegraph.com/subgraphs/name/hopeyen/gossip-registry-test`    |
+| `NETWORK_SUBGRAPH`           | `https://gateway.testnet.thegraph.com/network`                            |
+| `WAKU_HOST` (Optional)       | Defaults to `127.0.0.1`                                                   |
+| `WAKU_PORT` (Optional)       | Defaults to `8546`                                                        |
+| `SLACK_TOKEN` (Optional)     | `xoxp-0123456789-0123456789-0123456789-0123456789` (defaults to `None`)   |
+| `SLACK_WEBHOOK` (Optional)   | `https://hooks.slack.com/services/<ID>/<ID>/<TOKEN>` (defaults to `None`) |
+| `LOG_LEVEL` (Optional)       | Defaults to `INFO`                                                        |
+
+`SLACK_TOKEN` and `SLACK_WEBHOOK` are used for POI divergence notifications in a Slack channel.
+
+`WAKU_HOST` and `WAKU_PORT` specify where the Graphcast node (included in all Radios) runs. If you want to run multiple Radios, or multiple instances of the same Radio, you should run them on different ports. 
+
+If you want to customize the log level, you can set `LOG_LEVEL` to one of `ERROR`, `WARN`, `DEBUG`, `TRACE`.
+
 ## Workflow
+
 Upon initiation, the Radio fetches active allocations of the Radio operator's corresponding Indexer and establishes Radio topics on each allocations identified by subgraph deployment IPFS hash. Also when started, the Radio immediately starts listening for new blocks on Ethereum. On a given interval, the Radio loops through the list and acquires the normalised POI for each deployment (using the metadata of the block that we're on) and saves those nPOIs in an in-memory map. Below we will refer to these nPOIs as _local_ POIs since they are the ones that we've generated.
 
 At the same time, other Indexers running the Radio will start doing the same, which means that messages start propagating through the network. We handle each message and add the POI from it in another in-memory map, we can refer to these POIs as _remote_ POIs since these are the ones that we've received from other network participants. The messages don't come only with the POI and subgraph hash, they also include a nonce (UNIX timestamp), block number and signature. The signature is then used to derive the sender's on-chain Indexer address. It's important to note that before saving an entry to the map, the radio operator verifies through the graph network subgraph for the sender's on-chain identity and amount of tokens staked, which would be used during comparisons later on.
