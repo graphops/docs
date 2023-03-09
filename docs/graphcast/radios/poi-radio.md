@@ -74,8 +74,7 @@ You can append this service definition to your `docker-compose` manifest and cus
 
 ```yaml
 services:
-  // ... your other service definitions
-
+  # ... your other service definitions
   poi-radio:
     image: ghcr.io/graphops/poi-radio:latest
     container_name: poi-radio
