@@ -10,7 +10,7 @@ For a more complex and full example of the Graphcast SDK being used to create a 
 
 ## A simple ping pong example
 
-Let's take a look at the simples possible example of a Radio, built on top of Graphcast - a ping pong app. When one participant sends `Ping`, all the others in the network are listening on the ping pong topic will send `Pong` back. Pretty straightforward.
+Let's take a look at the simplest possible example of a Radio, built on top of Graphcast - a ping pong app. When one participant sends `Ping`, all the others in the network are listening on the ping pong topic will send `Pong` back. Pretty straightforward.
 
 ### Register an operator address
 
