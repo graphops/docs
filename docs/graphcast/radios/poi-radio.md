@@ -37,7 +37,7 @@ If you would prefer not to import the Operator account that you use with `indexe
 :::
 
 1. [Generate a new Ethereum account](https://iancoleman.io/bip39/) to act as your Graphcast ID, keeping the details safe
-2. Import your Indexer Operator account into your wallet
+2. Import your Indexer Operator private key into your wallet (e.g. MetaMask or Frame) in order to send a transaction to register your Graphcast ID
 3. Navigate to Etherscan ([mainnet registry](https://etherscan.io/address/0x89f97698d6006f25570cd2e31737d3d22aedcbcf#writeProxyContract), [testnet registry](https://goerli.etherscan.io/address/0x26ebbA649FAa7b56FDB8DE9Ea17aF3504B76BFA0#writeProxyContract)) in order to interact with the Graphcast Registry contract and register your Graphcast ID
 4. Call `setGraphcastIDFor(indexer_address, graphcast_id)`, passing in your Indexer Address and Graphcast ID
 5. Submit your transaction and wait for it to be included in a block
