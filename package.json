@@ -16,10 +16,10 @@
     "version": "docusaurus docs:version"
   },
   "dependencies": {
-    "@docusaurus/core": "^2.1.0",
-    "@docusaurus/preset-classic": "^2.1.0",
-    "@docusaurus/theme-mermaid": "^0.0.0-5335",
-    "@mdx-js/react": "^1.6.21",
+    "@docusaurus/core": "^2.3.1",
+    "@docusaurus/preset-classic": "^2.3.1",
+    "@docusaurus/theme-mermaid": "^2.3.1",
+    "@mdx-js/react": "^1",
     "@svgr/webpack": "^5.5.0",
     "clsx": "^1.1.1",
     "file-loader": "^6.2.0",

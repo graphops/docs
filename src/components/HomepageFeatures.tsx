@@ -30,17 +30,6 @@ const FeatureList: FeatureItem[] = [
     link: "/launchpad/intro",
   },
   {
-    title: "View resources for The Graph's MIPs Program",
-    image: "/img/noun_testnet.svg",
-    alt: "Image copyright LAFS, courtesy of the Noun Project",
-    description: (
-      <>
-        A collection of resources to support Indexers in The Graph's ongoing incentivised <Link to={"https://thegraph.com/blog/mips-multi-chain-indexing-incentivized-program"}>MIPs Program</Link>
-      </>
-    ),
-    link: "/mips-resources/intro",
-  },
-  {
     title: "Run a Radio and join the Graphcast network",
     image: "/img/noun_gn_EkoPurnomo.svg",
     alt: "Image copyright Eko Purnomo, courtesy of the Noun Project",

@@ -21,10 +21,10 @@ const config = {
   projectName: "docs", // Usually your repo name.
   trailingSlash: false,
   // Waiting for docusauras canary to be released for mermaid support: https://docusaurus.io/docs/next/markdown-features/diagrams
-  // themes: ['@docusaurus/theme-mermaid'],
-  // markdown: {
-  //   mermaid: true,
-  // },
+  themes: ['@docusaurus/theme-mermaid'],
+  markdown: {
+    mermaid: true,
+  },
   presets: [
     [
       "@docusaurus/preset-classic",
@@ -69,12 +69,6 @@ const config = {
             docId: 'launchpad/intro',
             position: 'left',
             label: 'Launchpad',
-          },
-          {
-            type: "doc",
-            docId: "mips-resources/intro",
-            position: "left",
-            label: "MIPs Resources",
           },
           {
             type: "doc",
