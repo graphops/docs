@@ -30,12 +30,12 @@ const FeatureList: FeatureItem[] = [
     link: "/launchpad/intro",
   },
   {
-    title: "Run a Radio and join the Graphcast network",
+    title: "Join Graphcast to coordinate with other Indexers using Radios",
     image: "/img/noun_gn_EkoPurnomo.svg",
     alt: "Image copyright Eko Purnomo, courtesy of the Noun Project",
     description: (
       <>
-        Run Radios (p2p messaging apps) in your stack to coordinate with other Indexers via the Graphcast
+        Run Radios (P2P apps) in your stack to coordinate with other Indexers via the Graphcast Network
       </>
     ),
     link: "/graphcast/intro",

@@ -164,9 +164,9 @@ The Radio fetches new active allocations at a regular interval to ensure that it
 
 ```mermaid
 sequenceDiagram
-    participant POI Radio
     participant Network Subgraph
     participant Graph Node
+    participant POI Radio
     participant Graphcast Network
     actor Human
     loop Track allocated deployments
@@ -179,15 +179,13 @@ sequenceDiagram
             POI Radio->>POI Radio: Update chain heads
             deactivate POI Radio
             loop For each deployment that we are tracking
-                opt If deployment is synced and healthy
-                    opt If deployment has reached trigger block
-                        POI Radio->>+Graph Node: Fetch POI for deployment
-                        Graph Node->>-POI Radio: Normalized POI
-                        activate POI Radio
-                        POI Radio->>POI Radio: Generate signed POI Attestation
-                        deactivate POI Radio
-                        POI Radio-->>Graphcast Network: Broadcast POI Attestation to Graphcast Network
-                    end
+                opt If deployment reached trigger block is healthy
+                    POI Radio->>+Graph Node: Fetch POI for deployment
+                    Graph Node->>-POI Radio: Normalized POI
+                    activate POI Radio
+                    POI Radio->>POI Radio: Generate signed POI Attestation
+                    deactivate POI Radio
+                    POI Radio-->>Graphcast Network: Broadcast POI Attestation to Graphcast Network
                 end
                 opt If stored remote attestations and collect message duration passed
                     activate POI Radio
@@ -217,7 +215,7 @@ flowchart LR
     b -->|No| eee{End}
     b -->|Yes| c[If reached trigger block]
     c -->|No| eee
-    c -->|Yes| d[Fetch POI for deployment\nand generate attestation]
+    c -->|Yes| d[Fetch POI for deployment]
     d -->|Broadcast| n(Graphcast\nNetwork)
     n -->|Receive remote POI| o[Other Indexers]
     n --> x{End}
@@ -230,11 +228,11 @@ After a successful comparison, the attestations that have been checked are remov
 
 ```mermaid
 flowchart LR
-    q[Fetch deployment status] --> g[Has comparison window expired?]
+    q[Fetch deployment status] --> g[Has collection window expired?]
     g -->|Yes| t[Compute consensus remote POI]
     g -->|No| p{End}
     c -->|Aggregate| t
-    a[Receive POI attestations] --> b[Has comparison window expired?]
+    a[Receive POI attestations] --> b[Has collection window expired?]
     b -->|Yes| eee{End}
     b -->|No| c[Store remote attestation\nfor deployment]
     t --> l[Does local POI match remote consensus POI?]
