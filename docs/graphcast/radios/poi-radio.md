@@ -24,11 +24,11 @@ The Graphcast Registry contract maps Graphcast IDs to Indexers in the Graph Prot
 
 Here is a brief overview of the accounts you'll be interacting with:
 
-| Account Name | Description |
-| - | - |
-| Indexer Account | The existing account associated with your Graph Protocol Indexer. This may be a Token Lock Contract address, or a multisig or EOA address. |
-| Indexer Operator Account | An account you have registered as an Operator for your Indexer. You can use the Operator account that you pass to `indexer-agent`. |
-| Graphcast ID Account | A new account that you will create that is used by Graphcast Radio instances to sign messages on behalf of your Indexer. |
+| Account Name             | Description                                                                                                                                |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| Indexer Account          | The existing account associated with your Graph Protocol Indexer. This may be a Token Lock Contract address, or a multisig or EOA address. |
+| Indexer Operator Account | An account you have registered as an Operator for your Indexer. You can use the Operator account that you pass to `indexer-agent`.         |
+| Graphcast ID Account     | A new account that you will create that is used by Graphcast Radio instances to sign messages on behalf of your Indexer.                   |
 
 You'll need to use a registered [Indexer Operator](https://thegraph.com/docs/en/network/indexing/#stake-in-the-protocol) account for your Indexer to register a Graphcast ID.
 
@@ -36,7 +36,7 @@ You'll need to use a registered [Indexer Operator](https://thegraph.com/docs/en/
 flowchart LR
     subgraph Graphcast Registry
     A[Graphcast ID] -->|points to| B(Indexer Account)
-    end 
+    end
     O[Indexer Operator Account] -->|registers| A
 ```
 
@@ -60,13 +60,13 @@ Great, you now have a Graphcast ID that is authorized to sign messages on behalf
 
 The POI Radio is configured using environment variables. You will need to prepare the following environment variables:
 
-| Name                                  | Description and examples                                                                                  |
-| ------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `PRIVATE_KEY`                         | Private key for your Graphcast ID.<br/>Example: `0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef`                       |
-| `GRAPH_NODE_STATUS_ENDPOINT`          | URL to a Graph Node Indexing Status endpoint.<br/>Example: `http://index-node:8030/graphql` |
-| `REGISTRY_SUBGRAPH`                   | URL to the Graphcast Registry subgraph for your network.<br/>Mainnet: `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet`<br/>Goerli: `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-goerli`        |
-| `NETWORK_SUBGRAPH`                    | URL to the Graph Network subgraph<br/>Mainnet: `https://gateway.thegraph.com/network`<br/>Goerli: `https://gateway.testnet.thegraph.com/network`|
-| `GRAPHCAST_NETWORK`                   | The Graphcast Messaging fleet and pubsub namespace to use.<br/>Mainnet: `mainnet`<br/>Goerli: `testnet`|
+| Name                         | Description and examples                                                                                                                                                                                                                   |
+| ---------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `PRIVATE_KEY`                | Private key to the Graphcast ID wallet (Precendence over mnemonics).<br/>Example: `0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef`                                                                                                                       |
+| `GRAPH_NODE_STATUS_ENDPOINT` | URL to a Graph Node Indexing Status endpoint.<br/>Example: `http://index-node:8030/graphql`                                                                                                                                                |
+| `REGISTRY_SUBGRAPH`          | URL to the Graphcast Registry subgraph for your network.<br/>Mainnet: `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet`<br/>Goerli: `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-goerli` |
+| `NETWORK_SUBGRAPH`           | URL to the Graph Network subgraph<br/>Mainnet: `https://gateway.thegraph.com/network`<br/>Goerli: `https://gateway.testnet.thegraph.com/network`                                                                                           |
+| `GRAPHCAST_NETWORK`          | The Graphcast Messaging fleet and pubsub namespace to use.<br/>Mainnet: `mainnet`<br/>Goerli: `testnet`                                                                                                                                    |
 
 ### Run with Docker
 
@@ -119,21 +119,25 @@ We also provide pre-built binaries for Ubuntu and MacOS, which you can find in t
 
 In the configuration table below is the full list of environment variables you can set, along with example values.
 
-
 See [Basic Configuration](#basic-configuration) above. The following environment variables are optional:
 
-| Name                                  | Description and examples                                                                                  |
-| ------------------------------------- | ---------------------------------------------------------------------------------------- |
-| `COLLECT_MESSAGE_DURATION` (Optional) | Seconds that the POI Radio will wait to collect remote POI attestations before making a comparison with the local POI. Example: `120` for 2 minutes. |
-| `WAKU_HOST` (Optional)                | Interface onto which to bind the bundled Waku node. Example: `127.0.0.1` |
-| `WAKU_PORT` (Optional)                | P2P port on which the bundled Waku node will operate. Example: `60000` |
-| `WAKU_NODE_KEY` (Optional)            | Static Waku Node Key. |
-| `BOOT_NODE_ADDRESSES` (Optional)      | Peer addresses to use as Waku boot nodes. Example: `"addr1, addr2, addr3"` |
-| `SLACK_TOKEN` (Optional)              | Slack Token to use for notifications. Example: `xoxp-0123456789-0123456789-0123456789-0123456789` |
-| `SLACK_WEBHOOK` (Optional)            | Slack Webhook to use for notifications. Example: `https://hooks.slack.com/services/<ID>/<ID>/<TOKEN>` |
-| `RUST_LOG` (Optional)                 | Rust tracing configuration. Example: `graphcast_sdk=debug,poi_radio=debug`, defaults to `info` for everything |
+| Name                                  | Description and examples                                                                                                                                                                            |
+| ------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MNEMONIC` (Optional)                 | Mnemonic to the Graphcast ID wallet (first address of the wallet is used; Only one of private key or mnemonic is needed). Example: `claptrap armchair violin...`                                   |
+| `COLLECT_MESSAGE_DURATION` (Optional) | Seconds that the POI Radio will wait to collect remote POI attestations before making a comparison with the local POI. Example: `120` for 2 minutes.                                                |
+| `COVERAGE` (Optional)                 | Toggle for topic coverage level. Possible values: "comprehensive", "on-chain", "minimal". Default is set to "on-chain" coverage.                                                                   |
+| `WAKU_HOST` (Optional)                | Interface onto which to bind the bundled Waku node. Example: `127.0.0.1`                                                                                                                            |
+| `WAKU_PORT` (Optional)                | P2P port on which the bundled Waku node will operate. Example: `60000`                                                                                                                              |
+| `WAKU_NODE_KEY` (Optional)            | Static Waku Node Key.                                                                                                                                                                               |
+| `BOOT_NODE_ADDRESSES` (Optional)      | Peer addresses to use as Waku boot nodes. Example: `"addr1, addr2, addr3"`                                                                                                                          |
+| `SLACK_TOKEN` (Optional)              | Slack Token to use for notifications. Example: `xoxp-0123456789-0123456789-0123456789-0123456789`                                                                                                   |
+| `SLACK_CHANNEL` (Optional)            | Name of Slack channel to send messages to (has to be a public channel). Example: `poir-notifications`                                                                                               |
+| `WAKU_LOG_LEVEL` (Optional)           | Waku node logging configuration. Example: `INFO` (is also the default)                                                                                                                              |
+| `RUST_LOG` (Optional)                 | Rust tracing configuration. Example: `graphcast_sdk=debug,poi_radio=debug`, defaults to `info` for everything                                                                                       |
+| `DISCORD_WEBHOOK` (Optional)          | Discord webhook URL for notifications. Example: `https://discord.com/api/webhooks/123456789012345678/AbCDeFgHiJkLmNoPqRsTuVwXyZaBcDeFgHiJkLmN`                                                      |
+| `METRICS_PORT` (Optional)             | If set, the Radio will expose Prometheus metrics on the given port (off by default). This requires having a local Prometheus server running and scraping metrics on the given port. Example: `3001` |
 
-`SLACK_TOKEN` and `SLACK_WEBHOOK` are used for POI divergence notifications in a Slack channel.
+`SLACK_TOKEN` and `SLACK_CHANNEL` are used for POI divergence notifications in a Slack channel.
 
 `WAKU_HOST` and `WAKU_PORT` specify where the bundled Waku node runs. If you want to run multiple Radios, or multiple instances of the same Radio, you should run them on different ports.
 
@@ -145,7 +149,7 @@ RUST_LOG="warn,hyper=warn,graphcast_sdk=debug,poi_radio=debug"
 
 ## Monitoring the Radio
 
-If the Radio operator has set up a Slack Bot integration and the Radio finds a POI mismatch, it sends alerts to the designated channel. The operator can also inspect the logs to see if the Radio is functioning properly, if it's sending and receiving messages, if it's comparing normalised POIs, if there is a found POI mismatch, etc.
+If the Radio operator has set up a Slack Bot and/or Discord bot integration and the Radio finds a POI mismatch, it sends alerts to the designated channels. The operator can also inspect the logs to see if the Radio is functioning properly, if it's sending and receiving messages, if it's comparing normalised POIs, if there is a found POI mismatch, etc.
 
 Support for Prometheus metrics and Grafana dashboards is coming soon!
 
@@ -160,7 +164,6 @@ The relevant networks are those corresponding to the subgraphs that have active 
 :::
 
 The Radio fetches new active allocations at a regular interval to ensure that it is processing the latest information. Chainheads for these networks are updated with data from the Graph Node, and the Radio ensures that it is always using the latest chainhead when processing messages.
-
 
 ```mermaid
 sequenceDiagram
@@ -204,10 +207,9 @@ sequenceDiagram
 
 At a given interval, the Radio fetches the normalised POI for each deployment. This interval is defined in blocks different for each network.
 
-It then saves those nPOIs in an in-memory map. These nPOIs are referred to as _local_ POIs since they are generated by the Radio. As other Indexers running the Radio start doing the same, messages start propagating through the network. The Radio handles each message and adds the POI from it in another in-memory map. These POIs are referred to as _remote_ POIs since they are received from other network participants.
+It then saves those nPOIs in an in-memory map. These nPOIs are referred to as _local_ nPOIs since they are generated by the Radio. As other Indexers running the Radio start doing the same, messages start propagating through the network. The Radio saves each message into a cache (another in-memory map) and processes them into attestations on a given interval (while processing, the Radio adds the nPOI from each message into another in-memory map). These nPOIs are referred to as _remote_ nPOIs since they are received from other network participants.
 
 The messages include a nonce (UNIX timestamp), block number, signature (used to derive the sender's on-chain Indexer address) and network. Before saving an entry to the map, the Radio operator verifies through the Graph network subgraph for the sender's on-chain identity and amount of tokens staked, which is used during comparisons later on.
-
 
 ```mermaid
 flowchart LR
@@ -221,10 +223,11 @@ flowchart LR
     n --> x{End}
 ```
 
-At another interval, the Radio compares the local POIs with the collected remote ones. The remote POIs are sorted so that for each subgraph (on each block), the POI that is backed by the most on-chain stake is selected. This means that the combined stake of all Indexers that attested to it is considered, not just the highest staking Indexer. The top POI is then compared with the local POI for that subgraph at that block to determine consensus.
+At another interval, the Radio compares the local nPOIs with the collected remote ones. The remote nPOIs are sorted so that for each subgraph (on each block), the nPOI that is backed by the most on-chain stake is selected. This means that the combined stake of all Indexers that attested to it is considered, not just the highest staking Indexer. The top nPOI is then compared with the local nPOI for that subgraph at that block to determine consensus.
+
+If there is a mismatch and if the Radio operator has set up a Slack Bot and/or Discord bot integration, the Radio will send alerts to the designated channels. 
 
 After a successful comparison, the attestations that have been checked are removed from the store.
-
 
 ```mermaid
 flowchart LR
