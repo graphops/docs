@@ -111,6 +111,10 @@ services:
       driver: local
 ```
 
+### (or) Run as part of [StakeSquid](https://github.com/StakeSquid)'s docker-compose setup
+
+POI Radio is included as an optional component in both the [mainnet](https://github.com/StakeSquid/graphprotocol-mainnet-docker) and [testnet](https://github.com/StakeSquid/graphprotocol-testnet-docker) versions of StakeSquid's guide. The only prerequisite is to have a [Graphcast ID registered](#registering-your-graphcast-id). To enable the POI Radio, you can edit the `.env` file as follows - uncomment the `GRAPHCAST_ID_PRIVATE_KEY` line and replace the placeholder value with the private key of your Graphcast ID wallet.
+
 ### (or) Run using a pre-built binary
 
 We also provide pre-built binaries for Ubuntu and MacOS, which you can find in the `Assets` section on each release in the [releases page](https://github.com/graphops/poi-radio/releases) on Github. Simply download the binary, make it executable (`chmod a+x ./poi-radio-{TAG}-{SYSTEM}`) and then run it (using `./poi-radio-{TAG}-{SYSTEM}`).
