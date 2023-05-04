@@ -58,7 +58,7 @@ nitro:
 
 ## Deploying with helm in a Kubernetes cluster outside Launchpad
 
-You can find blockchain related helm packages ['here'](https://github.com/graphops/helm-charts/tree/main/charts)
+You can find blockchain related helm packages ['here'](https://github.com/graphops/launchpad-charts/tree/main/charts)
 
 Given that Arbitrum needs both Nitro and classic to run use the following commands:
 
@@ -81,7 +81,7 @@ arbitrum:
 Deploy helm-chart:
 
 ```sh
-helm repo add graphops http://graphops.github.io/helm-charts
+helm repo add graphops http://graphops.github.io/launchpad-charts
 ```
 
 ```sh

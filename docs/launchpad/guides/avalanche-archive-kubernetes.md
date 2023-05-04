@@ -34,7 +34,7 @@ task releases:apply avalanche-mainnet
 
 ## Deploying with helm in a Kubernetes cluster outside Launchpad
 
-You can find blockchain related helm packages [here](https://github.com/graphops/helm-charts/tree/main/charts)
+You can find blockchain related helm packages [here](https://github.com/graphops/launchpad-charts/tree/main/charts)
 
 By default avalanche is told what type of node to run by the following default `toml` config:
 
@@ -60,7 +60,7 @@ configTemplate: |
 Override the above config by providing a new one in a values file and deploy:
 
 ```sh
-helm repo add graphops http://graphops.github.io/helm-charts
+helm repo add graphops http://graphops.github.io/launchpad-charts
 ```
 
 ```sh
