@@ -144,6 +144,8 @@ See [Basic Configuration](#basic-configuration) above. The following environment
 | `METRICS_HOST`             | If set, the Radio will expose Prometheus metrics on this (off by default). Example: `0.0.0.0`                                                                                                                                      |
 | `SERVER_HOST`              | If set, the Radio will expose an API service on the given host (off by default). Example: `0.0.0.0`                                                                                                                                |
 | `SERVER_PORT`              | If set, the Radio will expose an API service on the given port (off by default). Example: `8080`                                                                                                                                   |
+| `LOG_FORMAT`               | Options: `pretty` - verbose and human readable; `json` - not verbose and parsable; `compact` - not verbose and not parsable; `full` - verbose and not parsible. Default value: `pretty`.                                           |
+| `PERSISTENCE_FILE_PATH`    | Relative path. If set, the Radio will periodically store states of the program to the file in json format (off by default).                                                                                                        |
 
 `COVERAGE` is used to specify the topic coverage level. It controls the range of topics (subgraph ipfs hashes) the Indexer subscribes to in order to process data and participate in the network.
 
@@ -163,6 +165,8 @@ If you want to customize the log level, you can toggle `RUST_LOG` environment va
 RUST_LOG="warn,hyper=warn,graphcast_sdk=debug,poi_radio=debug"
 ```
 
+The `PERSISTENCE_FILE_PATH` configuration variable allows the Radio to maintain operational continuity across sessions. When set, it triggers the Radio to periodically store its state, including local attestations and remote messages, in a JSON-formatted file at the specified path. This facilitates seamless session transitions and minimizes data loss.. In the event of a system disruption, the state can be reloaded from this file, ensuring the Radio can resume operation effectively.
+
 ## Monitoring the Radio
 
 ### Notifications
@@ -175,12 +179,20 @@ The POI Radio exposes metrics that can then be scraped by a Prometheus server an
 
 ## HTTP Server
 
-If you set the `SERVER_HOST` and `SERVER_PORT` environment variables, the Radio will spin up an HTTP server with a GraphQL API. Currently the Radio supports the following routes:
+The Radio spins up an HTTP server with a GraphQL API when `SERVER_HOST` and `SERVER_PORT` environment variables are set. The supported routes are:
 
 - `/health` for health status
 - `/api/v1/graphql` for GET and POST requests with GraphQL playground interface
 
-Here are some example queries you can use:
+The GraphQL API now includes several advanced queries:
+
+- `radioPayloadMessages`
+- `localAttestations`
+- `comparisonResults`
+- `stakeRatio`
+- `senderRatio`
+
+Below are some example queries:
 
 ```graphql
 Query {
@@ -209,8 +221,67 @@ Query {
       npoi
     }
   }
+  stakeRatio(filter: {deployment: "__", blockNumber: "___"}){
+    deployment
+    blockNumber
+    compareRatio
+  }
+  senderRatio{
+    deployment
+    blockNumber
+    compareRatio
+  }
 }
 ```
+
+You can customize the returned data from the `stakeRatio` and `senderRatio` queries by providing optional filters as arguments:
+
+- `deployment` - If provided, only attestations for the specified deployment will be included in the comparison.
+- `block` - If provided, only attestations for the specified block number will be included in the comparison.
+- `filter` - A more complex filter that can include deployment, block_number, and result_type fields. This filter is used to further refine the set of attestations included in the comparison.
+  Here's an example of a query with filters:
+
+```graphql
+Query {
+  stakeRatio(filter: {deployment: "Qm....", blockNumber: 12345, result_type: "Type_Name"}){
+    deployment
+    blockNumber
+    compareRatio
+  }
+}
+```
+
+In this example, the `stakeRatio` query will return the stake ratios only for attestations from deployment "Qm...." and block number 12345, and only for the specified result type.
+
+Note: The `result_type` field of the filter corresponds to the `resultType` field in the `comparisonResults` query. This field represents the type of comparison result.
+
+The API also includes the `senderRatio` and `stakeRatio` endpoints, which return more detailed insights into the state of the Radio.
+
+`senderRatio` provides an overview of the consensus status of the attestations from remote messages. It gives a ratio string that signifies the number of indexers with the same npoi as the local Radio. The results are presented as `x/y!/z` where:
+
+- `x`, `y`, and `z` are sorted by descending stake weights
+- `!` indicates the entry that corresponds to the local result.
+
+For example,` 2/0!` means there are two indexers attesting with a higher sum of stake weight and no other indexer shares the same nPOI as the local Radio. `8!` means there are eight other indexers agreeing with the local Radio.
+
+`stakeRatio` offers similar functionality to senderRatio but the results are based on the stake weight. It orders the attestations by stake weight, then computes the ratio of unique senders.
+
+```graphql
+Query {
+  senderRatio{
+    deployment
+    blockNumber
+    compareRatio
+  }
+  stakeRatio{
+    deployment
+    blockNumber
+    compareRatio
+  }
+}
+```
+
+These queries provide a clear aggregation of the attestations from remote messages, giving a concise understanding of the Radio's state. The optional filters - deployment, block, and filter - can be used to refine the results.
 
 ## How it works
 
