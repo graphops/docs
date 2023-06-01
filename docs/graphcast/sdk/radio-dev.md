@@ -110,16 +110,13 @@ use graphcast_sdk::{
         message_typing::GraphcastMessage, waku_handling::WakuHandlingError, GraphcastAgent,
         GraphcastAgentConfig,
     },
-    graphql::client_graph_node::{get_indexing_statuses, update_network_chainheads},
+    graphql::client_graph_node::update_network_chainheads,
     networks::NetworkName,
     BlockPointer,
 };
 
 // Import the OnceCell container for lazy initialization of global/static data
 use once_cell::sync::OnceCell;
-
-// Import HashMap for key-value storage
-use std::collections::HashMap;
 
 // Import Arc and Mutex for thread-safe sharing of data across threads
 use std::sync::{Arc, Mutex};
@@ -256,13 +253,23 @@ pub struct Config {
         default_value = "https://gateway.testnet.thegraph.com/network"
     )]
     pub network_subgraph: String,
+    #[clap(
+        long,
+        value_name = "LOG_FORMAT",
+        env = "LOG_FORMAT",
+        help = "Support logging formats: pretty, json, full, compact",
+        long_help = "pretty: verbose and human readable; json: not verbose and parsable; compact:  not verbose and not parsable; full: verbose and not parsible",
+        possible_values = ["pretty", "json", "full", "compact"],
+        default_value = "full"
+    )]
+    pub log_format: String,
 }
 
 impl Config {
     /// Parse config arguments
     pub fn args() -> Self {
         let config = Config::parse();
-        init_tracing().expect("Could not set up global default subscriber for logger, check environmental variable `RUST_LOG` or the CLI input `log-level`");
+        init_tracing(config.log_format.clone()).expect("Could not set up global default subscriber for logger, check environmental variable `RUST_LOG` or the CLI input `log-level`");
         config
     }
 
@@ -271,7 +278,7 @@ impl Config {
         // The wallet can be stored instead of the original private key
         let wallet = build_wallet(value)?;
         let addr = graphcast_id_address(&wallet);
-        info!("Resolved Graphcast id: {}", addr);
+        info!(address = addr, "Resolved Graphcast id");
         Ok(String::from(value))
     }
 }
@@ -292,12 +299,13 @@ From here on, all following code will be in the `main` function. To start off, w
 
 ```Rust
 // This can be any string
-let radio_name: &str = "ping-pong";
+let radio_name = "ping-pong".to_string();
 // Loads the environment variables from .env
 dotenv().ok();
 
 // Instantiates the configuration struct based on provided environment variables or CLI args
 let config = Config::args();
+let _parent_span = tracing::info_span!("main").entered();
 ```
 
 Now let's instantiate a few variables that will do all the heavy lifting for us.
@@ -317,7 +325,7 @@ pub static GRAPHCAST_AGENT: OnceCell<GraphcastAgent> = OnceCell::new();
 
 // Subtopics are optionally provided and used as the content topic identifier of the message subject,
 // if not provided then they are usually generated based on indexer allocations
-let subtopics = vec!["ping-pong-content-topic".to_string()];
+let subtopics: Vec<String> = vec!["ping-pong-content-topic".to_string()];
 
 // GraphcastAgentConfig defines the configuration that the SDK expects from all Radios, regardless of their specific functionality
 let graphcast_agent_config = GraphcastAgentConfig::new(
@@ -331,6 +339,9 @@ let graphcast_agent_config = GraphcastAgentConfig::new(
     Some(subtopics),
     None,
     None,
+    None,
+    // Example ENR address
+    Some(vec![String::from("enr:-JK4QBcfVXu2YDeSKdjF2xE5EDM5f5E_1Akpkv_yw_byn1adESxDXVLVjapjDvS_ujx6MgWDu9hqO_Az_CbKLJ8azbMBgmlkgnY0gmlwhAVOUWOJc2VjcDI1NmsxoQOUZIqKLk5xkiH0RAFaMGrziGeGxypJ03kOod1-7Pum3oN0Y3CCfJyDdWRwgiMohXdha3UyDQ")]),
     None,
     None,
 )
@@ -367,8 +378,6 @@ Awesome, we're all set to start with the actual Radio logic now!
 We'll define a helper function that holds the logic of sending messages to the Graphcast network:
 
 ```Rust
-let mut network_chainhead_blocks: HashMap<NetworkName, BlockPointer> = HashMap::new();
-
 // Helper function to reuse message sending code
 async fn send_message(
     payload: Option<RadioPayloadMessage>,
@@ -388,7 +397,7 @@ async fn send_message(
         )
         .await
     {
-        error!("Failed to send message: {}", e)
+        error!(error = tracing::field::debug(&e), "Failed to send message");
     };
 }
 ```
@@ -418,7 +427,10 @@ let radio_handler =
                 .push(msg);
         }
         Err(err) => {
-            error!("{err}");
+            error!(
+                error = tracing::field::debug(&err),
+                "Failed to handle Waku signal"
+            );
         }
     };
 
@@ -439,16 +451,22 @@ We'll start listening to Ethereum blocks coming from the Graph Node and on each 
 let network = NetworkName::from_string("goerli");
 
 loop {
-    let indexing_statuses =
-        match get_indexing_statuses(config.graph_node_endpoint.clone()).await {
-            Ok(res) => res,
-            Err(e) => {
-                error!("Could not query indexing statuses, pull again later: {e}");
-                sleep(Duration::from_secs(5));
-                continue;
-            }
-        };
-    update_network_chainheads(indexing_statuses, &mut network_chainhead_blocks);
+    let mut network_chainhead_blocks = match GRAPHCAST_AGENT
+        .get()
+        .unwrap()
+        .callbook
+        .indexing_statuses()
+        .await
+    {
+        Ok(res) => update_network_chainheads(res),
+        Err(e) => {
+            error!(
+                err = tracing::field::debug(&e),
+                "Could not query indexing statuses, pull again later"
+            );
+            continue;
+        }
+    };
     let block_number = network_chainhead_blocks
         .entry(network)
         .or_insert(BlockPointer {
@@ -456,7 +474,7 @@ loop {
             hash: "temp".to_string(),
         })
         .number;
-    info!("🔗 Block number: {}", block_number);
+    info!(block = block_number, "🔗 Block number");
 
     if block_number & 2 == 0 {
         // If block number is even, send ping message
