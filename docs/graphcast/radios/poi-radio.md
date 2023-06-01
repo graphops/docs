@@ -136,16 +136,20 @@ See [Basic Configuration](#basic-configuration) above. The following environment
 | `WAKU_NODE_KEY`            | Static Waku Node Key.                                                                                                                                                                                                              |
 | `BOOT_NODE_ADDRESSES`      | Peer addresses to use as Waku boot nodes. Example: `"addr1, addr2, addr3"`                                                                                                                                                         |
 | `SLACK_TOKEN`              | Slack Token to use for notifications. Example: `xoxp-0123456789-0123456789-0123456789-0123456789`                                                                                                                                  |
+| `TELEGRAM_TOKEN`           | Telegram Bot Token to use for notifications. Example: `123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11`                                                                                                                                  |
+| `TELEGRAM_CHAT_ID`         | The ID of the Telegram chat to send messages to. Example: `-1001234567890`                                                                                                                                                         |
 | `SLACK_CHANNEL`            | Name of Slack channel to send messages to (has to be a public channel). Example: `poir-notifications`                                                                                                                              |
 | `WAKU_LOG_LEVEL`           | Waku node logging configuration. Example: `INFO` (is also the default)                                                                                                                                                             |
 | `RUST_LOG`                 | Rust tracing configuration. Example: `graphcast_sdk=debug,poi_radio=debug`, defaults to `info` for everything                                                                                                                      |
 | `DISCORD_WEBHOOK`          | Discord webhook URL for notifications. Example: `https://discord.com/api/webhooks/123456789012345678/AbCDeFgHiJkLmNoPqRsTuVwXyZaBcDeFgHiJkLmN`                                                                                     |
 | `METRICS_PORT`             | If set, the Radio will expose Prometheus metrics on this (off by default). Example: `3001`                                                                                                                                         |
 | `METRICS_HOST`             | If set, the Radio will expose Prometheus metrics on this (off by default). Example: `0.0.0.0`                                                                                                                                      |
-| `SERVER_HOST`              | If set, the Radio will expose an API service on the given host (off by default). Example: `0.0.0.0`                                                                                                                                |
+| `SERVER_HOST`              | If `SERVER_PORT` is set, the Radio will expose an API service on the given host and port. Default: `0.0.0.0`                                                                                                                       |
 | `SERVER_PORT`              | If set, the Radio will expose an API service on the given port (off by default). Example: `8080`                                                                                                                                   |
 | `LOG_FORMAT`               | Options: `pretty` - verbose and human readable; `json` - not verbose and parsable; `compact` - not verbose and not parsable; `full` - verbose and not parsible. Default value: `pretty`.                                           |
 | `PERSISTENCE_FILE_PATH`    | Relative path. If set, the Radio will periodically store states of the program to the file in json format (off by default).                                                                                                        |
+| `DISCV5_ENRS`              | Comma separated ENRs for Waku Discv5 bootstrapping. Defaults to empty list.                                                                                                                                                        |
+| `DISCV5_PORT`              | Discoverable UDP port. Default: `9000`                                                                                                                                                                                             |
 
 `COVERAGE` is used to specify the topic coverage level. It controls the range of topics (subgraph ipfs hashes) the Indexer subscribes to in order to process data and participate in the network.
 
@@ -155,8 +159,6 @@ There are three coverage levels available:
 - **on-chain**: Subscribe to on-chain topics and user-defined static topics. This is the default coverage level and is suitable for indexers who only want to compare data for deployments with active allocations.
 - **minimal**: Only subscribe to user-defined static topics. This level is for Indexers who want to limit their participation to specific topics of interest.
 
-`SLACK_TOKEN` and `SLACK_CHANNEL` are used for POI divergence notifications in a Slack channel.
-
 `WAKU_HOST` and `WAKU_PORT` specify where the bundled Waku node runs. If you want to run multiple Radios, or multiple instances of the same Radio, you should run them on different ports.
 
 If you want to customize the log level, you can toggle `RUST_LOG` environment variable. Here's an example configuration to get more verbose logging:
@@ -165,13 +167,15 @@ If you want to customize the log level, you can toggle `RUST_LOG` environment va
 RUST_LOG="warn,hyper=warn,graphcast_sdk=debug,poi_radio=debug"
 ```
 
-The `PERSISTENCE_FILE_PATH` configuration variable allows the Radio to maintain operational continuity across sessions. When set, it triggers the Radio to periodically store its state, including local attestations and remote messages, in a JSON-formatted file at the specified path. This facilitates seamless session transitions and minimizes data loss.. In the event of a system disruption, the state can be reloaded from this file, ensuring the Radio can resume operation effectively.
+The `PERSISTENCE_FILE_PATH` configuration variable allows the Radio to maintain operational continuity across sessions. When set, it triggers the Radio to periodically store its state, including local attestations and remote messages, in a JSON-formatted file at the specified path. This facilitates seamless session transitions and minimizes data loss. In the event of a system disruption, the state can be reloaded from this file, ensuring the Radio can resume operation effectively.
+
+Discv5 is an ambient node discovery network for establishing a decentralized network of interconnected Graphcast Radios. Discv5, when used in Graphcast Radios, serves as a dedicated peer-to-peer discovery protocol that empowers Radios to form an efficient, decentralized network. Without Discv5, the traffic within the Graphcast network would largely rely on centrally hosted boot nodes, leading to a less distributed architecture. However, with Discv5, Radios are capable of directly routing messages among themselves, significantly enhancing network decentralization and reducing reliance on the central nodes. If you want to learn more about Discv5, check out the [official spec](https://rfc.vac.dev/spec/33/).
 
 ## Monitoring the Radio
 
 ### Notifications
 
-If the Radio operator has set up a Slack Bot and/or Discord bot integration and the Radio finds a POI mismatch, it sends alerts to the designated channels. The operator can also inspect the logs to see if the Radio is functioning properly, if it's sending and receiving messages, if it's comparing normalised POIs, if there is a found POI mismatch, etc.
+If the Radio operator has set up a Slack, Discord and/or Telegram bot integration and the Radio finds a POI mismatch, it sends alerts to the designated channels. The operator can also inspect the logs to see if the Radio is functioning properly, if it's sending and receiving messages, if it's comparing normalised POIs, if there is a found POI mismatch, etc.
 
 ### Prometheus & Grafana
 
@@ -353,7 +357,7 @@ flowchart LR
 
 At another interval, the Radio compares the local nPOIs with the collected remote ones. The remote nPOIs are sorted so that for each subgraph (on each block), the nPOI that is backed by the most on-chain stake is selected. This means that the combined stake of all Indexers that attested to it is considered, not just the highest staking Indexer. The top nPOI is then compared with the local nPOI for that subgraph at that block to determine consensus.
 
-If there is a mismatch and if the Radio operator has set up a Slack Bot and/or Discord bot integration, the Radio will send alerts to the designated channels.
+If there is a mismatch and if the Radio operator has set up a Slack, Discord and/or Telegram bot integration, the Radio will send alerts to the designated channels.
 
 After a successful comparison, the attestations that have been checked are removed from the store.
 
