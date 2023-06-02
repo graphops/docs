@@ -14,45 +14,9 @@ Let's take a look at the simplest possible example of a Radio, built on top of G
 
 ### Register a Graphcast ID
 
-First things first - before you can run any Radio on Graphcast, you need to register a Graphcast ID for your on-chain Indexer address.
+First things first - before you can run any Radio on Graphcast, you need to register a Graphcast ID for your on-chain Indexer address. You can learn what a Graphcast ID is and how to register one [here](http://https://docs.graphops.xyz/graphcast/sdk/registry#register-a-graphcast-id).
 
-### Registering your Graphcast ID
-
-The Graphcast Registry contract maps Graphcast IDs to Indexers in the Graph Protocol. You'll need to register a Graphcast ID that is authorized to sign messages on behalf of your Indexer in order to use Graphcast.
-
-Here is a brief overview of the accounts you'll be interacting with:
-
-| Account Name             | Description                                                                                                                                |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| Indexer Account          | The existing account associated with your Graph Protocol Indexer. This may be a Token Lock Contract address, or a multisig or EOA address. |
-| Indexer Operator Account | An account you have registered as an Operator for your Indexer. You can use the Operator account that you pass to `indexer-agent`.         |
-| Graphcast ID Account     | A new account that you will create that is used by Graphcast Radio instances to sign messages on behalf of your Indexer.                   |
-
-You'll need to use a registered [Indexer Operator](https://thegraph.com/docs/en/network/indexing/#stake-in-the-protocol) account for your Indexer to register a Graphcast ID.
-
-```mermaid
-flowchart LR
-    subgraph Graphcast Registry
-    A[Graphcast ID] -->|points to| B(Indexer Account)
-    end
-    O[Indexer Operator Account] -->|registers| A
-```
-
-:::tip
-You can register multiple Operators for your Indexer in parallel. If you would prefer not to import the Operator account that you use with `indexer-agent` into your wallet in order to register your Graphcast ID, you can generate and register a dedicated operator account for this purpose. After you have registered your Graphcast ID, you can deregister the dedicated operator if you desire.
-:::
-
-1. [Generate a new Ethereum account](https://iancoleman.io/bip39/) to act as your Graphcast ID, keeping the details safe. Be sure to select the Ethereum network, and save the mnemonic, as well as the address and private key for the first account. This is your Graphcast ID.
-2. Import your Indexer Operator private key into your wallet (e.g. MetaMask or Frame) in order to send a transaction to register your Graphcast ID.
-3. Navigate to Etherscan ([Mainnet registry](https://etherscan.io/address/0x89f97698d6006f25570cd2e31737d3d22aedcbcf#writeProxyContract), [Goerli registry](https://goerli.etherscan.io/address/0x26ebbA649FAa7b56FDB8DE9Ea17aF3504B76BFA0#writeProxyContract)) in order to interact with the Graphcast Registry contract and register your Graphcast ID.
-4. Call `setGraphcastIDFor(indexer_address, graphcast_id)`, passing in your Indexer Address and Graphcast ID. Neither address should be your Indexer Operator address that is being used to sign the transaction.
-5. Submit your transaction and wait for it to be included in a block.
-
-:::info
-Each Graphcast ID can be associated with a single Indexer. To revoke a Graphcast ID for your Indexer, call `setGraphcastIDFor(indexer_address, graphcast_id)` with a Graphcast ID of `0x0` using a registered Indexer Operator Account.
-:::
-
-Great, you now have a Graphcast ID that is authorized to sign messages on behalf of your Indexer. You can start building your very first Radio.
+Once you complete those steps you will have a Graphcast ID that is authorized to sign messages on behalf of your Indexer. You can then use that Graphcast ID to run a POI Radio instance.
 
 ### Populate your `.env` file
 
