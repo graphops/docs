@@ -14,7 +14,7 @@ Let's take a look at the simplest possible example of a Radio, built on top of G
 
 ### Register a Graphcast ID
 
-First things first - before you can run any Radio on Graphcast, you need to register a Graphcast ID for your on-chain Indexer address. You can learn what a Graphcast ID is and how to register one [here](http://https://docs.graphops.xyz/graphcast/sdk/registry#register-a-graphcast-id).
+First things first - before you can run any Radio on Graphcast, you need to register a Graphcast ID for your on-chain Indexer address. You can learn what a Graphcast ID is and how to register one [here](https://docs.graphops.xyz/graphcast/sdk/registry#register-a-graphcast-id).
 
 Once you complete those steps you will have a Graphcast ID that is authorized to sign messages on behalf of your Indexer. You can then use that Graphcast ID to run a POI Radio instance.
 
