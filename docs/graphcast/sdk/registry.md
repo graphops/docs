@@ -40,14 +40,15 @@ You can register multiple Operators for your Indexer in parallel. If you would p
 4. Call `setGraphcastIDFor(indexer_address, graphcast_id)`, passing in your Indexer Address and Graphcast ID. Neither address should be your Indexer Operator address that is being used to sign the transaction.
 5. Submit your transaction and wait for it to be included in a block.
 
-#### Registry contracts
+#### Registry endpoints
 
-| Network          | Registry Contract                                                                                                                               |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| Ethereum-mainnet | [0x89f97698d6006f25570cd2e31737d3d22aedcbcf](https://etherscan.io/address/0x89f97698d6006f25570cd2e31737d3d22aedcbcf#writeProxyContract)        |
-| Ethereum-goerli  | [0x26ebbA649FAa7b56FDB8DE9Ea17aF3504B76BFA0](https://goerli.etherscan.io/address/0x26ebbA649FAa7b56FDB8DE9Ea17aF3504B76BFA0#writeProxyContract) |
-| Arbitrum-goerli  | [0x50c2d70a41ecefe4cc54a331457ea204ecf97292](https://goerli.arbiscan.io/address/0x50c2d70a41ecefe4cc54a331457ea204ecf97292#writeProxyContract)  |
-| Arbitrum-one     | [0xfae79e8cb8fbac2408e5baf89262bd92b6ca464a](https://arbiscan.io/address/0xfae79e8cb8fbac2408e5baf89262bd92b6ca464a#writeProxyContract)         |
+| Network          | Registry Contract                                                                                                                               | Subgraph API                                                                                                                    |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Ethereum-mainnet | [0x89f97698d6006f25570cd2e31737d3d22aedcbcf](https://etherscan.io/address/0x89f97698d6006f25570cd2e31737d3d22aedcbcf#writeProxyContract)        | [https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet](https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet)        |
+| Ethereum-goerli  | [0x26ebbA649FAa7b56FDB8DE9Ea17aF3504B76BFA0](https://goerli.etherscan.io/address/0x26ebbA649FAa7b56FDB8DE9Ea17aF3504B76BFA0#writeProxyContract) | [https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-goerli](https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-goerli)          |
+| Arbitrum-one     | [0xfae79e8cb8fbac2408e5baf89262bd92b6ca464a](https://arbiscan.io/address/0xfae79e8cb8fbac2408e5baf89262bd92b6ca464a#writeProxyContract)         | [https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arb-one](https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arb-one) |
+| Arbitrum-goerli  | [0x50c2d70a41ecefe4cc54a331457ea204ecf97292](https://goerli.arbiscan.io/address/0x50c2d70a41ecefe4cc54a331457ea204ecf97292#writeProxyContract)  | [https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arbitrum-go](https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arbitrum-go)  |
+
 
 :::info
 Each Graphcast ID can be associated with a single Indexer. To revoke a Graphcast ID for your Indexer, call `setGraphcastIDFor(indexer_address, graphcast_id)` with a Graphcast ID of `0x0` using a registered Indexer Operator Account.
