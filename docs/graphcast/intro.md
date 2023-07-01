@@ -18,7 +18,7 @@ The Graphcast SDK (Software Development Kit) allows developers to build Radios, 
 
 ## Learn more
 
-If you want to find out more about the initial idea behind Graphcast, as well as stay up to date with the newest developments, keep an eye on the [GRC post on The Graph Forum](https://forum.thegraph.com/t/grc-001-graphcast-a-gossip-network-for-indexers/3544).
+If you want to find out more about the initial idea behind Graphcast, as well as stay up to date with the newest developments, keep an eye on the [GRC post on The Graph Forum](https://forum.thegraph.com/t/grc-001-graphcast-a-gossip-network-for-indexers/3544), or join the Graphcast [Discord channel](https://discord.com/channels/438038660412342282/1087503343410225152).
 
 ## Contributing
 

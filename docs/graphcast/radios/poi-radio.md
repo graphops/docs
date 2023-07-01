@@ -29,9 +29,10 @@ The POI Radio is configured using environment variables. You will need to prepar
 | Name                         | Description and examples                                                                                                                                                                                                                                                                                                                                                                                                                        |
 | ---------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `PRIVATE_KEY`                | Private key to the Graphcast ID wallet (Precendence over mnemonics).<br/>Example: `0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef`                                                                                                                                                                                                                                                                                          |
+| `INDEXER_ADDRESS`                | Indexer address for Graphcast message verification. all lowercase<br/>Example: `0xabcdcabdabcdabcdcabdabcdabcdcabdabcdabcd`                                                                                                                                                                                                                                                                                          |
 | `GRAPH_NODE_STATUS_ENDPOINT` | URL to a Graph Node Indexing Status endpoint.<br/>Example: `http://index-node:8030/graphql`                                                                                                                                                                                                                                                                                                                                                     |
-| `REGISTRY_SUBGRAPH`          | URL to the Graphcast Registry subgraph for your network.<br/>Mainnet: `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet`<br/>Goerli: `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-goerli`<br/>Arbitrum-one: `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arb-one`<br/>Arbitrum-Goerli: `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arbitrum-go` |
-| `NETWORK_SUBGRAPH`           | URL to the Graph Network subgraph<br/>Mainnet: `https://gateway.thegraph.com/network`<br/>Goerli: `https://gateway.testnet.thegraph.com/network`                                                                                                                                                                                                                                                                                                |
+| `REGISTRY_SUBGRAPH`          | URL to the Graphcast Registry subgraph for your network. Check [APIs](../sdk/registry#subgraph-apis) for your preferred network |
+| `NETWORK_SUBGRAPH`           | URL to the Graph Network subgraph. Check [APIs](../sdk/registry#subgraph-apis) for your preferred network  |                                                                                                                                                                                                                                                                                              |
 | `GRAPHCAST_NETWORK`          | The Graphcast Messaging fleet and pubsub namespace to use.<br/>Mainnet: `mainnet`<br/>Goerli: `testnet`                                                                                                                                                                                                                                                                                                                                         |
 
 ### Run with Docker
@@ -48,7 +49,7 @@ docker pull ghcr.io/graphops/poi-radio:latest
 docker run \
     -e GRAPHCAST_NETWORK="mainnet" \
     -e REGISTRY_SUBGRAPH="https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet" \
-    -e NETWORK_SUBGRAPH="https://gateway.thegraph.com/network" \
+    -e NETWORK_SUBGRAPH="https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-mainnet" \
     -e PRIVATE_KEY="GRAPHCAST_ID_PRIVATE_KEY" \
     -e GRAPH_NODE_STATUS_ENDPOINT="http://graph-node:8030/graphql" \
     -e RUST_LOG="warn,hyper=warn,graphcast_sdk=info,poi_radio=info" \
@@ -69,7 +70,7 @@ services:
     environment:
       GRAPHCAST_NETWORK: "mainnet"
       REGISTRY_SUBGRAPH: "https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet"
-      NETWORK_SUBGRAPH: "https://gateway.thegraph.com/network"
+      NETWORK_SUBGRAPH: "https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-mainnet"
       PRIVATE_KEY: "GRAPHCAST_ID_PRIVATE_KEY"
       GRAPH_NODE_STATUS_ENDPOINT: "http://graph-node:8030/graphql"
       RUST_LOG: "warn,hyper=warn,graphcast_sdk=info,poi_radio=info"
@@ -116,7 +117,12 @@ See [Basic Configuration](#basic-configuration) above. The following environment
 | `PERSISTENCE_FILE_PATH`    | Relative path. If set, the Radio will periodically store states of the program to the file in json format (off by default).                                                                                                        |
 | `DISCV5_ENRS`              | Comma separated ENRs for Waku Discv5 bootstrapping. Defaults to empty list.                                                                                                                                                        |
 | `DISCV5_PORT`              | Discoverable UDP port. Default: `9000`                                                                                                                                                                                             |
+| `ID_VALIDATION`            | Defines the level of validation for message signers used during radio operation. Options include: `no-check`, `valid-address`, `graphcast-registered`, `graph-network-account`, `registered-indexer`, `indexer`. Default: `registered-indexer` |
 
+### Configurations explained
+
+
+#### COVERAGE (topic)
 `COVERAGE` is used to specify the topic coverage level. It controls the range of topics (subgraph ipfs hashes) the Indexer subscribes to in order to process data and participate in the network.
 
 There are three coverage levels available:
@@ -124,6 +130,19 @@ There are three coverage levels available:
 - **comprehensive**: Subscribe to on-chain topics, user-defined static topics, and subgraph deployments syncing on graph node. This level is useful for Indexers who want to compare NPOIs for all deployments syncing on their graph node even if they don't have an active allocations open (their stake will not be taken into account in attestation).
 - **on-chain**: Subscribe to on-chain topics and user-defined static topics. This is the default coverage level and is suitable for indexers who only want to compare data for deployments with active allocations.
 - **minimal**: Only subscribe to user-defined static topics. This level is for Indexers who want to limit their participation to specific topics of interest.
+
+#### Identity validaiton
+`ID_VALIDATION` is used to define level of validation for message signers used during radio operation. We recommend `registered-indexer` for most strict identity validation, while `indexer` is a viable option for those who want to use the network before considering Grapchast ID registration.  You can choose a sender identity validation mechanism for your radio, based on your use case and security preferences.
+
+Available Options:
+- **no-check**: Does not perform check on the message signature and does not verify the signer. All messages should pass the sender check.
+- **valid-address**: Requires the signer to be a valid Ethereum address. Messages should be traceable to an Ethers wallet.
+- **graphcast-registered**: Requires the signer to be registered on the Graphcast Registry.
+- **graph-network-account**: signer must be a Graph account.
+- **registered-indexer**: signer must be registered at Graphcast Registry and correspond to an Indexer satisfying the indexer minimum stake requirement.
+- **indexer**: signer must be registered at Graphcast Registry or is a Graph Account, and correspond to an Indexer satisfying the indexer minimum stake requirement.
+
+#### Gossip protocol
 
 `WAKU_HOST` and `WAKU_PORT` specify where the bundled Waku node runs. If you want to run multiple Radios, or multiple instances of the same Radio, you should run them on different ports.
 
@@ -133,9 +152,11 @@ If you want to customize the log level, you can toggle `RUST_LOG` environment va
 RUST_LOG="warn,hyper=warn,graphcast_sdk=debug,poi_radio=debug"
 ```
 
-The `PERSISTENCE_FILE_PATH` configuration variable allows the Radio to maintain operational continuity across sessions. When set, it triggers the Radio to periodically store its state, including local attestations and remote messages, in a JSON-formatted file at the specified path. This facilitates seamless session transitions and minimizes data loss. In the event of a system disruption, the state can be reloaded from this file, ensuring the Radio can resume operation effectively.
+`Discv5` is an ambient node discovery network for establishing a decentralized network of interconnected Graphcast Radios. Discv5, when used in Graphcast Radios, serves as a dedicated peer-to-peer discovery protocol that empowers Radios to form an efficient, decentralized network. Without Discv5, the traffic within the Graphcast network would largely rely on centrally hosted boot nodes, leading to a less distributed architecture. However, with Discv5, Radios are capable of directly routing messages among themselves, significantly enhancing network decentralization and reducing reliance on the central nodes. If you want to learn more about Discv5, check out the [official spec](https://rfc.vac.dev/spec/33/).
 
-Discv5 is an ambient node discovery network for establishing a decentralized network of interconnected Graphcast Radios. Discv5, when used in Graphcast Radios, serves as a dedicated peer-to-peer discovery protocol that empowers Radios to form an efficient, decentralized network. Without Discv5, the traffic within the Graphcast network would largely rely on centrally hosted boot nodes, leading to a less distributed architecture. However, with Discv5, Radios are capable of directly routing messages among themselves, significantly enhancing network decentralization and reducing reliance on the central nodes. If you want to learn more about Discv5, check out the [official spec](https://rfc.vac.dev/spec/33/).
+#### State management
+
+`PERSISTENCE_FILE_PATH` configuration variable allows the Radio to maintain operational continuity across sessions. When the file path is set, it triggers the Radio to periodically store its state, including local attestations and remote messages, in a JSON-formatted file at the specified path. This facilitates seamless session transitions and minimizes data loss. In the event of a system disruption, the state can be reloaded from this file, ensuring the Radio can resume operation effectively.
 
 ## Monitoring the Radio
 

@@ -26,8 +26,8 @@ You now need to export a few environment variables:
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `PRIVATE_KEY`                | Private key to the Graphcast ID wallet (Precendence over mnemonics).<br/>Example: `0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef`                |
 | `GRAPH_NODE_STATUS_ENDPOINT` | URL to a Graph Node Indexing Status endpoint.<br/>Example: `http://index-node:8030/graphql`                                                                           |
-| `REGISTRY_SUBGRAPH`          | URL to the Graphcast Registry subgraph for your network. You should set the Goerli link - `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-goerli` |
-| `NETWORK_SUBGRAPH`           | URL to the Graph Network subgraph. You can use the testnet one - `https://gateway.testnet.thegraph.com/network`                                                       |
+| `REGISTRY_SUBGRAPH`          | URL to the Graphcast Registry subgraph for your network. Check [APIs](../sdk/registry#subgraph-apis) for your preferred network |
+| `NETWORK_SUBGRAPH`           | URL to the Graph Network subgraph. Check [APIs](../sdk/registry#subgraph-apis) for your preferred network  |
 | `GRAPHCAST_NETWORK`          | The Graphcast Messaging fleet and pubsub namespace to use. For this example you should use `testnet`                                                                  |
 
 ### A few dependencies
@@ -214,7 +214,7 @@ pub struct Config {
         value_name = "SUBGRAPH",
         env = "NETWORK_SUBGRAPH",
         help = "Subgraph endpoint to The Graph network subgraph",
-        default_value = "https://gateway.testnet.thegraph.com/network"
+        default_value = "https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-goerli/network"
     )]
     pub network_subgraph: String,
     #[clap(
