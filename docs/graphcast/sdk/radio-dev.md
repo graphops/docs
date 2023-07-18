@@ -6,7 +6,7 @@ sidebar_position: 2
 
 Do you want to build robust, peer-to-peer messaging apps that automatically exchange valuable data with other Indexers in real time? Do you have an idea for what data could be useful to share that could lead to greater communication efficiency in The Graph network as a whole? Then you want to build a Radio on top of the Graphcast network.
 
-For a more complex and full example of the Graphcast SDK being used to create a POI Radio, take a look at this [implementation in the POC repo](https://github.com/graphops/poi-radio).
+For a more complex and full example of the Graphcast SDK being used to create a Subgraph Radio, take a look at this [repo](https://github.com/graphops/subgraph-radio).
 
 ## A simple ping pong example
 
@@ -14,21 +14,20 @@ Let's take a look at the simplest possible example of a Radio, built on top of G
 
 ### Register a Graphcast ID
 
-First things first - before you can run any Radio on Graphcast, you need to register a Graphcast ID for your on-chain Indexer address. You can learn what a Graphcast ID is and how to register one [here](https://docs.graphops.xyz/graphcast/sdk/registry#register-a-graphcast-id).
+We recommend that you register a Graphcast ID for your on-chain Indexer address. You can learn what a Graphcast ID is and how to register one [here](https://docs.graphops.xyz/graphcast/sdk/registry#register-a-graphcast-id).
 
-Once you complete those steps you will have a Graphcast ID that is authorized to sign messages on behalf of your Indexer. You can then use that Graphcast ID to run a POI Radio instance.
+Once you complete those steps you will have a Graphcast ID that is authorized to sign messages on behalf of your Indexer.
 
 ### Populate your `.env` file
 
 You now need to export a few environment variables:
 
-| Name                         | Description and examples                                                                                                                                              |
-| ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `PRIVATE_KEY`                | Private key to the Graphcast ID wallet (Precendence over mnemonics).<br/>Example: `0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef`                |
-| `GRAPH_NODE_STATUS_ENDPOINT` | URL to a Graph Node Indexing Status endpoint.<br/>Example: `http://index-node:8030/graphql`                                                                           |
-| `REGISTRY_SUBGRAPH`          | URL to the Graphcast Registry subgraph for your network. Check [APIs](../sdk/registry#subgraph-apis) for your preferred network |
-| `NETWORK_SUBGRAPH`           | URL to the Graph Network subgraph. Check [APIs](../sdk/registry#subgraph-apis) for your preferred network  |
-| `GRAPHCAST_NETWORK`          | The Graphcast Messaging fleet and pubsub namespace to use. For this example you should use `testnet`                                                                  |
+| Name                | Description and examples                                                                                                                                                            |
+| ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `PRIVATE_KEY`       | Private key to the Graphcast ID wallet or Indexer Operator wallet (Precendence over `MNEMONICS`).<br/>Example: `0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef` |
+| `REGISTRY_SUBGRAPH` | URL to the Graphcast Registry subgraph for your network. Check [APIs](../sdk/registry#subgraph-apis) for your preferred network                                                     |
+| `NETWORK_SUBGRAPH`  | URL to the Graph Network subgraph. Check [APIs](../sdk/registry#subgraph-apis) for your preferred network                                                                           |
+| `GRAPHCAST_NETWORK` | The Graphcast Messaging fleet and pubsub namespace to use. For this example you should use `testnet`                                                                                |
 
 ### A few dependencies
 
@@ -45,7 +44,7 @@ Start off with a new Rust project (`cargo new ping-pong`). Then add the followin
 
 ```Rust
 [dependencies]
-graphcast-sdk = "0.1.1"
+graphcast-sdk = "0.4.0"
 once_cell = "1.15"
 tokio = { version = "1.1.1", features = ["full"] }
 anyhow = "1.0.39"
@@ -65,25 +64,17 @@ serde_derive = "1.0.114"
 Open your `main.rs` file and add the following imports:
 
 ```Rust
+// For date and time utils
+use chrono::Utc;
+
 // Load environment variables from .env file
 use dotenv::dotenv;
 
-// Import Graphcast SDK types and functions for agent configuration, message handling, and more
-use graphcast_sdk::{
-    graphcast_agent::{
-        message_typing::GraphcastMessage, waku_handling::WakuHandlingError, GraphcastAgent,
-        GraphcastAgentConfig,
-    },
-    graphql::client_graph_node::update_network_chainheads,
-    networks::NetworkName,
-    BlockPointer,
-};
-
-// Import the OnceCell container for lazy initialization of global/static data
-use once_cell::sync::OnceCell;
-
 // Import Arc and Mutex for thread-safe sharing of data across threads
 use std::sync::{Arc, Mutex};
+
+// Import Graphcast SDK types and functions for agent configuration, message handling, and more
+use graphcast_sdk::graphcast_agent::{GraphcastAgent, GraphcastAgentConfig};
 
 // Import sleep and Duration for handling time intervals and thread delays
 use std::{thread::sleep, time::Duration};
@@ -92,13 +83,15 @@ use std::{thread::sleep, time::Duration};
 use tokio::sync::Mutex as AsyncMutex;
 
 // Import tracing macros for logging and diagnostic purposes
-use tracing::{debug, error, info};
+use tracing::{debug, error, info, trace};
 
-// Import RadioPayloadMessage from the crate's types module
-use types::RadioPayloadMessage;
+// Import SimpleMessage from the crate's types module
+use types::SimpleMessage;
 
 // Import Config from the crate's config module
 use config::Config;
+
+use crate::types::{GRAPHCAST_AGENT, MESSAGES};
 
 // Include the local config and types modules
 mod config;
@@ -125,9 +118,26 @@ use async_graphql::SimpleObject;
 use ethers_contract::EthAbiType;
 use ethers_core::types::transaction::eip712::Eip712;
 use ethers_derive_eip712::*;
+use graphcast_sdk::graphcast_agent::GraphcastAgent;
 use prost::Message;
 use serde::{Deserialize, Serialize};
 
+// Import the OnceCell container for lazy initialization of global/static data
+use once_cell::sync::OnceCell;
+use std::sync::{Arc, Mutex};
+
+/// A global static (singleton) instance of A GraphcastMessage vector.
+/// It is used to save incoming messages after they've been validated, in order
+/// defer their processing for later, because async code is required for the processing but
+/// it is not allowed in the handler itself.
+pub static MESSAGES: OnceCell<Arc<Mutex<Vec<SimpleMessage>>>> = OnceCell::new();
+
+/// The Graphcast Agent instance must be a global static variable (for the time being).
+/// This is because the Radio handler requires a static immutable context and
+/// the handler itself is being passed into the Graphcast Agent, so it needs to be static as well.
+pub static GRAPHCAST_AGENT: OnceCell<GraphcastAgent> = OnceCell::new();
+
+/// Make a test radio type
 #[derive(Eip712, EthAbiType, Clone, Message, Serialize, Deserialize, SimpleObject)]
 #[eip712(
     name = "Graphcast Ping-Pong Radio",
@@ -135,26 +145,36 @@ use serde::{Deserialize, Serialize};
     chain_id = 1,
     verifying_contract = "0xc944e90c64b2c07662a292be6244bdf05cda44a7"
 )]
-pub struct RadioPayloadMessage {
+pub struct SimpleMessage {
     #[prost(string, tag = "1")]
     pub identifier: String,
     #[prost(string, tag = "2")]
     pub content: String,
 }
 
-impl RadioPayloadMessage {
+impl SimpleMessage {
     pub fn new(identifier: String, content: String) -> Self {
-        RadioPayloadMessage {
+        SimpleMessage {
             identifier,
             content,
         }
     }
+
+    pub fn radio_handler(&self) {
+        MESSAGES
+            .get()
+            .expect("Could not retrieve messages")
+            .lock()
+            .expect("Could not get lock on messages")
+            .push(self.clone());
+    }
 }
+
 ```
 
-`RadioPayloadMessage` defines the the general structure that the Graphcast SDK expects from a type that will be used as a Radio payload.
+`SimpleMessage` defines the structure that all messages for this Radio must follow.
 
-`RadioPayloadMessage` is decorated with several macros - #[derive(Eip712, EthAbiType, Clone, Message, Serialize, Deserialize)], which automatically implement certain traits that are required in the SDK.
+`RadioPayloadMessage` is decorated with several macros - #[derive(Eip712, EthAbiType, Clone, Message, Serialize, Deserialize)], which automatically implement certain traits that are required by the SDK.
 
 The `#[eip712]` macro is used to define information that is used in EIP-712, a standard for structuring typed data in Ethereum transactions.
 
@@ -164,15 +184,16 @@ Now let's see the `config.rs` file:
 use clap::Parser;
 use ethers::signers::WalletError;
 use graphcast_sdk::build_wallet;
-use graphcast_sdk::graphcast_id_address;
+use graphcast_sdk::graphcast_agent::message_typing::IdentityValidation;
 use graphcast_sdk::init_tracing;
+use graphcast_sdk::wallet_address;
 use serde::{Deserialize, Serialize};
 use tracing::info;
 
 #[derive(Clone, Debug, Parser, Serialize, Deserialize)]
 #[clap(
-    name = "poi-radio",
-    about = "Cross-check POIs with other Indexer in real time",
+    name = "ping-pong-radio",
+    about = "A simple example for using the Graphcast SDK to build Radios",
     author = "GraphOps"
 )]
 pub struct Config {
@@ -182,7 +203,7 @@ pub struct Config {
         env = "GRAPH_NODE_STATUS_ENDPOINT",
         help = "API endpoint to the Graph Node Status Endpoint"
     )]
-    pub graph_node_endpoint: String,
+    pub graph_node_endpoint: Option<String>,
     #[clap(
         long,
         value_name = "KEY",
@@ -211,10 +232,17 @@ pub struct Config {
     pub registry_subgraph: String,
     #[clap(
         long,
+        value_name = "INDEXER_ADDRESS",
+        env = "INDEXER_ADDRESS",
+        help = "Graph account corresponding to Graphcast operator"
+    )]
+    pub indexer_address: String,
+    #[clap(
+        long,
         value_name = "SUBGRAPH",
         env = "NETWORK_SUBGRAPH",
         help = "Subgraph endpoint to The Graph network subgraph",
-        default_value = "https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-goerli/network"
+        default_value = "https://gateway.testnet.thegraph.com/network"
     )]
     pub network_subgraph: String,
     #[clap(
@@ -227,11 +255,28 @@ pub struct Config {
         default_value = "full"
     )]
     pub log_format: String,
+    #[clap(
+        long,
+        value_name = "ID_VALIDATION",
+        value_enum,
+        env = "ID_VALIDATION",
+        default_value = "valid-address",
+        help = "Identity validation mechanism for senders (message signers)",
+        long_help = "Identity validation mechanism for senders (message signers)\n
+        no-check: all messages signer is valid, \n
+        valid-address: signer needs to be an valid Eth address, \n
+        graphcast-registered: must be registered at Graphcast Registry, \n
+        graph-network-account: must be a Graph account, \n
+        registered-indexer: must be registered at Graphcast Registry, correspond to and Indexer statisfying indexer minimum stake requirement, \n
+        indexer: must be registered at Graphcast Registry or is a Graph Account, correspond to and Indexer statisfying indexer minimum stake requirement"
+    )]
+    pub id_validation: IdentityValidation,
 }
 
 impl Config {
     /// Parse config arguments
     pub fn args() -> Self {
+        // TODO: load config file before parse (maybe add new level of subcommands)
         let config = Config::parse();
         init_tracing(config.log_format.clone()).expect("Could not set up global default subscriber for logger, check environmental variable `RUST_LOG` or the CLI input `log-level`");
         config
@@ -241,7 +286,7 @@ impl Config {
     fn parse_key(value: &str) -> Result<String, WalletError> {
         // The wallet can be stored instead of the original private key
         let wallet = build_wallet(value)?;
-        let addr = graphcast_id_address(&wallet);
+        let addr = wallet_address(&wallet);
         info!(address = addr, "Resolved Graphcast id");
         Ok(String::from(value))
     }
@@ -275,18 +320,6 @@ let _parent_span = tracing::info_span!("main").entered();
 Now let's instantiate a few variables that will do all the heavy lifting for us.
 
 ```Rust
-/// A global static (singleton) instance of A GraphcastMessage vector.
-/// It is used to save incoming messages after they've been validated, in order
-/// defer their processing for later, because async code is required for the processing but
-/// it is not allowed in the handler itself.
-pub static MESSAGES: OnceCell<Arc<Mutex<Vec<GraphcastMessage<RadioPayloadMessage>>>>> =
-    OnceCell::new();
-
-/// The Graphcast Agent instance must be a global static variable (for the time being).
-/// This is because the Radio handler requires a static immutable context and
-/// the handler itself is being passed into the Graphcast Agent, so it needs to be static as well.
-pub static GRAPHCAST_AGENT: OnceCell<GraphcastAgent> = OnceCell::new();
-
 // Subtopics are optionally provided and used as the content topic identifier of the message subject,
 // if not provided then they are usually generated based on indexer allocations
 let subtopics: Vec<String> = vec!["ping-pong-content-topic".to_string()];
@@ -294,19 +327,22 @@ let subtopics: Vec<String> = vec!["ping-pong-content-topic".to_string()];
 // GraphcastAgentConfig defines the configuration that the SDK expects from all Radios, regardless of their specific functionality
 let graphcast_agent_config = GraphcastAgentConfig::new(
     config.private_key.expect("No private key provided"),
+    config.indexer_address,
     radio_name,
     config.registry_subgraph,
     config.network_subgraph,
-    config.graph_node_endpoint.clone(),
+    config.id_validation.clone(),
+    config.graph_node_endpoint,
     None,
     Some("testnet".to_string()),
     Some(subtopics),
     None,
     None,
     None,
+    None,
+    Some(true),
     // Example ENR address
     Some(vec![String::from("enr:-JK4QBcfVXu2YDeSKdjF2xE5EDM5f5E_1Akpkv_yw_byn1adESxDXVLVjapjDvS_ujx6MgWDu9hqO_Az_CbKLJ8azbMBgmlkgnY0gmlwhAVOUWOJc2VjcDI1NmsxoQOUZIqKLk5xkiH0RAFaMGrziGeGxypJ03kOod1-7Pum3oN0Y3CCfJyDdWRwgiMohXdha3UyDQ")]),
-    None,
     None,
 )
 .await
@@ -318,7 +354,8 @@ let graphcast_agent_config = GraphcastAgentConfig::new(
 Next, we will instantiate a `GraphcastAgent`:
 
 ```Rust
-let graphcast_agent = GraphcastAgent::new(graphcast_agent_config)
+debug!("Initializing the Graphcast Agent");
+let (graphcast_agent, waku_msg_receiver) = GraphcastAgent::new(graphcast_agent_config)
     .await
     .expect("Could not create Graphcast agent");
 ```
@@ -343,21 +380,16 @@ We'll define a helper function that holds the logic of sending messages to the G
 
 ```Rust
 // Helper function to reuse message sending code
-async fn send_message(
-    payload: Option<RadioPayloadMessage>,
-    network: NetworkName,
-    block_number: u64,
-) {
+async fn send_message(payload: SimpleMessage) {
     if let Err(e) = GRAPHCAST_AGENT
         .get()
         .expect("Could not retrieve Graphcast agent")
         .send_message(
             // The identifier can be any string that suits your Radio logic
             // If it doesn't matter for your Radio logic (like in this case), you can just use a UUID or a hardcoded string
-            "ping-pong-content-topic".to_string(),
-            network,
-            block_number,
+            "ping-pong-content-topic",
             payload,
+            Utc::now().timestamp(),
         )
         .await
     {
@@ -378,30 +410,35 @@ Here is a simple handler that does just that:
 
 ```Rust
 // The handler specifies what to do with incoming messages.
-// There cannot be any non-deterministic (this includes async) code inside the handler.
-// That is why we're saving the message for later processing, where we will check its content and perform some action based on it.
-let radio_handler =
-    |msg: Result<GraphcastMessage<RadioPayloadMessage>, WakuHandlingError>| match msg {
-        Ok(msg) => {
-            MESSAGES
-                .get()
-                .expect("Could not retrieve messages")
-                .lock()
-                .expect("Could not get lock on messages")
-                .push(msg);
-        }
-        Err(err) => {
-            error!(
-                error = tracing::field::debug(&err),
-                "Failed to handle Waku signal"
-            );
-        }
-    };
+// This is where you can define multiple message types and how they gets handled by the radio
+// by chaining radio payload typed decode and handler functions
+tokio::spawn(async move {
+    for msg in waku_msg_receiver {
+        trace!(
+            "Radio operator received a Waku message from Graphcast agent, now try to fit it to Graphcast Message with Radio specified payload"
+        );
+        let _ = GRAPHCAST_AGENT
+            .get()
+            .expect("Could not retrieve Graphcast agent")
+            .decoder::<SimpleMessage>(msg.payload())
+            .await
+            .map(|msg| {
+                msg.payload.radio_handler();
+            })
+            .map_err(|err| {
+                error!(
+                    error = tracing::field::debug(&err),
+                    "Failed to handle Waku signal"
+                );
+                err
+            });
+    }
+});
 
 GRAPHCAST_AGENT
     .get()
     .expect("Could not retrieve Graphcast agent")
-    .register_handler(Arc::new(AsyncMutex::new(radio_handler)))
+    .register_handler()
     .expect("Could not register handler");
 ```
 
@@ -412,41 +449,18 @@ Great, we're almost there! We have a way to pass messages back and forth 🏓. B
 We'll start listening to Ethereum blocks coming from the Graph Node and on each block we'll do a simple check - if the block number is even we'll send a "Ping" message, and if it's odd we'll process the messages we've received. After processing the messages we'll clear our store.
 
 ```Rust
-let network = NetworkName::from_string("goerli");
+let mut block_number = 0;
 
 loop {
-    let mut network_chainhead_blocks = match GRAPHCAST_AGENT
-        .get()
-        .unwrap()
-        .callbook
-        .indexing_statuses()
-        .await
-    {
-        Ok(res) => update_network_chainheads(res),
-        Err(e) => {
-            error!(
-                err = tracing::field::debug(&e),
-                "Could not query indexing statuses, pull again later"
-            );
-            continue;
-        }
-    };
-    let block_number = network_chainhead_blocks
-        .entry(network)
-        .or_insert(BlockPointer {
-            number: 0,
-            hash: "temp".to_string(),
-        })
-        .number;
+    block_number += 1;
     info!(block = block_number, "🔗 Block number");
-
     if block_number & 2 == 0 {
         // If block number is even, send ping message
-        let msg = RadioPayloadMessage::new(
+        let msg = SimpleMessage::new(
             "table".to_string(),
             std::env::args().nth(1).unwrap_or("Ping".to_string()),
         );
-        send_message(Some(msg), network, block_number).await;
+        send_message(msg).await;
     } else {
         // If block number is odd, process received messages
         let messages = AsyncMutex::new(
@@ -457,14 +471,9 @@ loop {
                 .expect("Could not get lock on messages"),
         );
         for msg in messages.lock().await.iter() {
-            let payload = msg
-                .payload
-                .as_ref()
-                .expect("Could not get radio payload payload");
-            if *payload.content == *"Ping" {
-                let replay_msg =
-                    RadioPayloadMessage::new("table".to_string(), "Pong".to_string());
-                send_message(Some(replay_msg), network, block_number).await;
+            if msg.content == *"Ping" {
+                let replay_msg = SimpleMessage::new("table".to_string(), "Pong".to_string());
+                send_message(replay_msg).await;
             };
         }
 

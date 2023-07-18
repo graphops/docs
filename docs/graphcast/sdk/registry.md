@@ -10,7 +10,7 @@ There are also [subgraphs](https://github.com/graphops/graphcast-registry-subgra
 
 ### Register a Graphcast ID
 
-The Graphcast Registry contract maps Graphcast IDs to Indexers in the Graph Protocol. You'll need to register a Graphcast ID that is authorized to sign messages on behalf of your Indexer in order to use Graphcast.
+The Graphcast Registry contract maps Graphcast IDs to Indexers in the Graph Protocol. With a unique Graphcast ID, an Indexer can sign messages for the Radio, eliminating the need to expose their private Indexer (or Indexer Operator) key or mnemonic. This provides an added layer of security, protecting Indexers' sensitive information while enabling participation in the Graphcast Network.
 
 Here is a brief overview of the accounts you'll be interacting with:
 
@@ -42,12 +42,12 @@ You can register multiple Operators for your Indexer in parallel. If you would p
 
 #### Registry endpoints
 
-| Network          | Registry Contract                                                                                                                               | Subgraph API                                                                                                                    |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------ |
-| Ethereum-mainnet | [0x89f97698d6006f25570cd2e31737d3d22aedcbcf](https://etherscan.io/address/0x89f97698d6006f25570cd2e31737d3d22aedcbcf#writeProxyContract)        | [https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet](https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet)        |
-| Ethereum-goerli  | [0x26ebbA649FAa7b56FDB8DE9Ea17aF3504B76BFA0](https://goerli.etherscan.io/address/0x26ebbA649FAa7b56FDB8DE9Ea17aF3504B76BFA0#writeProxyContract) | [https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-goerli](https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-goerli)          |
-| Arbitrum-one     | [0xfae79e8cb8fbac2408e5baf89262bd92b6ca464a](https://arbiscan.io/address/0xfae79e8cb8fbac2408e5baf89262bd92b6ca464a#writeProxyContract)         | [https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arb-one](https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arb-one) |
-| Arbitrum-goerli  | [0x50c2d70a41ecefe4cc54a331457ea204ecf97292](https://goerli.arbiscan.io/address/0x50c2d70a41ecefe4cc54a331457ea204ecf97292#writeProxyContract)  | [https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arbitrum-go](https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arbitrum-go)  |
+| Network          | Registry Contract                                                                                                                               | Subgraph API                                                                                                                                                     |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Ethereum-mainnet | [0x89f97698d6006f25570cd2e31737d3d22aedcbcf](https://etherscan.io/address/0x89f97698d6006f25570cd2e31737d3d22aedcbcf#writeProxyContract)        | [https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet](https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet)         |
+| Ethereum-goerli  | [0x26ebbA649FAa7b56FDB8DE9Ea17aF3504B76BFA0](https://goerli.etherscan.io/address/0x26ebbA649FAa7b56FDB8DE9Ea17aF3504B76BFA0#writeProxyContract) | [https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-goerli](https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-goerli)           |
+| Arbitrum-one     | [0xfae79e8cb8fbac2408e5baf89262bd92b6ca464a](https://arbiscan.io/address/0xfae79e8cb8fbac2408e5baf89262bd92b6ca464a#writeProxyContract)         | [https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arb-one](https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arb-one)         |
+| Arbitrum-goerli  | [0x50c2d70a41ecefe4cc54a331457ea204ecf97292](https://goerli.arbiscan.io/address/0x50c2d70a41ecefe4cc54a331457ea204ecf97292#writeProxyContract)  | [https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arbitrum-go](https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arbitrum-go) |
 
 :::info
 Each Graphcast ID can be associated with a single Indexer. To revoke a Graphcast ID for your Indexer, call `setGraphcastIDFor(indexer_address, graphcast_id)` with a Graphcast ID of `0x0` using a registered Indexer Operator Account.
@@ -55,14 +55,13 @@ Each Graphcast ID can be associated with a single Indexer. To revoke a Graphcast
 
 ### Subgraph APIs
 
-Here we list out the APIs the team supports actively. For network subgraph endpoint, We recommend you to expose your indexer-service's endpoint at `/network` queries with authentication. You can also index and serve registry subgraph but they are not currently deployed on the decentralized network. 
+Here we list out the APIs the team supports actively. For network subgraph endpoint, We recommend you to expose your indexer-service's endpoint at `/network` queries with authentication. You can also index and serve registry subgraph but they are not currently deployed on the decentralized network.
 
 Here are the endpoints available on the hosted service.
 
-| Protocol Network   | Graphcast Network | Registry Subgraph Endpoint | Network Subgraph Endpoint |
-| -------------- | ----------------- | -------------------------- | ------------------------- |
-| Ethereum Mainnet | `mainnet` | `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet` | `https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-mainnet` |
-| Goerli | `testnet` | `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-goerli` | `https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-goerli/network` |
-| Arbitrum-One | `mainnet` | `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arb-one` | `https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-arbitrum` |
-| Arbitrum-Goerli | `testnet` | `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arbitrum-go` | `https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-arbitrum-goerli` |
-
+| Protocol Network | Graphcast Network | Registry Subgraph Endpoint                                                       | Network Subgraph Endpoint                                                             |
+| ---------------- | ----------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
+| Ethereum Mainnet | `mainnet`         | `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet`     | `https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-mainnet`         |
+| Goerli           | `testnet`         | `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-goerli`      | `https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-goerli/network`  |
+| Arbitrum-One     | `mainnet`         | `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arb-one`     | `https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-arbitrum`        |
+| Arbitrum-Goerli  | `testnet`         | `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arbitrum-go` | `https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-arbitrum-goerli` |
