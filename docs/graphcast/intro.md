@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# 👋 Introduction
+# Introduction
 
 Is there something you'd like to learn from or share with your fellow Indexers in an automated manner, but it's too much hassle or costs too much gas?
 
