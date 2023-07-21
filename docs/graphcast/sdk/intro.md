@@ -2,9 +2,9 @@
 sidebar_position: 1
 ---
 
-# 👋 Introduction
+# Introduction
 
-Graphcast SDK is a decentralized, distributed peer-to-peer (P2P) communication tool that enables users across the network to exchange information in real-time. It is designed to overcome the high cost of signaling or coordination between  blockchain participants by enabling off-chain communication (gossip/cheap talk). This is particularly useful for applications where real-time communication is essential but the cost of on-chain transactions is prohibitive.
+Graphcast SDK is a decentralized, distributed peer-to-peer (P2P) communication tool that enables users across the network to exchange information in real-time. It is designed to overcome the high cost of signaling or coordination between blockchain participants by enabling off-chain communication (gossip/cheap talk). This is particularly useful for applications where real-time communication is essential but the cost of on-chain transactions is prohibitive.
 
 ## How it Works
 

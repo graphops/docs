@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# 📟 Subgraph Radio
+# Subgraph Radio
 
 The source code for the Subgraph Radio is available [on GitHub](https://github.com/graphops/subgraph-radio) and Docker builds are automatically published as [GitHub Packages](https://github.com/graphops/subgraph-radio/pkgs/container/subgraph-radio). Subgraph Radio is also published as a crate [on crates.io](https://crates.io/crates/subgraph-radio).
 
@@ -14,7 +14,7 @@ An essential aspect of earning indexing rewards as an Indexer is the generation 
 
 All POIs generated through Subgraph Radio are public (normalized), meaning they are hashed with a `0x0` Indexer Address and can be compared between Indexers. However, these public POIs are not valid for on-chain reward submission. Subgraph Radio groups and weighs public POIs according to the aggregate stake in GRT attesting to each. The normalized POI with the most substantial aggregate attesting stake is deemed canonical and used for comparisons with your local Indexer POIs.
 
-For enhanced security, we recommend running Subgraph Radio with an independent Graphcast ID linked to your Indexer account. This Graphcast ID is an Ethereum account authorized to sign POI attestations on behalf of your Indexer. By default, Subgraph Radio only validates messages received from peers with a registered Graphcast ID (though this behavior can be altered by setting the ID_VALIDATION config variable). Learn how to register a Graphcast ID [here](https://docs.graphops.xyz/graphcast/sdk/registry#register-a-graphcast-id).
+For enhanced security, we recommend running Subgraph Radio with an independent Graphcast ID linked to your Indexer account. This Graphcast ID is an Ethereum account authorized to sign POI attestations on behalf of your Indexer. By default, Subgraph Radio validates messages received from any signer, that can be resolved to an Indexer address, regardless of whether or not they are registered on the Graphcast registry (though this behavior can be altered by setting the ID_VALIDATION config variable). Learn how to register a Graphcast ID [here](https://docs.graphops.xyz/graphcast/sdk/registry#register-a-graphcast-id).
 
 ### Basic Configuration
 
@@ -44,9 +44,10 @@ docker run \
     -e GRAPHCAST_NETWORK="mainnet" \
     -e REGISTRY_SUBGRAPH="https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet" \
     -e NETWORK_SUBGRAPH="https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-mainnet" \
-    -e PRIVATE_KEY="GRAPHCAST_ID_PRIVATE_KEY" \
+    -e PRIVATE_KEY="PRIVATE_KEY" \
     -e GRAPH_NODE_STATUS_ENDPOINT="http://graph-node:8030/graphql" \
     -e RUST_LOG="warn,hyper=warn,graphcast_sdk=info,subgraph_radio=info" \
+    -e INDEXER_ADDRESS="INDEXER_ADDRESS" \
     ghcr.io/graphops/subgraph-radio:latest
 ```
 
@@ -65,9 +66,10 @@ services:
       GRAPHCAST_NETWORK: "mainnet"
       REGISTRY_SUBGRAPH: "https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet"
       NETWORK_SUBGRAPH: "https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-mainnet"
-      PRIVATE_KEY: "GRAPHCAST_ID_PRIVATE_KEY"
+      PRIVATE_KEY: "PRIVATE_KEY"
       GRAPH_NODE_STATUS_ENDPOINT: "http://graph-node:8030/graphql"
       RUST_LOG: "warn,hyper=warn,graphcast_sdk=info,subgraph_radio=info"
+      INDEXER_ADDRESS: "INDEXER_ADDRESS"
     logging:
       driver: local
 ```
@@ -86,32 +88,32 @@ In the configuration table below is the full list of environment variables you c
 
 See [Basic Configuration](#basic-configuration) above. The following environment variables are optional:
 
-| Name (Optional variables)  | Description and examples                                                                                                                                                                                                                       |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `MNEMONIC`                 | Mnemonic to the Graphcast ID wallet or the Indexer Operator wallet (first address of the wallet is used; Only one of `PRIVATE_KEY` or `MNEMONIC` is needed). Example: `claptrap armchair violin...`                                            |
-| `COLLECT_MESSAGE_DURATION` | Seconds that the Subgraph Radio will wait to collect remote POI attestations before making a comparison with the local POI. Example: `120` for 2 minutes.                                                                                      |
-| `COVERAGE`                 | Toggle for topic coverage level. Possible values: "comprehensive", "on-chain", "minimal". Default is set to "on-chain" coverage.                                                                                                               |
-| `TOPICS`                   | Comma separated static list of content topics (subgraphs) to subscribe to. Example: `QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz,QmUwCFhXM3f6qH9Ls9Y6gDNURBH7mxsn6JcectgxAz6CwU,QmQ1Lyh3U6YgVP6YX1RgRz6c8GmKkEpokLwPvEtJx6cF1y`             |
-| `WAKU_HOST`                | Interface onto which to bind the bundled Waku node. Example: `0.0.0.0`                                                                                                                                                                         |
-| `WAKU_PORT`                | P2P port on which the bundled Waku node will operate. Example: `60000`                                                                                                                                                                         |
-| `WAKU_NODE_KEY`            | Static Waku Node Key.                                                                                                                                                                                                                          |
-| `BOOT_NODE_ADDRESSES`      | Peer addresses to use as Waku boot nodes. Example: `"addr1, addr2, addr3"`                                                                                                                                                                     |
-| `SLACK_TOKEN`              | Slack Token to use for notifications. Example: `xoxp-0123456789-0123456789-0123456789-0123456789`                                                                                                                                              |
-| `TELEGRAM_TOKEN`           | Telegram Bot Token to use for notifications. Example: `123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11`                                                                                                                                              |
-| `TELEGRAM_CHAT_ID`         | The ID of the Telegram chat to send messages to. Example: `-1001234567890`                                                                                                                                                                     |
-| `SLACK_CHANNEL`            | Name of Slack channel to send messages to (has to be a public channel). Example: `poir-notifications`                                                                                                                                          |
-| `WAKU_LOG_LEVEL`           | Waku node logging configuration. Example: `INFO` (is also the default)                                                                                                                                                                         |
-| `RUST_LOG`                 | Rust tracing configuration. Example: `graphcast_sdk=debug,subgraph_radio=debug`, defaults to `info` for everything                                                                                                                             |
-| `DISCORD_WEBHOOK`          | Discord webhook URL for notifications. Example: `https://discord.com/api/webhooks/123456789012345678/AbCDeFgHiJkLmNoPqRsTuVwXyZaBcDeFgHiJkLmN`                                                                                                 |
-| `METRICS_PORT`             | If set, the Radio will expose Prometheus metrics on this (off by default). Example: `3001`                                                                                                                                                     |
-| `METRICS_HOST`             | If set, the Radio will expose Prometheus metrics on this (off by default). Example: `0.0.0.0`                                                                                                                                                  |
-| `SERVER_HOST`              | If `SERVER_PORT` is set, the Radio will expose an API service on the given host and port. Default: `0.0.0.0`                                                                                                                                   |
-| `SERVER_PORT`              | If set, the Radio will expose an API service on the given port (off by default). Example: `8080`                                                                                                                                               |
-| `LOG_FORMAT`               | Options: `pretty` - verbose and human readable; `json` - not verbose and parsable; `compact` - not verbose and not parsable; `full` - verbose and not parsible. Default value: `pretty`.                                                       |
-| `PERSISTENCE_FILE_PATH`    | Relative path. If set, the Radio will periodically store states of the program to the file in json format (off by default).                                                                                                                    |
-| `DISCV5_ENRS`              | Comma separated ENRs for Waku Discv5 bootstrapping. Defaults to empty list.                                                                                                                                                                    |
-| `DISCV5_PORT`              | Discoverable UDP port. Default: `9000`                                                                                                                                                                                                         |
-| `ID_VALIDATION`            | Defines the level of validation for message signers used during radio operation. Options include: `no-check`, `valid-address`, `graphcast-registered`, `graph-network-account`, `registered-indexer`, `indexer`. Default: `registered-indexer` |
+| Name (Optional variables)  | Description and examples                                                                                                                                                                                                            |
+| -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `MNEMONIC`                 | Mnemonic to the Graphcast ID wallet or the Indexer Operator wallet (first address of the wallet is used; Only one of `PRIVATE_KEY` or `MNEMONIC` is needed). Example: `claptrap armchair violin...`                                 |
+| `COLLECT_MESSAGE_DURATION` | Seconds that the Subgraph Radio will wait to collect remote POI attestations before making a comparison with the local POI. Example: `120` for 2 minutes.                                                                           |
+| `COVERAGE`                 | Toggle for topic coverage level. Possible values: "comprehensive", "on-chain", "minimal". Default is set to "comprehensive" coverage.                                                                                               |
+| `TOPICS`                   | Comma separated static list of content topics (subgraphs) to subscribe to. Example: `QmWmyoMoctfbAaiEs2G46gpeUmhqFRDW6KWo64y5r581Vz,QmUwCFhXM3f6qH9Ls9Y6gDNURBH7mxsn6JcectgxAz6CwU,QmQ1Lyh3U6YgVP6YX1RgRz6c8GmKkEpokLwPvEtJx6cF1y`  |
+| `WAKU_HOST`                | Interface onto which to bind the bundled Waku node. Example: `0.0.0.0`                                                                                                                                                              |
+| `WAKU_PORT`                | P2P port on which the bundled Waku node will operate. Example: `60000`                                                                                                                                                              |
+| `WAKU_NODE_KEY`            | Static Waku Node Key.                                                                                                                                                                                                               |
+| `BOOT_NODE_ADDRESSES`      | Peer addresses to use as Waku boot nodes. Example: `"addr1, addr2, addr3"`                                                                                                                                                          |
+| `SLACK_TOKEN`              | Slack Token to use for notifications. Example: `xoxp-0123456789-0123456789-0123456789-0123456789`                                                                                                                                   |
+| `TELEGRAM_TOKEN`           | Telegram Bot Token to use for notifications. Example: `123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11`                                                                                                                                   |
+| `TELEGRAM_CHAT_ID`         | The ID of the Telegram chat to send messages to. Example: `-1001234567890`                                                                                                                                                          |
+| `SLACK_CHANNEL`            | Name of Slack channel to send messages to (has to be a public channel). Example: `poir-notifications`                                                                                                                               |
+| `WAKU_LOG_LEVEL`           | Waku node logging configuration. Example: `INFO` (is also the default)                                                                                                                                                              |
+| `RUST_LOG`                 | Rust tracing configuration. Example: `graphcast_sdk=debug,subgraph_radio=debug`, defaults to `info` for everything                                                                                                                  |
+| `DISCORD_WEBHOOK`          | Discord webhook URL for notifications. Example: `https://discord.com/api/webhooks/123456789012345678/AbCDeFgHiJkLmNoPqRsTuVwXyZaBcDeFgHiJkLmN`                                                                                      |
+| `METRICS_PORT`             | If set, the Radio will expose Prometheus metrics on this (off by default). Example: `3001`                                                                                                                                          |
+| `METRICS_HOST`             | If set, the Radio will expose Prometheus metrics on this (off by default). Example: `0.0.0.0`                                                                                                                                       |
+| `SERVER_HOST`              | If `SERVER_PORT` is set, the Radio will expose an API service on the given host and port. Default: `0.0.0.0`                                                                                                                        |
+| `SERVER_PORT`              | If set, the Radio will expose an API service on the given port (off by default). Example: `8080`                                                                                                                                    |
+| `LOG_FORMAT`               | Options: `pretty` - verbose and human readable; `json` - not verbose and parsable; `compact` - not verbose and not parsable; `full` - verbose and not parsible. Default value: `pretty`.                                            |
+| `PERSISTENCE_FILE_PATH`    | Relative path. If set, the Radio will periodically store states of the program to the file in json format (off by default).                                                                                                         |
+| `DISCV5_ENRS`              | Comma separated ENRs for Waku Discv5 bootstrapping. Defaults to empty list.                                                                                                                                                         |
+| `DISCV5_PORT`              | Discoverable UDP port. Default: `9000`                                                                                                                                                                                              |
+| `ID_VALIDATION`            | Defines the level of validation for message signers used during radio operation. Options include: `no-check`, `valid-address`, `graphcast-registered`, `graph-network-account`, `registered-indexer`, `indexer`. Default: `indexer` |
 
 ### Configurations explained
 
@@ -403,5 +405,5 @@ To have full control over the Subgraph Radio code and run it directly on your ma
 #### Running the Subgraph Radio natively
 
 ```
-cargo run
+cargo run --release
 ```

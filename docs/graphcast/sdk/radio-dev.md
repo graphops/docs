@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# 🧑‍💻 Radio Development
+# Radio Development
 
 Do you want to build robust, peer-to-peer messaging apps that automatically exchange valuable data with other Indexers in real time? Do you have an idea for what data could be useful to share that could lead to greater communication efficiency in The Graph network as a whole? Then you want to build a Radio on top of the Graphcast network.
 

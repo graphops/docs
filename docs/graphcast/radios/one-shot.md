@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# 📟 One-shot CLI
+# One-shot CLI
 
 The source code for the one-shot CLI is available [on GitHub](https://github.com/graphops/subgraph-radio/tree/dev/one-shot) as a member of the Subgraph Radio workspace.
 

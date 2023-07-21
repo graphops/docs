@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# ⚙️ Design Principles
+# Design Principles
 
 There are two main components of Graphcast
 
