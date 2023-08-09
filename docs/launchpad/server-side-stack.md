@@ -13,6 +13,6 @@ Launchpad V2 represents a departure from the previous model of orchestrating the
 
 Alternatively, for the indexers seeking more detailed guidance with regards to a Kubernetes setup, we have created guides that outline the steps one should consider when installing and deploying [Fedora CoreOS (FCOS)](https://docs.fedoraproject.org/en-US/fedora-coreos/) - an auto-updating, minimal, container-focused OS, designed for clusters or standalone use and optimized for Kubernetes. These guides are designed to assist you in getting started with the process of setting up and guide you through the management of your Kubernetes cluster.
 
-If you are bringing your own Kubernetes cluster feel free to skip to [Quick Start](quick-start). 
+If you are bringing your own Kubernetes cluster, feel free to skip to [Quick Start](quick-start). 
 
-For guidance on Fedora CoreOs setup and considerents skip to [Install FCOS](guides/install-fcos).
+For guidance on Fedora CoreOS setup and considerations, skip to [Install FCOS Guide](guides/install-fcos).

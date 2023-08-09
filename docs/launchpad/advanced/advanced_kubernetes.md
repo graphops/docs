@@ -6,9 +6,9 @@ This guide provides a general walkthrough for installing Kubernetes using Fedora
 
 ## Prerequisites
 
-Before proceeding with this guide, ensure you have a solid understanding of how `fcos` works and the steps required to install and enable fcos as detailed in [Install fcos guide](guide/install-fcos).
+Before proceeding with this guide, ensure you have a solid understanding of how FCOS works and the steps required to install and enable FCOS as detailed in [Install FCOS Guide](guide/install-fcos).
 
-Additionally, a clear grasp of the fundamental [Kubernetes architecture](https://devopscube.com/kubernetes-architecture-explained/) will greatly aid in navigating the guidance outlined ahead .
+Additionally, a clear grasp of the fundamental [Kubernetes architecture](https://devopscube.com/kubernetes-architecture-explained/) will greatly aid in navigating the guidance outlined ahead.
 
 ## Key components for Kubernetes Installation
 
@@ -58,6 +58,6 @@ On a worker node you need to perform the following steps for installing Kubernet
 
 2. Install the kubelet: The kubelet is the primary node agent responsible for managing containers on the node and ensuring they match the desired state described in the Kubernetes manifest files. 
 
-3. Run kubeadm join: Once the container runtime and kubelet are installed and properly configured on the worker node, you can run the kubeadm join command to connect the node to the cluster's control plane.
+3. Run `kubeadm join`: Once the container runtime and kubelet are installed and properly configured on the worker node, you can run the kubeadm join command to connect the node to the cluster's control plane.
 
 4. Network Configuration: After the node is joined to the cluster, you might need to configure network plugins (e.g., Calico, Flannel) to enable communication between nodes and pods.
