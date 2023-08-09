@@ -2,7 +2,7 @@
 ---
 # FCOS Installation
 
-[Fedora CoreOS](https://docs.fedoraproject.org/en-US/fedora-coreos/) is an open-source container-focused operating system that is:
+[Fedora CoreOS](https://docs.fedoraproject.org/en-US/fedora-coreos/) (FCOS) is an open-source container-focused operating system that is:
 
 - minimal
 - automatically updated
@@ -10,15 +10,15 @@
 
 It is optimized for Kubernetes and includes technology from CoreOS Container Linux and Fedora Atomic Host, providing a secure and scalable container host for workloads.
 
-Here are key differences between Fedora CoreOS and traditional operating systems:
+Here are key differences between FCOS and traditional operating systems:
 
-- **Package management**: Fedora CoreOS uses [`rpm-ostree`](https://github.com/coreos/rpm-ostree) for atomic updates, while traditional OSes use package managers like `apt` or `yum`.
-- **Security**: Fedora CoreOS includes [`SELinux`](https://selinuxproject.org/page/Main_Page) for enhanced security, while traditional OSes may require additional security configurations.
-- **Containerization**: Fedora CoreOS is designed for container workloads, while traditional OSes may need extra setup for containers.
-- **Automatic updates**: Fedora CoreOS provides automatic updates, while traditional OSes may require manual updates.
-- **Minimal footprint**: Fedora CoreOS is optimized for running containers at scale, while traditional OSes have a broader range of software and features.
+- **Package management**: FCOS uses [`rpm-ostree`](https://github.com/coreos/rpm-ostree) for atomic updates, while traditional OSes use package managers like `apt` or `yum`.
+- **Security**: FCOS includes [`SELinux`](https://selinuxproject.org/page/Main_Page) for enhanced security, while traditional OSes may require additional security configurations.
+- **Containerization**: FCOS is designed for container workloads, while traditional OSes may need extra setup for containers.
+- **Automatic updates**: FCOS provides automatic updates, while traditional OSes may require manual updates.
+- **Minimal footprint**: FCOS is optimized for running containers at scale, while traditional OSes have a broader range of software and features.
 
-This guide takes you through the different considerents required to install and configure `fcos` (Fedora CoreOS). **NOTE the following instructions are for guidance only and do not represent step by step instructions.**
+This guide takes you through the different considerations required to install and configure FCOS. **NOTE the following instructions are for guidance only and do not represent step by step instructions.**
 - [FCOS Installation](#fcos-installation)
   - [Picking the right installation method](#picking-the-right-installation-method)
   - [Create a configuration](#create-a-configuration)
@@ -27,13 +27,13 @@ This guide takes you through the different considerents required to install and 
 
 ## Picking the right installation method
 
-To install and configure `fcos`, you need to use the `coreos-installer` tool. The following options for booting the OS are available:
+To install and configure FCOS, you need to use the `coreos-installer` tool. The following options for booting the OS are available:
 
 - Installing on bare metal:
     - Booting from [live ISO](https://docs.fedoraproject.org/en-US/fedora-coreos/bare-metal/#_installing_from_live_iso) using a KVM
     - Booting from [PXE](https://docs.fedoraproject.org/en-US/fedora-coreos/bare-metal/#_installing_from_live_iso) or [iPXE](https://docs.fedoraproject.org/en-US/fedora-coreos/bare-metal/#_installing_from_ipxe)
     - Booting from a [container](https://docs.fedoraproject.org/en-US/fedora-coreos/bare-metal/#_installing_from_the_container)
-    - Installing `coreos-installer` using `cargo` (not officially documented) but a good option for anyone running Hetzner servers or any other provider that doesn't offer PXE/iPXE boot and is not officially supporting `fcos` images. The officially supported alternative for this option would be [booting from live ISO](https://docs.fedoraproject.org/en-US/fedora-coreos/bare-metal/#_installing_from_live_iso).
+    - Installing `coreos-installer` using `cargo` (not officially documented) but a good option for anyone running Hetzner servers or any other provider that doesn't offer PXE/iPXE boot and is not officially supporting FCOS images. The officially supported alternative for this option would be [booting from live ISO](https://docs.fedoraproject.org/en-US/fedora-coreos/bare-metal/#_installing_from_live_iso).
         Example of `coreos-installer` install using cargo:
         ```
         # install packages necessary for coreos-installer
@@ -49,7 +49,7 @@ To install and configure `fcos`, you need to use the `coreos-installer` tool. Th
         ```
 
 - Installing on cloud servers/VMs:
-    - official `fcos` images can be used to provision new servers for AWS and GCP - can be found under `Cloud Launchable` section on [downloads page](https://fedoraproject.org/coreos/download/?stream=stable)
+    - official FCOS images can be used to provision new servers for AWS and GCP - can be found under `Cloud Launchable` section on [downloads page](https://fedoraproject.org/coreos/download/?stream=stable)
 
 Once an installation image is picked, time to customize the system. 
 

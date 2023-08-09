@@ -1,6 +1,6 @@
 ---
 ---
-# Considerents for Kubernetes installation using FCOS
+# Considerations for Kubernetes installation using FCOS
 
 This guide provides a general walkthrough for installing Kubernetes using Fedora CoreOS (FCOS) as the base operating system.
 
