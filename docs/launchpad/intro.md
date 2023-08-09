@@ -4,7 +4,7 @@ sidebar_position: 1
 
 # Introduction
 
-Launchpad is a toolkit for running a Graph Protocol Indexer on Kubernetes. It aims to provide the fastest path to production multi-chain indexing, with sane security and performance defaults. It should work well whether you have a single host or twenty. It is comprised of an opinionated set of tools on your local machine, layered over one another to provide a declarative workflow through all the layers of your infrastructure.
+Launchpad is a toolkit for running a Graph Protocol Indexer on Kubernetes. It aims to provide the fastest path to production multi-chain indexing, with sane security and performance defaults. It should work well whether you have a single node cluster or twenty. It is comprised of an opinionated set of tools on your local machine, layered over one another to provide a declarative workflow to manage your deployments stack.
 
 There are three major components to be aware of:
 
@@ -27,4 +27,4 @@ There are three major components to be aware of:
 - Read the [Prerequisites](prerequisites) section to understand what you need to bring
 - Read the [Quick Start guide](quick-start) to get up and running
 - Look at the repositories above on GitHub to understand how they work
-- Review **Advanced Topics** to understand more advanced behaviour
+- Review **Advanced Topics** to understand more advanced behavior
