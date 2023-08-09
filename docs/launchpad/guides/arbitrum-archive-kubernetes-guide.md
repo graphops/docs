@@ -2,6 +2,10 @@
 ---
 # Arbitrum Archive Mainnet Node Guide
 
+:::warning
+This Quick Start guide has not yet been updated for Launchpad V2.
+:::
+
 This guide is intended to be an end to end walk-through of running an Arbitrum Archive Mainnet Node in an existing Kubernetes cluster.
 Sync times are reported to be in the range of 1 week on dedicated hardware. The node consists of 2 parts, the classic part and the nitro hardfork. The classic part is only required to request archive data for blocks before the hardfork and takes the aforementioned 1 weeks to sync from scratch. The nitro history is shorter and can be quickly synced within 3 days.
 

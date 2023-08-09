@@ -2,6 +2,10 @@
 ---
 # Avalanche Archive Mainnet Node Guide
 
+:::warning
+This Quick Start guide has not yet been updated for Launchpad V2.
+:::
+
 This guide is intended to be an end to end walk-through of running an Avalanche Archive Mainnet Node in an existing Kubernetes cluster.
 Sync times are reported to be in the range of 3 weeks on dedicated hardware.
 

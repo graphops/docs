@@ -2,6 +2,10 @@
 ---
 # Celo Archive Mainnet Node Guide
 
+:::warning
+This Quick Start guide has not yet been updated for Launchpad V2.
+:::
+
 This guide is intended to be an end to end walk-through of running an Celo Archive Mainnet Node in an existing Kubernetes cluster.
 Sync times are reported to be in the range of 4 days on dedicated hardware.
 

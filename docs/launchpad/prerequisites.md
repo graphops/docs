@@ -31,20 +31,18 @@ We will assume a basic understanding of the Graph Protocol Indexing stack, as we
 
 See [Other Resources](other-resources) for links to helpful resources.
 
-## Willingness to learn and contribute
-
-Launchpad is a collaborative effort to create the best UX for Graph Protocol Indexers on Kubernetes. The Launchpad stack provides an opinionated set of defaults and recipes for success, but to be an advanced operator you will need to learn Kubernetes and many of the other tools in the stack. With Launchpad, you have guard rails to guide you in your journey towards mastering operating your Indexer on Kubernetes.
-
-Please contribute back when you are able!
-
 ## A client machine
 
 Launchpad comes with a [series of tools](client-side-tooling) that should run on a client device. This is most likely your local machine. These tools should not run on your servers. Instead, they help you instruct your cluster of servers to do what you want.
 
 Currently, Launchpad comes with support for Linux and MacOS clients. Windows is currently not supported, though you may be able to use Launchpad using the *Windows Subsystem for Linux*.
 
-## One or more SSH-enabled hosts running Ubuntu 22.04 LTS
+## A Kubernetes cluster 
 
-You will need at least one host running Ubuntu 22.04 LTS with SSH access to that host on your local machine using public key authentication. **Password authentication is not supported.**
+You will need to provision a Kubernetes cluster. This can be a self-managed cluster (see our [guide using Fedora CoreOS](guides/install-fcos)), or a managed cluster from a major Cloud Provider like AWS or GCP.
 
+## Willingness to learn and contribute
 
+Launchpad is a collaborative effort to create the best UX for Graph Protocol Indexers on Kubernetes. The Launchpad stack provides an opinionated set of defaults and recipes for success, but to be an advanced operator you will need to learn Kubernetes and many of the other tools in the stack. With Launchpad, you have guard rails to guide you in your journey towards mastering operating your Indexer on Kubernetes.
+
+Please contribute back when you are able!

@@ -22,12 +22,6 @@ Launchpad comes with a task to install local dependencies on your machine. See t
 
 Launchpad uses `task` as the primary command line interface. You can also define your own tasks!
 
-### Ansible & SSH
-
-[Ansible](https://github.com/ansible/ansible) is an open-source automation tool that helps you to manage and automate tasks, such as configuration management, application deployment, and task automation. It allows you to define tasks using a simple, easy-to-read syntax, and then execute them on one or more servers. Ansible can be used to manage servers running a wide variety of operating systems, including Linux, Windows, and macOS. 
-
-Launchpad uses Ansible to perform tasks on your cluster hosts.
-
 ### Helm
 
 [Helm](https://github.com/helm/helm) is a package manager for Kubernetes that helps you manage and automate the deployment of your applications. It allows you to define, install, and upgrade Kubernetes resources in a consistent, versioned way. Helm uses a simple templating syntax to allow you to parameterize your deployments and create reusable chart templates. Helm also provides a variety of pre-built charts for popular software.
@@ -45,7 +39,3 @@ Launchpad uses Helmfile to declare and manage sets of related Helm releases.
 [Kubectl](https://github.com/kubernetes/kubectl) is the command-line interface for Kubernetes that allows you to deploy, scale, and manage applications on a Kubernetes cluster. It provides a simple, easy-to-use command-line interface for performing common Kubernetes tasks such as creating and managing pods, services, and deployments.
 
 Launchpad uses Kubectl to interact with your Kubernetes cluster.
-
-## Understanding the flow
-
-> TODO: Diagram showing the relationship between helmfiles, helm releases, kubernetes resources

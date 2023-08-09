@@ -4,9 +4,11 @@ sidebar_position: 3
 
 # Quick Start
 
-Make sure you have all the [Prerequisites](prerequisites) before starting.
+:::warning
+This Quick Start guide has not yet been updated for Launchpad V2.
+:::
 
-## Quickstart
+Make sure you have all the [Prerequisites](prerequisites) before starting.
 
 ### Install Taskfile
 
