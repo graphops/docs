@@ -2,9 +2,9 @@
 sidebar_position: 1
 ---
 
-# 3LA - Listener Radio
+# Listener Radio
 
-The source code for 3LA is available [on GitHub](https://github.com/graphops/graphcast-3la) and Docker builds are automatically published as [GitHub Packages](https://github.com/graphops/graphcast-3la/pkgs/container/graphcast-3la).
+The source code for Listener Radio is available [on GitHub](https://github.com/graphops/listener-radio) and Docker builds are automatically published as [GitHub Packages](https://github.com/graphops/listener-radio/pkgs/container/listener-radio).
 
 ## Introduction
 
