@@ -65,11 +65,29 @@ If you don't have an `helmfile.yaml` file yet, you can start with copying the ex
 cp sample.helmfile.yaml helmfile.yaml
 ```
 
-and edit it with your editor of choice.
+and edit it with your editor of choice. Under that file, there is an `helmfiles:` section declaring Namespaces to be deployed on the cluster, looking like this:
 
+```yaml
+helmfiles:
+  - path: git::https://github.com/graphops/launchpad-namespaces.git@storage/helmfile.yaml?ref=storage-stable/latest
+    selectorsInherited: true
+    values:
+      - helmDefaults:
+          <<: *helmDefaults
 
+  - path: git::https://github.com/graphops/launchpad-namespaces.git@monitoring/helmfile.yaml?ref=monitoring-stable/latest
+    selectorsInherited: true
 
-### Install releases into the cluster for base cluster services
+  - path: git::https://github.com/graphops/launchpad-namespaces.git@ingress/helmfile.yaml?ref=ingress-stable/latest
+    selectorsInherited: true
+    values:
+      - kubeVersion: *kubeVersion
+```
+
+You can override values, and select which Namespaces you are interested in. Refer to Namespaces documentation available here for more examples on how to configure them, or to see which ones are available: [Namespaces](https://github.com/graphops/launchpad-namespaces).
+
+### Syncing your `helmfile.yaml` with the cluster
+
 
 
 Next we need to install key non-Graph components of our stack, including monitoring and logging systems.
