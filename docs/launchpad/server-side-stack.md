@@ -7,7 +7,10 @@ sidebar_position: 20
 
 ## Your Kubernetes cluster
 
-Note that Launchpad v1 used [`k0s`](https://k0sproject.io/) as the [`Kubernetes distribution`](https://acloudguru.com/blog/engineering/which-kubernetes-distribution-is-right-for-you) for managing Kubernetes. K0s was picked for this project as it was viewed to be one of the top open-source lightweight certified Kubernetes distributions targeted at public & private clouds, on-premises, edge & hybrid.
+
+:::note
+Launchpad v1 used [`k0s`](https://k0sproject.io/) as the [`Kubernetes distribution`](https://acloudguru.com/blog/engineering/which-kubernetes-distribution-is-right-for-you) for managing Kubernetes. K0s was picked for this project as it was viewed to be one of the top open-source lightweight certified Kubernetes distributions targeted at public & private clouds, on-premises, edge & hybrid.
+:::
 
 Launchpad V2 represents a departure from the previous model of orchestrating the configuration of host machines to form a Kubernetes cluster. Instead, users are now encouraged to bring their own Kubernetes clusters to be used in conjunction with Launchpad. This approach ensures that users are not tied to a specific Kubernetes distribution or mode of installation. 
 

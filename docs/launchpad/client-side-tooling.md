@@ -4,11 +4,11 @@ sidebar_position: 5
 
 # Client Side Tooling
 
-Launchpad comes with an opinionated set of tools on your local machine, layered over one another to provide a declarative workflow through all the layers of your infrastructure.
+Launchpad comes with an opinionated set of tools on your local machine, layered over one another to provide a declarative workflow to manage your cluster software stack.
 
 ![Client Side Stack](/img/launchpad-client-side-stack.svg)
 
-These tools do not run on your servers, but on your local machine. They form the command & control center that you use to send instructions to your cluster of servers.
+These tools do not run on your servers, but on your local machine. They form the command & control center that you use to send instructions to your cluster.
 
 ## Installing on your local machine
 
@@ -33,6 +33,10 @@ Launchpad uses Helm to deploy packages (Helm Charts) into your cluster.
 [Helmfile](https://github.com/roboll/helmfile) is a tool for managing multiple Helm charts together using a single file. It allows you to define a set of Helm releases together in a file, and then use a single command to install, upgrade, or delete all of the releases at once. This makes it easy to manage complex, multi-chart applications. Helmfile is written in Go and is easy to install and use.
 
 Launchpad uses Helmfile to declare and manage sets of related Helm releases.
+
+### Kustomize
+
+[Kustomize](https://github.com/kubernetes-sigs/kustomize) lets you customize raw, template-free YAML files for multiple purposes, leaving the original YAML untouched and usable as is. It is used by helmfile for some of its features.
 
 ### Kubectl
 
