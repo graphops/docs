@@ -4,10 +4,6 @@ sidebar_position: 3
 
 # Quick Start
 
-:::warning
-This Quick Start guide has not yet been updated for Launchpad V2.
-:::
-
 Make sure you have all the [Prerequisites](prerequisites) before starting.
 
 ### Install Taskfile
@@ -174,15 +170,59 @@ task releases:apply -- graph-goerli
 
 ## Updates
 
-### Updating `launchpad-core`
+### Updating `launchpad-namespace` changes into your stack 
 
-As new versions of key components in the stack are released, we will update `launchpad-core`'s templated definitions. You can easily inherit these updates by pulling down the latest submodule.
+As new versions of key components in the stack are released, we will update `launchpad-namespaces`'s templated definitions and the various release streams available. You can selectively inherit these updates with ease by changing the git ref as a means to track what release stream you may want, or to pin to any particular major, minor or patch version.
 
-Launchpad comes with a built in task to do this:
+**following latest**:
+
+Your `?ref=` would look like this, for the storage namespace: `?ref=storage-latest`, or alternatively: `?ref=storage-stable/latest`.
+The path for this *Namespace*, under helmfiles, would then look like:
 
 ```shell
-task launchpad:update-core
+- path: git::https://github.com/graphops/launchpad-namespaces.git@storage/helmfile.yaml?ref=storage-latest
 ```
+
+**following a specific major version**:
+
+Your `?ref=` would look like this, for the storage namespace: `?ref=storage-v1`.
+The path for this *Namespace*, under helmfiles, would then look like:
+
+```shell
+- path: git::https://github.com/graphops/launchpad-namespaces.git@storage/helmfile.yaml?ref=storage-v1
+```
+
+**following a specific minor version**:
+
+Your `?ref=` would look like this, for the storage namespace: `?ref=storage-v1.2`.
+The path for this *Namespace*, under helmfiles, would then look like:
+
+```shell
+- path: git::https://github.com/graphops/launchpad-namespaces.git@storage/helmfile.yaml?ref=storage-v1.2
+```
+
+**pinning to an exact version**:
+
+Your `?ref=` would look like this, for the storage namespace: `?ref=storage-v1.2.2`.
+The path for this *Namespace*, under helmfiles, would then look like:
+
+```shell
+- path: git::https://github.com/graphops/launchpad-namespaces.git@storage/helmfile.yaml?ref=storage-v1.2.2
+```
+**following the latest canary**:
+
+Your `?ref=` would look like this, for the storage namespace: `?ref=storage-canary/latest`.
+The path for this *Namespace*, under helmfiles, would then look like:
+
+```shell
+- path: git::https://github.com/graphops/launchpad-namespaces.git@storage/helmfile.yaml?ref=storage-canary/latest
+```
+
+We would recommend that you either follow the latest stable releases, or pin to a specific version and use pulling in starter changes as a means to keep your `helmfile.yaml` updated regularly.
+
+:::note
+For full implemetation details and other comprehensive notes about `launchpad-namespaces` please visit the [github repo](https://github.com/graphops/launchpad-namespaces/blob/main/README.md).
+:::
 
 ### Pulling in starter changes
 

@@ -32,7 +32,9 @@ Key features of `kubeadm` include:
 
 * **Configuration Validation:** kubeadm performs preflight checks to validate whether the host system is ready for cluster creation or joining.
 
-**Note:** If you opt for a multi-node Kubernetes cluster, your Butane configurations will differ based on the specific role each node plays, whether it's a control plane or a worker node.
+:::note
+If you opt for a multi-node Kubernetes cluster, your Butane configurations will differ based on the specific role each node plays, whether it's a control plane or a worker node.
+:::
 
 ### Butane config for Kubernetes control-planes
 
