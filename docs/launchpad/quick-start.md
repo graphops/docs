@@ -100,7 +100,7 @@ commands:
 
 As you can see, `releases:apply-base` just calls `releases:apply` filter for all namespaces with the label `launchpad.graphops.xyz/layer=base`.
 
-You can list all the releases present in the helmfile.yaml, and their labels, by running `helmfile list`:
+You can list all the releases present in the helmfile.yaml, and their labels, by running `task releases:list`:
 ```shell
 NAME                            NAMESPACE               ENABLED INSTALLED       LABELS                                                                                  CHART                                           VERSION       
 openebs                         storage                 true    true            launchpad.graphops.xyz/layer:base,launchpad.graphops.xyz/namespace:storage              openebs/openebs                                 3.8.0         
@@ -144,7 +144,39 @@ Launchpad comes with Namespace definitions for a number of blockchain networks, 
 
 #### (optional, eth-goerli) Install Erigon, Nimbus and Proxyd for Ethereum Goerli
 
-Update the configuration files in the `helmfiles/release-values/eth-goerli` folder to ensure they are correct. You will need to generate a JWT and configure Erigon and Nimbus with it.
+Update your `helmfile.yaml` to add the ethereum Namespace and ensure the values are correct:
+
+```yaml
+helmfiles:
+  - path: git::https://github.com/graphops/launchpad-namespaces.git@ethereum/helmfile.yaml
+    selectorsInherited: true
+    values:
+    - flavor: goerli
+      helmDefaults:
+        <<: *helmDefaults
+    - erigon:
+        values:
+          statefulNode:
+            volumeClaimSpec:
+              storageClassName: "<<your storage class>>"
+            jwt:
+              existingSecret:
+                name: jwt
+                key: jwt
+      nimbus:
+        values:
+          nimbus:
+            volumeClaimSpec:
+              storageClassName: "<<your storage class>>"
+            jwt:
+              existingSecret:
+                name: jwt
+                key: jwt
+```
+
+You will need to generate a JWT and create a kubernetes secret accordingly, to be used by Erigon and Nimbus.
+
+Deploy by syncing your cluster with the declarative `helmfile.yaml`:
 
 ```shell
 task releases:apply -- eth-goerli
@@ -152,15 +184,60 @@ task releases:apply -- eth-goerli
 
 ### Install the Graph Goerli Indexer Stack
 
-Update the configuration files in the `helmfiles/release-values/graph-goerli` folder to ensure they are correct.
+Update your `helmfile` to include the graph Namespace, and configure the values accordingly:
+
+```yaml
+helmfiles:
+  - path: git::https://github.com/graphops/launchpad-namespaces.git@graph/helmfile.yaml
+    selectorsInherited: true
+    values:
+    - helmDefaults:
+        <<: *helmDefaults
+      flavor: "goerli"
+    - graph-network-indexer:
+        values:
+          indexerDefaults:
+            config:
+              indexer-address: "<<your indexer ethereum address>>"
+          indexerAgent:
+            config:
+              public-indexer-url: "<<your public index URL>>"
+      graph-operator-mnemonic:
+        values:
+          resources:
+            ### RECOMMENDED, safe to commit
+            sealed-secret:
+              apiVersion: bitnami.com/v1alpha1
+              kind: SealedSecret
+              metadata:
+                name: graph-operator-mnemonic
+                namespace: graph-goerli
+              spec:
+                template:
+                  metadata:
+                    name: graph-operator-mnemonic
+                    namespace: graph-goerli
+                  type: Opaque
+                encryptedData:
+                  mnemonic: <<your encrypted mnemonic>> # Generate a SealedSecret encryptedData key with the "utils:seal-secrets" task, e.g.: task utils:seal-secrets -- -n graph-goerli -s graph-operator-mnemonic -k mnemonic -v "your mnemonic words"
+      graph-database:
+        values:
+          resources:
+            postgres-cr-primary-subgraph-data:
+              spec:
+                volume:
+                  storageClass: "<<your storage class>>"
+            postgres-cr-indexer-metadata:
+              spec:
+                volume:
+                  storageClass: "<<your storage class>>"
+```
+
+Proceed to deploy:
 
 ```shell
 task releases:apply -- graph-goerli
 ```
-
-### Check Indexer CLI status output
-
-
 
 ### 🎉 Milestone: Graph Indexer running and accessible
 
