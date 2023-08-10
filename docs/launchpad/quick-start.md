@@ -295,10 +295,10 @@ The path for this *Namespace*, under helmfiles, would then look like:
 - path: git::https://github.com/graphops/launchpad-namespaces.git@storage/helmfile.yaml?ref=storage-canary/latest
 ```
 
-We would recommend that you either follow the latest stable releases, or pin to a specific version and use pulling in starter changes as a means to keep your `helmfile.yaml` updated regularly.
+We would recommend that you either follow the latest stable releases, or pin to a specific version.
 
 :::note
-For full implemetation details and other comprehensive notes about `launchpad-namespaces` please visit the [github repo](https://github.com/graphops/launchpad-namespaces/blob/main/README.md).
+For full implementation details and other comprehensive notes about `launchpad-namespaces` please visit the [github repo](https://github.com/graphops/launchpad-namespaces/blob/main/README.md).
 :::
 
 ### Pulling in starter changes
