@@ -88,31 +88,41 @@ You can override values, and select which Namespaces you are interested in. Refe
 
 ### Syncing your `helmfile.yaml` with the cluster
 
-
-
 Next we need to install key non-Graph components of our stack, including monitoring and logging systems.
 
 Let's see what the `releases:apply-base` task is actually doing by running `task help -- releases:apply-base`:
 
 ```shell
 task: releases:apply-base
-
-Apply all namespaces for base cluster services
-
+  
+Apply current helmfile state filtered by all base layer services
+  
 commands:
-
-• task releases:apply -- sealed-secrets
-• task releases:apply -- storage
-• task releases:apply -- monitoring
-• task releases:apply -- ingress
-• task releases:apply -- postgres-operator
+  
+• task releases:apply -- launchpad.graphops.xyz/layer=base
 ```
 
-As you can see, `releases:apply-base` just calls `releases:apply` for multiple namespace.
+As you can see, `releases:apply-base` just calls `releases:apply` filter for all namespaces with the label `launchpad.graphops.xyz/layer=base`.
 
-First, update configuration in the `helmfiles/release-values/<namespace>/*` for the base namespaces. You will likely need to configure storage and ingress with your own values.
+You can list all the releases present in the helmfile.yaml, and their labels, by running `helmfile list`:
+```shell
+NAME                            NAMESPACE               ENABLED INSTALLED       LABELS                                                                                  CHART                                           VERSION       
+openebs                         storage                 true    true            launchpad.graphops.xyz/layer:base,launchpad.graphops.xyz/namespace:storage              openebs/openebs                                 3.8.0         
+openebs-zfs-localpv             storage                 true    true            launchpad.graphops.xyz/layer:base,launchpad.graphops.xyz/namespace:storage              openebs-zfs-localpv/zfs-localpv                 2.3.0         
+openebs-zfs-storageclass        storage                 true    true            launchpad.graphops.xyz/layer:base,launchpad.graphops.xyz/namespace:storage              graphops/resource-injector                      0.2.0         
+openebs-zfs-snapclass           storage                 true    true            launchpad.graphops.xyz/layer:base,launchpad.graphops.xyz/namespace:storage              graphops/resource-injector                      0.2.0         
+postgres-operator               postgres-operator       true    true            launchpad.graphops.xyz/layer:base,launchpad.graphops.xyz/namespace:postgres-operator    postgres-operator-charts/postgres-operator      1.10.0        
+ingress-nginx                   ingress                 true    true            launchpad.graphops.xyz/layer:base,launchpad.graphops.xyz/namespace:ingress              ingress-nginx/ingress-nginx                     4.7.1         
+cert-manager                    ingress                 true    true            launchpad.graphops.xyz/layer:base,launchpad.graphops.xyz/namespace:ingress              jetstack/cert-manager                           v1.12.3       
+cert-manager-resources          ingress                 true    true            launchpad.graphops.xyz/layer:base,launchpad.graphops.xyz/namespace:ingress              graphops/resource-injector                      0.2.0         
+sealed-secrets                  sealed-secrets          true    true            launchpad.graphops.xyz/namespace:sealed-secrets                                         sealed-secrets/sealed-secrets                   2.1
+```
 
-Next, let's go ahead and install all the cluster services. You will be prompted to install each namespace, with a summary of changes to be made.
+First, update configuration in your `helmfile.yaml` for the base namespaces. You will likely need to configure storage and ingress with your own values.
+
+In particular, the storage namespace may be a requirement even for other base namespaces, so lets install that one first by running `task releases:apply -- launchpad.graphops.xyz/namespace=storage`
+
+Next, let's go ahead and install all the remaining cluster services. You will be prompted to install each namespace, with a summary of changes to be made.
 
 ```shell
 task releases:apply-base
@@ -134,7 +144,7 @@ You can now use `task indexer:forward-grafana` to securely access your remote cl
 If you have existing external blockchain nodes that you would like to use instead of deploying them into your cluster, you can skip this section, but make sure that you can access those nodes securely (e.g. via an internal network, or using HTTPS and authentication).
 :::
 
-Launchpad comes with namespace defitions for a number of blockchain networks, including Ethereum Mainnet, Ethereum Goerli Testnet, Gnosis Chain Mainnet, Polygon mainnet, Abitrum Mainnet, Avalanche Mainnet, Celo Mainnet and others. Using these defintions, you can easily deploy blockchain nodes for the networks you want to index into your cluster. Namespace definitions are located in your `helmfiles/namespace-releases` folder.
+Launchpad comes with Namespace definitions for a number of blockchain networks, including Ethereum Mainnet, Ethereum Goerli Testnet, Gnosis Chain Mainnet, Polygon mainnet, Abitrum Mainnet, Avalanche Mainnet, Celo Mainnet and others. Using those Namespaces, you can easily deploy blockchain nodes for the networks you want to index into your cluster.
 
 #### (optional, eth-goerli) Install Erigon, Nimbus and Proxyd for Ethereum Goerli
 
