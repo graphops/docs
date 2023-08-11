@@ -133,26 +133,26 @@ The GraphQL API now includes:
 Below are an example query:
 
 ```graphql
-Query {
-  rows{
+query {
+  rows {
     id
-    message{
+    message {
       nonce
       network
-      payload{
+      payload {
         content
       }
     }
   }
 
-  messages{
+  messages {
     identifier
     nonce
     network
     blockNumber
     blockHash
     signature
-    payload{
+    payload {
       identifier
       content
     }
