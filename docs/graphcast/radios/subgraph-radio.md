@@ -162,7 +162,7 @@ RUST_LOG="warn,hyper=warn,graphcast_sdk=debug,subgraph_radio=debug"
 
 The subgraph upgrade pre-sync feature provides a way for Subgraph Developers to signal when they plan on releasing a new subgraph version, thereby allowing Indexers to start syncing the subgraph in advance. If the Radio operator has set up the notification system, they will get notified whenever a new subgraph upgrade intent message is received.
 
-If the `INDEXER_MANAGEMEN_SERVER_ENDPOINT` configuration variable has been set, the Radio will send a request to the Indexer Agent to start offchain syncing the new Subgraph deployment.
+If the `INDEXER_MANAGEMENT_SERVER_ENDPOINT` configuration variable has been set, the Radio will send a request to the Indexer Agent to start offchain syncing the new Subgraph deployment.
 
 The `AUTO_UPGRADE` variable can be toggled to change the coverage level of subgraphs for which the Radio will send offchain syncing commands to the indexer management server.
 
