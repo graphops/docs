@@ -52,17 +52,17 @@ task launchpad:setup
 
 To connect your local machine to a Kubernetes cluster, you can follow these general steps:
 
-1. **Get Cluster Configuration:** Make sure your [`kubeconfig`](https://devopscube.com/kubernetes-kubeconfig-file/) has been added to `~/.kube/config` directory. If you don't have this file, you may need to ask the administrator that created the cluster for the configuration.
+**Get Cluster Configuration:** Make sure your [`kubeconfig`](https://devopscube.com/kubernetes-kubeconfig-file/) has been added to `~/.kube/config` directory. If you don't have this file, you may need to ask the administrator that created the cluster for the configuration.
 
-2. **Verify Configuration:** Open the `config` file in a text editor to verify that it contains the correct cluster details, including server URL, certificates, and context information.
+**Verify Configuration:** Open the `config` file in a text editor to verify that it contains the correct cluster details, including server URL, certificates, and context information.
 
-3. **Switch Context if working with multiple Kubernetes clusters:** A context in Kubernetes is a combination of a cluster, a user, and a namespace. Use the `kubectl config use-context` command to set your desired context. For example:
+**Switch Context if working with multiple Kubernetes clusters:** A context in Kubernetes is a combination of a cluster, a user, and a namespace. Use the `kubectl config use-context` command to set your desired context. For example:
 
    ```sh
    kubectl config use-context <context-name>
    ```
 
-4. **Test Connection:** Run a simple `kubectl` command to test if your local machine can connect to the cluster:
+**Test Connection:** Run a simple `kubectl` command to test if your local machine can connect to the cluster:
 
    ```sh
    kubectl get pods
