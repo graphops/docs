@@ -52,7 +52,7 @@ task launchpad:setup
 
 To connect your local machine to a Kubernetes cluster, you can follow these general steps:
 
-**Get Cluster Configuration:** Make sure your [`kubeconfig`](https://devopscube.com/kubernetes-kubeconfig-file/) has been added to `~/.kube/config` directory. If you don't have this file, you may need to ask the administrator that created the cluster for the configuration.
+**Get Cluster Configuration:** Make sure your [`kubeconfig`](https://devopscube.com/kubernetes-kubeconfig-file/) has been added to `~/.kube/config` file. If you don't have this file, you may need to ask the administrator that created the cluster for the configuration.
 
 **Verify Configuration:** Open the `config` file in a text editor to verify that it contains the correct cluster details, including server URL, certificates, and context information.
 
