@@ -21,7 +21,7 @@ The major components that make up k8s are:
 - **kube-proxy:** manages iptables rules in order to implement the Kubernetes service abstraction
 
 Being a multi-node clustered system, Kubernetes topology distinguishes between two different roles:
-- **control-plane** nodes: these are the nodes that run *apiserver*, *kube-controller-manager*, and in some setups also *etcd* nodes (*etcd* could, potentially, run externally in its own independent nodes)
+- **control-plane** nodes: these are the nodes that run *kube-apiserver*, *kube-controller-manager*, and in some setups also *etcd* nodes (*etcd* could, potentially, run externally in its own independent nodes)
 - **worker** nodes: these need to run mostly *kubelet*, as their purpose is focused on running the workload containers
 
 Setting up, and bootstrapping a cluster involves installing and configuring all the required components, certificates management, and container manifests that make up the system. There are numerous options and tools to achieve this goal, but performing manual bootstrapping is a highly educational experience: [Kubernetes - The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way)).
@@ -73,7 +73,7 @@ kubeadm init --upload-certs --config cluster-config.yaml
 after which, if all goes well, one should see output similar to this:
 
 ```bash
-[root@iris /]# kubeadm init
+[root@demo /]# kubeadm init
 I0515 19:48:51.424146 1642628 version.go:256] remote version is much newer: v1.27.1; falling back to: stable-1.25
 [init] Using Kubernetes version: v1.25.9
 [preflight] Running pre-flight checks
@@ -83,15 +83,15 @@ I0515 19:48:51.424146 1642628 version.go:256] remote version is much newer: v1.2
 [certs] Using certificateDir folder "/etc/kubernetes/pki"
 [certs] Generating "ca" certificate and key
 [certs] Generating "apiserver" certificate and key
-[certs] apiserver serving cert is signed for DNS names [iris kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 134.177.177.107]
+[certs] apiserver serving cert is signed for DNS names [demo kubernetes kubernetes.default kubernetes.default.svc kubernetes.default.svc.cluster.local] and IPs [10.96.0.1 134.177.177.107]
 [certs] Generating "apiserver-kubelet-client" certificate and key
 [certs] Generating "front-proxy-ca" certificate and key
 [certs] Generating "front-proxy-client" certificate and key
 [certs] Generating "etcd/ca" certificate and key
 [certs] Generating "etcd/server" certificate and key
-[certs] etcd/server serving cert is signed for DNS names [iris localhost] and IPs [134.177.177.107 127.0.0.1 ::1]
+[certs] etcd/server serving cert is signed for DNS names [demo localhost] and IPs [134.177.177.107 127.0.0.1 ::1]
 [certs] Generating "etcd/peer" certificate and key
-[certs] etcd/peer serving cert is signed for DNS names [iris localhost] and IPs [134.177.177.107 127.0.0.1 ::1]
+[certs] etcd/peer serving cert is signed for DNS names [demo localhost] and IPs [134.177.177.107 127.0.0.1 ::1]
 [certs] Generating "etcd/healthcheck-client" certificate and key
 [certs] Generating "apiserver-etcd-client" certificate and key
 [certs] Generating "sa" key and public key
@@ -113,8 +113,8 @@ I0515 19:48:51.424146 1642628 version.go:256] remote version is much newer: v1.2
 [upload-config] Storing the configuration used in ConfigMap "kubeadm-config" in the "kube-system" Namespace
 [kubelet] Creating a ConfigMap "kubelet-config" in namespace kube-system with the configuration for the kubelets in the cluster
 [upload-certs] Skipping phase. Please see --upload-certs
-[mark-control-plane] Marking the node iris as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
-[mark-control-plane] Marking the node iris as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
+[mark-control-plane] Marking the node demo as control-plane by adding the labels: [node-role.kubernetes.io/control-plane node.kubernetes.io/exclude-from-external-load-balancers]
+[mark-control-plane] Marking the node demo as control-plane by adding the taints [node-role.kubernetes.io/control-plane:NoSchedule]
 [bootstrap-token] Using token: 4y3umx.fnuv7v9pgp4jn74b
 [bootstrap-token] Configuring bootstrap tokens, cluster-info ConfigMap, RBAC Roles
 [bootstrap-token] Configured RBAC rules to allow Node Bootstrap tokens to get nodes
@@ -164,9 +164,9 @@ export KUBECONFIG=/etc/kubernetes/admin.conf
 now *kubectl* should be setup to interact your the cluster. Try it by doing the following command:
 
 ```bash
-[root@iris /]# kubectl get nodes
+[root@demo /]# kubectl get nodes
 NAME   STATUS   ROLES           AGE   VERSION
-iris   Ready    control-plane   10s   v1.25.9
+demo   Ready    control-plane   10s   v1.25.9
 ```
 
 ## Installing a CNI
