@@ -67,7 +67,7 @@ where you must replace `<endpoint_ip_or_dns>` by the control-plane's endpoint an
 
 next, you can use *kubeadm* to bootstrap the cluster with:
 ```yaml
-kubeadm init --config cluster-config.yaml
+kubeadm init --upload-certs --config cluster-config.yaml
 ```
 
 after which, if all goes well, one should see output similar to this:
@@ -142,11 +142,19 @@ You should now deploy a pod network to the cluster.
 Run "kubectl apply -f [podnetwork].yaml" with one of the options listed at:
   https://kubernetes.io/docs/concepts/cluster-administration/addons/
 
+You can now join any number of control-plane node by running the following command on each as a root:
+
+kubeadm join 192.168.0.200:6443 --token 9vr73a.a8uxyaju799qwdjv --discovery-token-ca-cert-hash sha256:7c2e69131a36ae2a042a339b33381c6d0d43887e2de83720eff5359e26aec866 --control-plane --certificate-key f8902e114ef118304e561c3ecd4d0b543adc226b7a07f675f56564185ffe0c07
+
+Please note that the certificate-key gives access to cluster sensitive data, keep it secret!
+As a safeguard, uploaded-certs will be deleted in two hours; If necessary, you can use kubeadm init phase upload-certs to reload certs afterward.
+
 Then you can join any number of worker nodes by running the following on each as root:
 
-kubeadm join 135.181.181.107:6443 --token 4y3umx.fnuv7v9pgp4jn74b \
-        --discovery-token-ca-cert-hash sha256:78ed580c4290e433bd7469dd6737da020c480ccb3a099a497ad641da1fecf0d5
+kubeadm join 192.168.0.200:6443 --token 9vr73a.a8uxyaju799qwdjv --discovery-token-ca-cert-hash sha256:7c2e69131a36ae2a042a339b33381c6d0d43887e2de83720eff5359e26aec866
 ```
+(*Note*: Save these `kubeadm join` commands presented in this output, as they contain secrets that will be required to add more nodes in future steps.)
+
 
 this being a control-plane node, *kubeadm* will have created a *kubeconfig* file in /etc/kubernetes/admin.conf. A *kubeconfig* file is an YAML file that contains the required metadata and credentials to talk to the cluster, that being: certificates/tokens and endpoint specification. *Kubectl* will use whatever *kubeconfig* file is pointed at by the KUBECONFIG environment variable, or, by default, the file in `~/.kube/config`. So, as suggested in the output, we should do:
 ```bash
@@ -187,6 +195,34 @@ and then proceed to install cilium with default options by running:
 
 ## Adding more control-plane nodes
 
+If you have gone with the default topology setup, *kubeadm* should be instantiating *etcd* instances co-located with your control-plane nodes. Given that and the fact that *etcd* is a majority quorum based system, it's specially important that for a high-availability setup you'll keep an ***odd*** (i.e: one, thee, five, ...) number of control-plane nodes. As such, the minimum number of control-plane nodes that can offer high-availability would be three.
 
+To add more control-plane nodes you need to first get the hosts ready for such by:
+- preparing that node OS as required
+- provisioning the required tools and software as in the first bootstrapping node (container runtime engine, kubelet, kubeadm, kubectl, ...)
+
+and then execute, on that node, the appropriate `kubeadm join` command as shown in the previous `kubeadm init` output.
+For a control-plane node, that takes the form: 
+`kubeadm join <endpoint> --token <secret> --discovery-token-ca-cert-hash sha256:<hash> --control-plane --certificate-key <secret>`
+
+*Note*: the `kubeadm join` commands shown after bootstrapping the cluster or, rather, the secrets uploaded and displayed are temporary and expire after a certain time. In case you lost them or they've expired, you can re-upload new certificates and display the new ones, on the bootstrapping control-plane node, by running:
+```bash
+kubeadm init phase upload-certs --upload-certs
+kubeadm token create --print-join-command
+```
 
 ## Adding worker nodes
+
+To add worker nodes to your cluster, first get them ready for such by:
+- preparing that node OS as required
+- provisioning the required tools and software as in the first bootstrapping node (container runtime engine, kubelet, kubeadm, kubectl, ...)
+
+Next, you can run the appropriate `kubeadm join` command that was displayed at cluster bootstrap. It has the form:
+`kubeadm join <endpoint> --token <secret> --discovery-token-ca-cert-hash sha256:<hash>`
+
+In case you haven't saved that output, you can run (on one of the existing control-plane cluster members) the following command:
+```bash
+kubeadm token create --print-join-command
+```
+
+which will display you the appropriate kubeadm join command and the relevant secrets, again.
