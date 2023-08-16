@@ -26,7 +26,7 @@ Being a multi-node clustered system, Kubernetes topology distinguishes between t
 
 Setting up, and bootstrapping a cluster involves installing and configuring all the required components, certificates management, and container manifests that make up the system. There are numerous options and tools to achieve this goal, but performing manual bootstrapping is a highly educational experience: [Kubernetes - The Hard Way](https://github.com/kelseyhightower/kubernetes-the-hard-way)).
 
-This guide is focused on [Kubeadm](https://kubernetes.io/docs/reference/setup-tools/kubeadm/) - a tool used to bootstrap and manage the lifecycle of a Kubernetes cluster (upgrade, add/remove nodes, ...). It automates the process of setting up a cluster and provides a consistent way of doing it, while preserving almost as much control over the setup as a purely manual one.
+This guide utilizes [Kubeadm](https://kubernetes.io/docs/reference/setup-tools/kubeadm/) - a tool used to bootstrap and manage the lifecycle of a Kubernetes cluster (upgrade versions, add/remove nodes). It automates the process of setting up a cluster and provides a consistent way of doing it while preserving almost as much control over the setup as a purely manual one.
 
 ## Prerequisites
 
