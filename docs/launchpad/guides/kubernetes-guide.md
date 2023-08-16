@@ -91,7 +91,7 @@ I0515 19:48:51.424146 1642628 version.go:256] remote version is much newer: v1.2
 [certs] Generating "etcd/server" certificate and key
 [certs] etcd/server serving cert is signed for DNS names [iris localhost] and IPs [134.177.177.107 127.0.0.1 ::1]
 [certs] Generating "etcd/peer" certificate and key
-[certs] etcd/peer serving cert is signed for DNS names [iris localhost] and IPs [135.181.181.107 127.0.0.1 ::1]
+[certs] etcd/peer serving cert is signed for DNS names [iris localhost] and IPs [134.177.177.107 127.0.0.1 ::1]
 [certs] Generating "etcd/healthcheck-client" certificate and key
 [certs] Generating "apiserver-etcd-client" certificate and key
 [certs] Generating "sa" key and public key
