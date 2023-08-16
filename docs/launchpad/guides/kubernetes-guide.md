@@ -214,7 +214,7 @@ kubeadm token create --print-join-command
 ## Adding worker nodes
 
 To add worker nodes to your cluster, first get them ready for such by:
-- preparing that node OS as required
+- preparing the node OS as required
 - provisioning the required tools and software as in the first bootstrapping node (container runtime engine, kubelet, kubeadm, kubectl, ...)
 
 Next, you can run the appropriate `kubeadm join` command that was displayed at cluster bootstrap. It has the form:
