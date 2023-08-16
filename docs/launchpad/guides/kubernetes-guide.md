@@ -156,7 +156,7 @@ kubeadm join 192.168.0.200:6443 --token 9vr73a.a8uxyaju799qwdjv --discovery-toke
 (*Note*: Save these `kubeadm join` commands presented in this output, as they contain secrets that will be required to add more nodes in future steps.)
 
 
-this being a control-plane node, *kubeadm* will have created a *kubeconfig* file in /etc/kubernetes/admin.conf. A *kubeconfig* file is an YAML file that contains the required metadata and credentials to talk to the cluster, that being: certificates/tokens and endpoint specification. *Kubectl* will use whatever *kubeconfig* file is pointed at by the KUBECONFIG environment variable, or, by default, the file in `~/.kube/config`. So, as suggested in the output, we should do:
+this being a control-plane node, *kubeadm* will have created a *kubeconfig* file in /etc/kubernetes/admin.conf. A *kubeconfig* file is a YAML file that contains the required metadata and credentials to talk to the cluster, such as certificates/tokens and endpoint specification. *Kubectl* will use whatever *kubeconfig* file is pointed at by the KUBECONFIG environment variable, or, by default, the file in `~/.kube/config`. So, as suggested in the output, we should do:
 ```bash
 export KUBECONFIG=/etc/kubernetes/admin.conf
 ```
