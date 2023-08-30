@@ -6,10 +6,10 @@ sidebar_position: 3
 
 In the realm of blockchain indexing, Launchpad V2 strategically supports an array of prominent blockchains. This support extends to the following blockchain ecosystems:
 
-- [arbitrum](https://docs.arbitrum.io/)
-- [celo](https://docs.celo.org/)
-- [ethereum](https://ethereum.org/en/developers/docs/)
-- [gnosis](https://docs.gnosischain.com/)
+- [Arbitrum One](https://docs.arbitrum.io/)
+- [Celo](https://docs.celo.org/)
+- [Ethereum](https://ethereum.org/en/developers/docs/)
+- [Gnosis](https://docs.gnosischain.com/)
   
 
 This comprehensive support is rooted in GraphOps' active indexing of the mentioned blockchain networks within our production environment. The reason for this selection is due to the complexity involved in consistently testing and verifying new releases across the various components necessary for operating these blockchain networks.
