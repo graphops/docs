@@ -2,26 +2,22 @@
 sidebar_position: 3
 ---
 
-# Chain Philosophy
+# Supported Namespaces
 
-In the realm of blockchain indexing, Launchpad V2 strategically supports an array of prominent blockchains. This support extends to the following blockchain ecosystems:
+Launchpad includes a number of prepackaged Kubernetes namespaces (see [Launchpad Namespaces repo](https://github.com/graphops/launchpad-namespaces)), which in turn reference Helm Charts in the [Launchpad Charts](https://github.com/graphops/launchpad-charts) repository, as well as third-party Charts. GraphOps maintains support for these namespaces, meaning that we:
 
-- [Arbitrum One](https://docs.arbitrum.io/)
-- [Celo](https://docs.celo.org/)
-- [Ethereum](https://ethereum.org/en/developers/docs/)
-- [Gnosis](https://docs.gnosischain.com/)
-  
+- Track upstream releases and test them
+- Move these releases through `canary` and `stable` release channels for both `launchpad-charts` and `launchpad-namespaces`
+- Evolve the Launchpad stack to meet the evolving operational needs of these applications
+- Offer support for operators experiencing challenges with these namespaces
 
-This comprehensive support is rooted in GraphOps' active indexing of the mentioned blockchain networks within our production environment. The reason for this selection is due to the complexity involved in consistently testing and verifying new releases across the various components necessary for operating these blockchain networks.
+This strategy is rooted in GraphOps' active usage of these namespaces and the applications within them.
 
- TODO add diagram
+We welcome third-party contributors to add support for additional namespaces and applications.
 
-Given the rapid pace at which the blockchain ecosystem evolves, this approach underscores our commitment to maintaining a robust and current indexing infrastructure stack. 
+## Using custom releases and deploying sets of applications not defined in `launchpad-namespaces`
 
-
-## Using custom releases and deploying chains not defined in launchpad-namespaces
-
-Although GraphOps' officially supported blockchain stack may be limited, Launchpad's architecture is designed to go beyond the boundaries imposed by `launchpad-namespaces`.
+Launchpad's architecture is designed to be highly flexible and does not constrain you to deploying `launchpad-namespaces`.
 
 To incorporate releases not covered within a namespace, you can utilize the `helmfile.yaml` that you generated during the [Quickstart](quick-start.md#customize-your-helmfileyaml) process.
 
@@ -43,11 +39,11 @@ releases:
 ```
 
 :::note
-If you're considering the integration of a blockchain that currently falls outside the scope of Launchpad's supported stack, it's worth noting that including a new release in your helmfile.yaml might require an extra step of creating a custom helm-chart. While certain publicly available charts (ie. [Teku](https://artifacthub.io/packages/helm/stakewise/teku), [Lighthouse](https://artifacthub.io/packages/helm/stakewise/lighthouse)) might be regurlarly maintained by external contributors, you might encounter cases where other charts are not readily supported.
+If you're considering the integration of a blockchain that currently falls outside the scope of Launchpad's Supported Namespaces, it's worth noting that including a new release in your `helmfile.yaml` might require an extra step of creating a custom Helm Chart. While certain publicly available charts (ie. [Teku](https://artifacthub.io/packages/helm/stakewise/teku), [Lighthouse](https://artifacthub.io/packages/helm/stakewise/lighthouse)) might be regularly maintained by external contributors, you might encounter cases where other charts are not readily supported.
 :::
 
 While the full Launchpad stack contains:
-1. Launchpad Starter ([`graphops/launchpad-starter`](https://github.com/graphops/launchpad-starter)): A starting point for every new Launchpad deployment
+1. Launchpad Starter ([`graphops/launchpad-starter`](https://github.com/graphops/launchpad-starter)): A starting point for new Launchpad deployments
 2. Launchpad Charts ([`graphops/launchpad-charts`](https://github.com/graphops/launchpad-charts)): A collection of Helm Charts for blockchains and web3 apps
 3. Launchpad Namespaces ([`graphops/launchpad-namespaces`](https://github.com/graphops/launchpad-namespaces)): A collection of preconfigured Kubernetes Namespaces using Helmfile
 
@@ -64,7 +60,6 @@ By opting out of `launchpad-starter`, you are essentially choosing not to levera
 - Taskfile definitions that encompass commonly utilized tasks
 - The automated process that installs all essential local tool dependencies on your personal machine
 - The regularly refreshed `sample.helmfile.yaml` configuration
-
 
 ### Using launchpad-charts without launchpad-namespaces or launchpad-starter
 
