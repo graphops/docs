@@ -21,7 +21,7 @@ First, prepare a new empty repository to hold your infrastructure repo. This cou
 Next, we're going to clone `launchpad-starter`, and then replace the existing `origin` remote with your new remote repository. This allows us to retain the commit history of `launchpad-starter`. A shared commit history will make future rebases against the upstream `launchpad-starter` much easier.
 
 ```shell
-# Clone the starter into my-new-infra and cd into it
+# Clone the starter into my-new-infra and cd into it
 git clone https://github.com/graphops/launchpad-starter my-new-infra
 cd my-new-infra
 

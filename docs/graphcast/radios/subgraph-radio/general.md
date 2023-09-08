@@ -2,7 +2,7 @@
 sidebar_position: 1
 ---
 
-# Subgraph Radio
+# General
 
 The source code for the Subgraph Radio is available [on GitHub](https://github.com/graphops/subgraph-radio) and Docker builds are automatically published as [GitHub Packages](https://github.com/graphops/subgraph-radio/pkgs/container/subgraph-radio). Subgraph Radio is also published as a crate [on crates.io](https://crates.io/crates/subgraph-radio).
 
@@ -10,23 +10,19 @@ The source code for the Subgraph Radio is available [on GitHub](https://github.c
 
 Subgraph Radio is an optional component of the Graph Protocol Indexer Stack. It uses the Graphcast Network to facilitate the exchange of Subgraph data and information among Indexers and other participants in the network.
 
-An essential aspect of earning indexing rewards as an Indexer is the generation of valid Proof of Indexing hashes (POIs). These POIs provide evidence of the Indexer's possession of correct data. Submitting invalid POIs could lead to a [Dispute](https://thegraph.com/docs/en/network/indexing/#what-are-disputes-and-where-can-i-view-them) and possible slashing by the protocol. With Subgraph Radio's POI feature, Indexers gain confidence knowing that their POIs are continually cross-verified against those of other participating Indexers. Should there be a discrepancy in POIs, Subgraph Radio functions as an early warning system, alerting the Indexer within minutes.
-
-All POIs generated through Subgraph Radio are public (normalized), meaning they are hashed with a `0x0` Indexer Address and can be compared between Indexers. However, these public POIs are not valid for on-chain reward submission. Subgraph Radio groups and weighs public POIs according to the aggregate stake in GRT attesting to each. The normalized POI with the most substantial aggregate attesting stake is deemed canonical and used for comparisons with your local Indexer POIs.
-
-For enhanced security, we recommend running Subgraph Radio with an independent Graphcast ID linked to your Indexer account. This Graphcast ID is an Ethereum account authorized to sign POI attestations on behalf of your Indexer. By default, Subgraph Radio validates messages received from any signer, that can be resolved to an Indexer address, regardless of whether or not they are registered on the Graphcast registry (though this behavior can be altered by setting the ID_VALIDATION config variable). Learn how to register a Graphcast ID [here](https://docs.graphops.xyz/graphcast/sdk/registry#register-a-graphcast-id).
+For enhanced security, we recommend running Subgraph Radio with an independent Graphcast ID linked to your Indexer account. This Graphcast ID is an Ethereum account authorized to sign Graphcast messages on behalf of your Indexer. By default, Subgraph Radio validates messages received from any signer, that can be resolved to an Indexer address, regardless of whether or not they are registered on the Graphcast registry (though this behavior can be altered by setting the `ID_VALIDATION` config variable). Learn how to register a Graphcast ID [here](https://docs.graphops.xyz/graphcast/sdk/registry#register-a-graphcast-id).
 
 ### Basic Configuration
 
-The Subgraph Radio can be configured using environment variables, CLI arguments, as well as a TOML or YAML configuration file. Take a look at the [configuration options](#configuration-options) to learn more. In all cases, users will need to prepare the following configuration variables:
+The Subgraph Radio can be configured using environment variables, CLI arguments, as well as a `.toml` or `.yaml` configuration file. Take a look at the [configuration options](#configuration-options) to learn more. In all cases, users will need to prepare the following configuration variables:
 
 | Name                         | Description and examples                                                                                                                                                                |
 | ---------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --- |
 | `PRIVATE_KEY`                | Private key of the Graphcast ID wallet or the Indexer Operator wallet (precendence over `MNEMONICS`).<br/>Example: `0x0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef` |
 | `INDEXER_ADDRESS`            | Indexer address for Graphcast message verification, in all lowercase.<br/>Example: `0xabcdcabdabcdabcdcabdabcdabcdcabdabcdabcd`                                                         |
 | `GRAPH_NODE_STATUS_ENDPOINT` | URL to a Graph Node Indexing Status endpoint.<br/>Example: `http://index-node:8030/graphql`                                                                                             |
-| `REGISTRY_SUBGRAPH`          | URL to the Graphcast Registry subgraph for your network. Check [APIs](../sdk/registry#subgraph-apis) for your preferred network                                                         |
-| `NETWORK_SUBGRAPH`           | URL to the Graph Network subgraph. Check [APIs](../sdk/registry#subgraph-apis) for your preferred network                                                                               |     |
+| `REGISTRY_SUBGRAPH`          | URL to the Graphcast Registry subgraph for your network. Check [APIs](../../sdk/registry#subgraph-apis) for your preferred network                                                      |
+| `NETWORK_SUBGRAPH`           | URL to the Graph Network subgraph. Check [APIs](../../sdk/registry#subgraph-apis) for your preferred network                                                                            |     |
 | `GRAPHCAST_NETWORK`          | The Graphcast Messaging fleet and pubsub namespace to use.<br/>Mainnet: `mainnet`<br/>Goerli: `testnet`                                                                                 |
 
 ### Run with Docker
@@ -116,6 +112,8 @@ See [Basic Configuration](#basic-configuration) above. The following environment
 | `ID_VALIDATION`                      | Defines the level of validation for message signers used during radio operation. Options include: `no-check`, `valid-address`, `graphcast-registered`, `graph-network-account`, `registered-indexer`, `indexer`. Default: `indexer`                                                  |
 | `INDEXER_MANAGEMENT_SERVER_ENDPOINT` | URL to the Indexer management server of Indexer Agent. Example: `http://localhost:18000`                                                                                                                                                                                             |
 | `AUTO_UPGRADE`                       | Toggle for the types of subgraphs for which the Radio will send offchain syncing commands to the indexer management server. Default to upgrade all syncing deployments. Possible values: "comprehensive", "on-chain", "minimal", "none". Default is set to "comprehensive" coverage. |
+| `RATELIMIT_THRESHOLD`                | Set upgrade intent ratelimit in seconds: only one upgrade per subgraph within the threshold (default: 86400 seconds = 1 day)                                                                                                                                                         |
+| `PROTOCOL_NETWORK`                   | The protocol network (currently matches with suffix of the provided `NETWORK_SUBGRAPH` configuration variable)                                                                                                                                                                       |
 
 ### Configurations explained
 
@@ -153,6 +151,22 @@ RUST_LOG="warn,hyper=warn,graphcast_sdk=debug,subgraph_radio=debug"
 ```
 
 `Discv5` is an ambient node discovery network for establishing a decentralized network of interconnected Graphcast Radios. Discv5, when used in Graphcast Radios, serves as a dedicated peer-to-peer discovery protocol that empowers Radios to form an efficient, decentralized network. Without Discv5, the traffic within the Graphcast network would largely rely on centrally hosted boot nodes, leading to a less distributed architecture. However, with Discv5, Radios are capable of directly routing messages among themselves, significantly enhancing network decentralization and reducing reliance on the central nodes. If you want to learn more about Discv5, check out the [official spec](https://rfc.vac.dev/spec/33/).
+
+#### Protocol network
+
+Available Options:
+
+- `goerli`
+- `mainnet`
+- `gnosis`
+- `hardhat`
+- `arbitrum-one`
+- `arbitrum-goerli`
+- `avalanche`
+- `matic`
+- `celo`
+- `optimism`
+- `fantom`
 
 #### State management
 
@@ -199,7 +213,7 @@ docker run ghcr.io/graphops/subgraph-radio \
 
 #### Using a TOML/YAML file
 
-Example TOML configuration file (config.toml):
+Example TOML configuration file (`config.toml`):
 
 ```toml
 [graph_stack]
@@ -212,7 +226,7 @@ private_key = 'a2b3c1d4e5f6890e7f6g5h4i3j2k1l0m'
 
 Then you just need to have the `CONFIG_FILE` set, either as an env variable - `CONFIG_FILE=path/to/config.toml` or passed as a CLI arg - `--config-file path/to/config.toml`.
 
-Example YAML configuration file (config.yaml):
+Example YAML configuration file (`config.yaml`):
 
 ```yaml
 graph_stack:
@@ -235,7 +249,51 @@ If the Radio operator has set up a Slack, Discord and/or Telegram bot integratio
 
 ### Prometheus & Grafana
 
-The Subgraph Radio exposes metrics that can then be scraped by a Prometheus server and displayed in Grafana. In order to use them you have to have a local Prometheus server running and scraping metrics on the provided port. You can specify the metrics host and port by using the environment variables `METRICS_PORT` and `METRICS_HOST`. We also provide a [Grafana dashboard config JSON file](https://github.com/graphops/subgraph-radio/blob/dev/grafana.json) which you can use to visualise the metrics in Grafana.
+The Subgraph Radio exposes metrics that can then be scraped by a Prometheus server and displayed in Grafana. In order to use them you have to have a local Prometheus server running and scraping metrics on the provided port. You can specify the metrics host and port by using the environment variables `METRICS_PORT` and `METRICS_HOST`.
+
+#### Setting up the Grafana dashboard
+
+The Subgraph Radio Grafana dashboard is included by default in Stakesquid's docker-compose stack. If you're not using the stack, below is a walk-through of how you can set it up.
+
+There is a [Grafana dashboard config JSON file](https://github.com/graphops/subgraph-radio/blob/dev/grafana.json) provided in the repo, which you can import and use to visualise the metrics in Grafana. When importing the dashboard, it will require you to specify two data sources - a Prometheus one and a GraphQL one. For Prometheus you should select the Prometheus instance that you've set up to scrape metrics from Subgraph Radio's metrics host and port. For GraphQL, you'd need to install the [GraphQL data source plugin](https://grafana.com/grafana/plugins/fifemon-graphql-datasource/?tab=installation), if you don't have it already installed. Then you need to create a new GraphQL data srouce that points to the GraphQL API of the Radio's integrated HTTP server. For instance, if you've set `SERVER_HOST` to` 0.0.0.0` and `SERVER_PORT` to `3012`, your GraphQL data source would need to point at `http://0.0.0.0:3012/api/v1/graphql`. You can learn more about the HTTP server in the next section.
+
+#### Reading the Grafana dashboard
+
+When the Subgraph Radio Grafana dashboard has been set up, it offers 6 panels:
+
+##### POI Comparison Overview
+
+At a glance, you can see the number of matching and diverging subgraphs. These two gauges update to reflect the results continiously after each comparison. The reason these are gauges and not counters is because a subgraph's comparison result can change between POI comparison events, for instance you might have a diverging public POI for a given subgraph on block X, but then at block Y it could be matching with the consensus public POI, in that case is would change groups, the number of divergent subgraphs would decrement and the number of matching subgraphs would increment.
+
+##### Message stats
+
+This includes the validated messages per minute, as well as the total cached messages in the store.
+
+##### Number of Gossiping Indexers per Subgraph
+
+This panel shows how many Indexers are actively sending public POIs for the subgraphs that you're interested in. This view can be filtered by a specific subgraph.
+
+##### POI Comparison Results
+
+This is the most insightful and important panel. The data in it is coming directly from the HTTP server's GraphQL endpoint. It shows the most recent comparison results for each subgraph that is being actively cross-checked, as well as the block for which that comparison happened.
+
+The Count Ratio shows the ratio of unique senders that have attested to a public POI for that subgraph on that block. For instance `3:1:1*` means that there are three distinct public POIs that were compared. It also means there are four Indexers attesting to public POIs that is different that the locally generated public POI, three of them attest to the same POI and the third Indexer attests to a different one, but none of those two POIs match the locally generated one. If it's `3*:1` it means that the local POI matches with the most often attested POI (highest sender count), meaning that the local Indexer is in that group of three Indexers, and there is one other Indexer who has sent a different POI. If it's `4*` it means that there are four Indexers attesting to a given POI and all four POIs are the same (the local one included). **The count that has a `*` sign is where the local attestation is.**
+
+Another possible ratio value is `3:0*`, the `0*` here represents that there is no local public POI, generated for this subgraph on this block (this might happen due to a lot of reasons, one of them being that the subgraph isn't fully synced).
+
+The Stake Ratio is similar to the Count Ratio, but POIs are grouped by stake, so `11686531*` means that that is the combined stake backing the public POI for that subgraph on that block (the local Indexer stake is included) where as for example `44141361*:651361` would mean that there are two distinct POIs and hence two different sender groups, and these two stake values are the aggregated stake values behind each of those POIs. The `*` on the first one means that the local Indexer's stake is attesting to the same public POIs and the local stake is included in that value. Similar to the Count Ratio, if there's a `0*`, for instance - `44141361:0*`, it means that there is no local public POI, generated for this subgraph on this block (therefore there is no attesting stake from the local Indexer).
+
+##### Function Call Stats
+
+Shows insights into the frequency of different functions running in the Radio, it helps convey a sense of how often/how many times certain events have happened, like POI comparison, processing a validated message, sending a message, and more.
+
+##### Number of diverged subgraphs
+
+Count of diverged subgraphs and how it's changed over time.
+
+##### Locally tracked Public POIs
+
+Number of locally generated public POIs for all of the subgraphs that are actively being cross-checked.
 
 ## HTTP Server
 
@@ -248,6 +306,7 @@ The GraphQL API now includes several advanced queries:
 
 - `radioPayloadMessages`
 - `localAttestations`
+- `upgradeIntentMessages`
 - `comparisonResults`
 - `comparisonRatio`
 
@@ -290,6 +349,12 @@ query {
     blockNumber
     stakeRatio
   }
+  upgradeIntentMessages {
+    subgraphId
+    newHash
+    nonce
+    graphAccount
+  }
 }
 ```
 
@@ -309,14 +374,9 @@ In this example, the `stakeRatio` query will return the stake ratios only for at
 
 Note: The `result_type` field of the filter corresponds to the `resultType` field in the `comparisonResults` query. This field represents the type of comparison result.
 
-`comparisonRatio` provides an overview of the consensus status of the attestations from remote messages. It gives a ratio string that signifies the number of indexers with the same public POI as the local Radio. The results are presented as `x/y!/z` where:
-
-- `x`, `y`, and `z` are sorted by descending stake weights
-- `!` indicates the entry that corresponds to the local result.
-
-For example,` 2/0!` means there are two indexers attesting with a higher sum of stake weight and no other indexer shares the same public POIs as the local Radio. `8!` means there are eight other indexers agreeing with the local Radio.
-
 `stakeRatio` orders the attestations by stake weight, then computes the ratio of unique senders.
+
+To understand more about the format of the ratio results, check out [this section](#poi-comparison-results).
 
 These queries provide a clear aggregation of the attestations from remote messages, giving a concise understanding of the Radio's state. The optional filters - deployment, block, and filter - can be used to refine the results.
 
@@ -366,8 +426,8 @@ sequenceDiagram
                         Subgraph Radio-->>Human: Send POI divergence warning notification
                     end
                 end
-                opt If VersionUpgradeMessage is received
-                    Graphcast Network-->>Subgraph Radio: VersionUpgradeMessage
+                opt If UpgradeIntentMessage is received
+                    Graphcast Network-->>Subgraph Radio: UpgradeIntentMessage
                     activate Subgraph Radio
                     Subgraph Radio-->>Human: Send Version Upgrade notification
                     opt If Indexer Management Server endpoint provided
@@ -378,44 +438,6 @@ sequenceDiagram
             end
         end
     end
-```
-
-### Gathering and comparing normalised POIs
-
-At a given interval, the Radio fetches the normalised POI for each deployment. This interval is defined in blocks different for each network. It then saves those public POIs, and as other Indexers running the Radio start doing the same, messages start propagating through the network. The Radio saves each message and processes them on a given interval.
-
-The messages include a nonce (UNIX timestamp), block number, signature (used to derive the sender's on-chain Indexer address) and network. Before saving an entry to the map, the Radio operator verifies through the Graph network subgraph for the sender's on-chain identity and amount of tokens staked, which is used during comparisons later on.
-
-```mermaid
-flowchart LR
-    a[Fetch deployment status] --> b[If healthy & synced]
-    b -->|No| eee{End}
-    b -->|Yes| c[If reached trigger block]
-    c -->|No| eee
-    c -->|Yes| d[Fetch POI for deployment]
-    d -->|Broadcast| n(Graphcast\nNetwork)
-    n -->|Receive remote POI| o[Other Indexers]
-    n --> x{End}
-```
-
-At another interval, the Radio compares the local public POIs with the collected remote ones. The remote POIs are sorted so that for each subgraph (on each block), the POI that is backed by the most on-chain stake is selected. This means that the combined stake of all Indexers that attested to it is considered, not just the highest staking Indexer. The top POI is then compared with the local POIs for that subgraph at that block to determine consensus.
-
-If there is a mismatch and if the Radio operator has set up a Slack, Discord and/or Telegram bot integration, the Radio will send alerts to the designated channels.
-
-After a successful comparison, the attestations that have been checked are removed from the store.
-
-```mermaid
-flowchart LR
-    q[Fetch deployment status] --> g[Has collection window expired?]
-    g -->|Yes| t[Compute consensus remote POI]
-    g -->|No| p{End}
-    c -->|Aggregate| t
-    a[Receive POI attestations] --> b[Has collection window expired?]
-    b -->|Yes| eee{End}
-    b -->|No| c[Store remote attestation\nfor deployment]
-    t --> l[Does local POI match remote consensus POI?]
-    l -->|No| i[Send notification]
-    l -->|Yes| d{End}
 ```
 
 ## Developing the Subgraph Radio

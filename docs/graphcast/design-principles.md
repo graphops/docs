@@ -49,6 +49,4 @@ Indexers must generate valid POIs to earn indexing rewards. Indexers find it ben
 
 #### Subgraph Upgrade Pre-sync
 
-The subgraph upgrade pre-sync feature provides a way for Subgraph Developers to signal when they plan on releasing a new subgraph version, thereby allowing Indexers to start syncing the subgraph in advance. If the Radio operator has set up the notification system, they will get notified whenever a new subgraph upgrade intent message is received.
-
-If the `INDEXER_MANAGEMEN_SERVER_ENDPOINT` configuration variable has been set, the Radio will send a request to the Indexer Agent to start offchain syncing the new Subgraph deployment.
+The subgraph upgrade pre-sync feature provides a way for Subgraph Developers to signal when they plan on releasing a new subgraph version, thereby allowing Indexers to start syncing the subgraph in advance. You can learn more about the feature [here](https://docs.graphops.xyz/graphcast/radios/subgraph-radio/subgraph_upgrade).
