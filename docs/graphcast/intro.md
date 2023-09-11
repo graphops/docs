@@ -4,9 +4,19 @@ sidebar_position: 1
 
 # Introduction
 
+![Why Graphcast 1](/img/graphcast-why-signals.svg)
+
 Is there something you'd like to learn from or share with your fellow Indexers in an automated manner, but it's too much hassle or costs too much gas?
 
-Currently, the cost to broadcast information to other network participants is determined by gas fees on the Ethereum blockchain. Graphcast solves this problem by acting as an optional decentralized, distributed peer-to-peer (P2P) communication tool that allows Indexers across the network to exchange information in real time. The cost of exchanging P2P messages is near zero, with the tradeoff of no data integrity guarantees. Nevertheless, Graphcast aims to provide message validity guarantees (i.e. that the message is valid and signed by a known protocol participant) with an open design space of reputation models.
+![Why Graphcast 2](/img/graphcast-why-blockchain.svg)
+
+When using the protocol, the cost to broadcast information to other network participants is determined by gas fees on the blockchain.
+
+![Why Graphcast 3](/img/graphcast-why-gossip.svg)
+
+Graphcast solves this problem by acting as an optional decentralized, distributed peer-to-peer (P2P) communication tool that allows Indexers across the network to exchange information in real time. The cost of exchanging P2P messages is near zero, with the tradeoff of no data integrity guarantees. Nevertheless, Graphcast aims to provide message validity guarantees (i.e. that the message is valid and signed by a known protocol participant) with an open design space of reputation models.
+
+![What is Graphcast](/img/graphcast-what.svg)
 
 The Graphcast SDK (Software Development Kit) allows developers to build Radios, which are gossip-powered applications that Indexers can run to serve a given purpose. We also intend to create a few Radios (or provide support to other developers/teams that wish to build Radios) for the following uses cases:
 

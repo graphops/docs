@@ -3,9 +3,9 @@ sidebar_position: 20
 ---
 # Server Side Stack
 
-![Server Side Stack](/img/server-side-stack.svg)
+![Server Side Stack](/img/launchpad-server-side-stack.svg)
 
-## Your Kubernetes cluster
+## Your Kubernetes Cluster
 
 
 :::note

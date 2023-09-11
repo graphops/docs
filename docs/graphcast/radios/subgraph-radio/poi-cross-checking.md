@@ -1,12 +1,21 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 ---
 
-# POI cross-checking feature
+# POI Cross-checking
 
 An essential aspect of earning indexing rewards as an Indexer is the generation of valid Proof of Indexing hashes (POIs). These POIs provide evidence of the Indexer's possession of correct data. Submitting invalid POIs could lead to a [Dispute](https://thegraph.com/docs/en/network/indexing/#what-are-disputes-and-where-can-i-view-them) and possible slashing by the protocol. With Subgraph Radio's POI feature, Indexers gain confidence knowing that their POIs are continually cross-verified against those of other participating Indexers. Should there be a discrepancy in POIs, Subgraph Radio functions as an early warning system, alerting the Indexer within minutes.
 
 All POIs generated through Subgraph Radio are public (normalized), meaning they are hashed with a `0x0` Indexer Address and can be compared between Indexers. However, these public POIs are not valid for on-chain reward submission. Subgraph Radio groups and weighs public POIs according to the aggregate stake in GRT attesting to each. The normalized POI with the most substantial aggregate attesting stake is deemed canonical and used for comparisons with your local Indexer POIs.
+
+![POI Cross-checking](/img/graphcast-poi-crosschecking.svg)
+
+
+## Determining which Subgraphs to gossip about
+
+Subgraph Radio will gossip about different subgraphs depending on the `COVERAGE` configuration (see more). By default, the Radio will gossip about all healthy subgraphs, whether they are allocated to or not.
+
+Subgraph Radio periodically polls the Graph Node for new blocks on all relevant networks and constructs Graphcast topics on each allocation identified by subgraph deployment IPFS hash. Chainheads for these networks are updated with data from the Graph Node, and the Radio ensures that it is always using the latest chainhead when processing messages.
 
 ## Gathering and comparing normalised POIs
 
@@ -44,4 +53,56 @@ flowchart LR
     t --> l[Does local POI match remote consensus POI?]
     l -->|No| i[Send notification]
     l -->|Yes| d{End}
+```
+
+## Sequence Diagram
+
+```mermaid
+sequenceDiagram
+    participant Network Subgraph
+    participant Graph Node
+    participant Subgraph Radio
+    participant Graphcast Network
+    actor Human
+    participant Indexer Management Server
+    loop Track allocated deployments
+        opt
+            Subgraph Radio->>+Network Subgraph: Get latest allocated deployments
+            Network Subgraph->>-Subgraph Radio: Return allocated deployments
+        end
+        loop Monitor allocated deployments and chain heads
+            Subgraph Radio->>+Graph Node: Get indexing statuses for relevant deployments
+            Graph Node->>-Subgraph Radio: Return matching indexing statuses
+            activate Subgraph Radio
+            Subgraph Radio->>Subgraph Radio: Update chain heads
+            deactivate Subgraph Radio
+            loop For each deployment that we are tracking
+                opt If deployment reached trigger block is healthy
+                    Subgraph Radio->>+Graph Node: Fetch POI for deployment
+                    Graph Node->>-Subgraph Radio: Normalized POI
+                    activate Subgraph Radio
+                    Subgraph Radio->>Subgraph Radio: Generate signed POI Attestation
+                    deactivate Subgraph Radio
+                    Subgraph Radio-->>Graphcast Network: Broadcast POI Attestation to Graphcast Network
+                end
+                opt If stored remote attestations and collect message duration passed
+                    activate Subgraph Radio
+                    Subgraph Radio->>Subgraph Radio: Compute consensus remote POI
+                    deactivate Subgraph Radio
+                    opt If local POI mismatches consensus remote POI
+                        Subgraph Radio-->>Human: Send POI divergence warning notification
+                    end
+                end
+                opt If UpgradeIntentMessage is received
+                    Graphcast Network-->>Subgraph Radio: UpgradeIntentMessage
+                    activate Subgraph Radio
+                    Subgraph Radio-->>Human: Send Version Upgrade notification
+                    opt If Indexer Management Server endpoint provided
+                        Subgraph Radio->>Indexer Management Server: Sends offchain sync request for new deployment hash
+                    end
+                    deactivate Subgraph Radio
+                end
+            end
+        end
+    end
 ```
