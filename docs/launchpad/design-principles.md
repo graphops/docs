@@ -4,7 +4,7 @@ sidebar_position: 4
 
 # Design Principles
 
-![Design Principles](/img/design-principles-slide.svg)
+![Design Principles](/img/launchpad-design-principles-slide.svg)
 
 ## Launchpad Components
 

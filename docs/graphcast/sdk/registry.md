@@ -2,7 +2,7 @@
 sidebar_position: 2
 ---
 
-# Registry
+# Registry Contract
 
 The Graphcast Registry contracts allow an address to set a `GraphcastID` by calling `setGraphcastID(indexer_address, graphcastID_address)` as either an Indexer or an Indexer operator, or calling `setGraphcastID(graphcastID_address)` as the Indexer address. The relationship between an Indexer address to its GraphcastID is limited to 1:1, and cannot be set to itself. This restriction provides consistency and security for the Indexer identity to operate on Graphcast as one GraphcastID operating across Radio applications. To learn more about the registry, you can check out [the Github repository](https://github.com/graphops/graphcast-registry).
 

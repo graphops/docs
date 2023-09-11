@@ -3,7 +3,9 @@ sidebar_position: 20
 ---
 # Server Side Stack
 
-## Your Kubernetes cluster
+![Server Side Stack](/img/launchpad-server-side-stack.svg)
+
+## Your Kubernetes Cluster
 
 Launchpad V2 requires users to bring their own Kubernetes cluster. This approach ensures that users are not tied to a specific Kubernetes distribution or mode of installation.
 
@@ -13,7 +15,7 @@ Once your Kubernetes cluster is ready, head over to [Quick Start](quick-start).
 
 ## Launchpad Namespaces
 
-![Server Side Stack](/img/server-side-stack.svg)
+![Server Side Stack](/img/launchpad-server-side-stack.svg)
 
 
 See the [Launchpad Namespaces repository](https://github.com/graphops/launchpad-namespaces) for details about which namespaces are available, as well as which Helm Releases are specified within each one.
