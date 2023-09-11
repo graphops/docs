@@ -15,7 +15,7 @@ Once your Kubernetes cluster is ready, head over to [Quick Start](quick-start).
 
 ## Launchpad Namespaces
 
-![Server Side Stack](/img/server-side-stack.svg)
+![Server Side Stack](/img/launchpad-server-side-stack.svg)
 
 
 See the [Launchpad Namespaces repository](https://github.com/graphops/launchpad-namespaces) for details about which namespaces are available, as well as which Helm Releases are specified within each one.
