@@ -4,7 +4,7 @@
 
 ## Introduction
 
-[Kubernetes](https://kubernetes.org/) is the container orchestration system emerging as the victor of the container wars.
+[Kubernetes](https://kubernetes.io/ is the container orchestration system emerging as the victor of the container wars.
 Some of its characteristics that stand out are:
 
 - being opensource
