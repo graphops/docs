@@ -37,9 +37,17 @@ Launchpad comes with a [series of tools](client-side-tooling) that should run on
 
 Currently, Launchpad comes with support for Linux and MacOS clients. Windows is currently not supported, though you may be able to use Launchpad using the *Windows Subsystem for Linux*.
 
-## A Kubernetes cluster 
+## Knowledge of Kubernetes and a Kubernetes cluster
 
-You will need to provision a Kubernetes cluster. This can be a self-managed cluster (see our [guide using Fedora CoreOS](guides/install-fcos)), or a managed cluster from a major Cloud Provider like AWS or GCP.
+The Launchpad project requires a certain level of familiarity with [Kubernetes](https://kubernetes.org/) and its intricacies. The extent of this Kubernetes expertise depends on your choice of cluster. Opting for a managed cluster from a leading Cloud Provider requires less intensive Kubernetes knowledge, as operating such a cluster is more straightforward, necessitating only a fundamental grasp of different Kubernetes resource types.
+
+However, it's essential to note that managed clusters can be very costly when running blockchains. In contrast, selecting a self-managed cluster demands a deeper understanding, encompassing all components necessary for cluster provisioning and management - for more details on this please checkout our [Kubernetes guide](guides/kubernetes-guide.md). Regardless of your choice, you'll need to create a Kubernetes cluster. This can involve setting up a self-managed cluster, as outlined in our [Fedora CoreOS guide](guides/install-fcos.md), or opting for a managed cluster provided by a major Cloud Provider like AWS or GCP.
+
+## Operational knowledge of Helm
+
+Launchpad operates in tandem with [Helm](https://helm.sh/) and [helm-charts](https://helm.sh/docs/topics/charts/). However, no need to worry if you're new to Helm or chart authoring – we've got you covered. Launchpad leverages a combination of widely used and publicly available charts (ie. [grafana/helm-charts](https://github.com/grafana/helm-charts)), along with our in-house helm-charts, [launchpad-charts](https://github.com/graphops/launchpad-charts). This ensures a seamless experience without the need for in-depth Helm expertise.
+
+In addition, we abstracted some of the Helm usage by using tasks ( ie. `task releases:apply` or `task releases:delete`) as outlined in our [Quick Start](quickstart) guide. As such, all you need is a basic understanding of Helm's core functions and [release management](https://helm.sh/docs/intro/using_helm/). Writing helm-charts is not a prerequisite for most users, as we provide the necessary charts to streamline your experience.
 
 ## Willingness to learn and contribute
 
