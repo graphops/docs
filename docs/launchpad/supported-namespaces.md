@@ -11,7 +11,7 @@ Launchpad includes a number of prepackaged Kubernetes namespaces (see [Launchpad
 - Evolve the Launchpad stack to meet the evolving operational needs of these applications
 - Offer support for operators experiencing challenges with these namespaces
 
-This strategy is rooted in GraphOps' active usage of these namespaces and the applications within them.
+This strategy is rooted in GraphOps' active usage of these namespaces and the applications within them. For more details on how a new application makes it from a `canary` release all the way to a `stable` launchpad-namespace please check out our [`release-channels`](release-channels.md) guide
 
 We welcome third-party contributors to add support for additional namespaces and applications.
 
