@@ -14,9 +14,14 @@
   --ifm-color-primary-lighter: #81bba3;
   --ifm-color-primary-lightest: #D9ECF3;
   --ifm-footer-background-color: #33474D;
+  --ifm-font-size-base: 110%;
   --ifm-code-font-size: 95%;
   --prism-background-color: #243D42;
   font-family: 'Avenir Next', Montserrat, sans-serif;
+}
+
+body {
+  font-size: var(--ifm-font-size-base);
 }
 
 html[data-theme="dark"] {
