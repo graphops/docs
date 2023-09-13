@@ -45,7 +45,7 @@ However, it's essential to note that managed clusters can be very costly when ru
 
 ## Operational knowledge of Helm
 
-Launchpad operates in tandem with [Helm](https://helm.sh/) and [helm-charts](https://helm.sh/docs/topics/charts/). However, no need to worry if you're new to Helm or chart authoring – we've got you covered. Launchpad leverages a combination of widely used and publicly available charts (ie. [grafana/helm-charts](https://github.com/grafana/helm-charts)), along with our in-house helm-charts, [launchpad-charts](https://github.com/graphops/launchpad-charts). This ensures a seamless experience without the need for in-depth Helm expertise.
+Launchpad operates in tandem with [Helm](https://helm.sh/) and [Helm Charts](https://helm.sh/docs/topics/charts/). However, no need to worry if you're new to Helm or chart authoring – we've got you covered. Launchpad leverages a combination of widely used and publicly available charts (ie. [grafana/helm-charts](https://github.com/grafana/helm-charts)), along with our in-house helm-charts, [launchpad-charts](https://github.com/graphops/launchpad-charts). This ensures a seamless experience without the need for in-depth Helm expertise.
 
 In addition, we abstracted some of the Helm usage by using tasks ( ie. `task releases:apply` or `task releases:delete`) as outlined in our [Quick Start](quick-start.md) guide. As such, all you need is a basic understanding of Helm's core functions and [release management](https://helm.sh/docs/intro/using_helm/). Writing helm-charts is not a prerequisite for most users, as we provide the necessary charts to streamline your experience.
 
