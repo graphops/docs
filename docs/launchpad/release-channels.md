@@ -19,7 +19,7 @@ The diagram below provides a visual representation illustrating the interdepende
 Below you can find a more comprehensive breakdown of the process, divided into automated workflows within launchpad-charts and launchpad-namespaces, as well as manual operator steps. This process guides the transition of a new application version from the initial launchpad-charts canary release to its eventual stability within the corresponding launchpad-namespace. For this walkthrough we will use Erigon as an example.
 
 **launchpad-charts** 
-  - Bot watches [Erigon tags](https://github.com/ledgerwatch/erigon/tags) and as a new version is published it opens a PR into [`launchpad-charts/charts/erigon` ](https://github.com/graphops/launchpad-charts/pull/133)
+  - On each run, bot looks-up [Erigon tags](https://github.com/ledgerwatch/erigon/tags) and upon finding a new version, opens a PR into [`launchpad-charts/charts/erigon` ](https://github.com/graphops/launchpad-charts/pull/133)
   - The new PR triggers a workflow that publishes a new [`pre-release`](https://github.com/graphops/launchpad-charts/releases/tag/erigon-0.8.1-canary.1) into the repo.
   - Another workflow runs and adds the newly released `canary` chart to the `canary` Helm repo index
 
