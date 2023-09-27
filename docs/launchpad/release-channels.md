@@ -8,7 +8,7 @@ Due to the intricate nature of managing indexing operations for multiple blockch
 
 For a reminder of the various components within Launchpad and their intricate connections, we recommend revisiting our [Intro](intro.md).
 
-This guide offers a comprehensive walkthrough, outlining the steps, automated and manual, required to introduce a new application, ie. Erigon, into the 'launchpad-charts' repository as a **canary** release and ultimately transitioning it to a **stable** state within its designated 'launchpad-namespace,' such as Ethereum. 
+This guide offers a comprehensive walkthrough, outlining the steps, automated and manual, required to introduce a new version release of an application, ie. Erigon, into the 'launchpad-charts' repository as a **canary** release and ultimately transitioning it to a **stable** state within its designated 'launchpad-namespace,' such as Ethereum. 
 
 The diagram below provides a visual representation illustrating the interdependence and impact of various components and workflows.
 
