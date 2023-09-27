@@ -25,7 +25,7 @@ Below you can find a more comprehensive breakdown of the process, divided into a
 
 **launchpad-namespaces** 
   - Bot sees new chart release and pushes update branch and opens a [new PR to namespaces](https://github.com/graphops/launchpad-namespaces/pull/38)
-  - Bot runs again, and auto-merges the PR to create a tag, triggers workflow to create a release
+  - Bot runs again, auto-merges the PR and creates a tag
   - Workflow runs, updates semver tags
 
 **operator**
