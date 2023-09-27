@@ -16,7 +16,7 @@ The diagram below provides a visual representation illustrating the interdepende
 
 # From new version to `launchpad-namespaces` stable
 
-Below you can find a more comprehensive breakdown of the process, divided into automated workflows within launchpad-charts and launchpad-namespaces, as well as manual operator steps. This process guides the transition of a new application version from the initial launchpad-charts canary release to its eventual stability within the corresponding launchpad-namespace. For this walkthrough we will use Erigon as an example.
+Below you can find a more comprehensive breakdown of the process, divided into automated workflows within `launchpad-charts` and `launchpad-namespaces`, as well as manual operator steps. This process guides the transition of a new application version from the initial `launchpad-charts` canary release to its eventual stability within the corresponding `launchpad-namespaces`. For this walkthrough we will use Erigon as an example.
 
 **launchpad-charts** 
   - On each run, bot looks-up [Erigon tags](https://github.com/ledgerwatch/erigon/tags) and upon finding a new version, opens a PR into [`launchpad-charts/charts/erigon` ](https://github.com/graphops/launchpad-charts/pull/133)
@@ -24,7 +24,7 @@ Below you can find a more comprehensive breakdown of the process, divided into a
   - Another workflow runs and adds the newly released `canary` chart to the `canary` Helm repo index
 
 **launchpad-namespaces** 
-  - Bot sees new chart release and pushes update branch and opens a [new PR to namespaces](https://github.com/graphops/launchpad-namespaces/pull/38)
+  - On each run, bot checks for new chart releases and upon finding one, pushes an update branch and opens a [new PR to namespaces](https://github.com/graphops/launchpad-namespaces/pull/38)
   - Bot runs again, auto-merges the PR and creates a tag
   - Workflow runs, updates semver tags
 
