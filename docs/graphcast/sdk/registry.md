@@ -62,6 +62,6 @@ Here are the endpoints available on the hosted service.
 | Protocol Network | Graphcast Network | Registry Subgraph Endpoint                                                       | Network Subgraph Endpoint                                                             |
 | ---------------- | ----------------- | -------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------- |
 | Ethereum Mainnet | `mainnet`         | `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet`     | `https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-mainnet`         |
-| Goerli           | `testnet`         | `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-goerli`      | `https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-goerli/network`  |
+| Goerli           | `testnet`         | `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-goerli`      | `https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-goerli`  |
 | Arbitrum-One     | `mainnet`         | `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arb-one`     | `https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-arbitrum`        |
 | Arbitrum-Goerli  | `testnet`         | `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arbitrum-go` | `https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-arbitrum-goerli` |
