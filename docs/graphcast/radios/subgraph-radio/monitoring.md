@@ -1,13 +1,26 @@
 ---
 sidebar_position: 4
 ---
+
 # Notifications and Monitoring
 
 ## Notifications
 
 If the Radio operator has set up a Slack, Discord and/or Telegram bot integration and the Radio finds a POI mismatch, it sends alerts to the designated channels. The operator can also inspect the logs to see if the Radio is functioning properly, if it's sending and receiving messages, if it's comparing normalised POIs, if there is a found POI mismatch, etc.
 
-[See more information](advanced-configuration) about Slack, Discord and Telegram configuration.
+### Notification modes
+
+Subgraph Radio supports three modes of notification, based on the user's preference for how often they'd like to get notified, and what data the notifications contain:
+
+- `live` - the Radio sends a notification as soon as it finds a divergence, providing the Subgraph deployment and the block.
+- `periodic-update` - the Radio sends a notification on a specified interval (default is 24 hours) containing any updates to comparison results that have happened since the previous notification (the notification message format is the same as the one using live mode). If there are no updates it will not send a notification.
+- `periodic-report` - the Radio sends a notification on a specified interval (default is 24 hours) with a summary of total subgraphs being cross-checked, number of matched subgraphs, number of diverged subgraphs, and a list of the divergent subgraphs and the blocks where the divergence was caught.
+
+The default notification mode if there's Slack/Discord/Telegram integration in place is `live`.
+
+The notification mode can be toggled using the `NOTIFICATION_MODE` and `NOTIFICATION_INTERVAL` configuration variables.
+
+See more information on how to configure notifications, as well as how to set up Slack, Discord and Telegram in the [advanced configuration section](advanced-configuration).
 
 ## Prometheus & Grafana
 

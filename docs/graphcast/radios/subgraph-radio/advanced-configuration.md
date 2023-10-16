@@ -1,6 +1,7 @@
 ---
 sidebar_position: 5
 ---
+
 # Advanced Configuration
 
 In the configuration table below is the full list of environment variables you can set, along with example values.
@@ -37,6 +38,8 @@ See [Basic Configuration in the Introduction](intro#basic-configuration). The fo
 | `AUTO_UPGRADE`                       | Toggle for the types of subgraphs for which the Radio will send offchain syncing commands to the indexer management server. Default to upgrade all syncing deployments. Possible values: "comprehensive", "on-chain", "minimal", "none". Default is set to "comprehensive" coverage. |
 | `RATELIMIT_THRESHOLD`                | Set upgrade intent ratelimit in seconds: only one upgrade per subgraph within the threshold (default: 86400 seconds = 1 day)                                                                                                                                                         |
 | `PROTOCOL_NETWORK`                   | The protocol network (currently matches with suffix of the provided `NETWORK_SUBGRAPH` configuration variable)                                                                                                                                                                       |
+| `NOTIFICATION_MODE`                  | Options: `live`, `periodic-report`, `periodic-update`. Learn more about notification modes [here](monitoring#notification-modes). Default: `live`                                                                                                                                    |
+| `NOTIFICATION_INTERVAL`              | Interval (in hours) between sending a divergence notification (used in the `periodic-update` and `periodic-report` nofitification modes). Learn more about notification modes [here](monitoring#notification-modes). Default: 24                                                     |
 
 :::info
 For enhanced security, we recommend running Subgraph Radio with an independent Graphcast ID linked to your Indexer account. This Graphcast ID is an Ethereum account authorized to sign Graphcast messages on behalf of your Indexer. By default, Subgraph Radio validates messages received from any signer, that can be resolved to an Indexer address, regardless of whether or not they are registered on the Graphcast registry (though this behavior can be altered by setting the `ID_VALIDATION` config variable). Learn how to register a Graphcast ID [here](https://docs.graphops.xyz/graphcast/sdk/registry#register-a-graphcast-id).
