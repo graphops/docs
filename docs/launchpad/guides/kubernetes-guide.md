@@ -198,7 +198,7 @@ and then proceed to install cilium with default options by running:
 
 ### Adding more control-plane nodes
 
-If you have gone with the default topology setup, *kubeadm* should be instantiating *etcd* instances co-located with your control-plane nodes. Given that and the fact that *etcd* is a majority quorum based system, it's specially important that for a high-availability setup you'll keep an ***odd*** (i.e: one, thee, five, ...) number of control-plane nodes. As such, the minimum number of control-plane nodes that can offer high-availability would be three.
+If you have gone with the default topology setup, *kubeadm* should be instantiating *etcd* instances co-located with your control-plane nodes. Given that and the fact that *etcd* is a majority quorum based system, it's especially important that for a high-availability setup, you'll keep an ***odd*** (i.e: one, three, five, ...) number of control-plane nodes. As such, the minimum number of control-plane nodes that can offer high-availability would be three.
 
 To add more control-plane nodes you need to first get the hosts ready for such by:
 - preparing the node OS as required
