@@ -349,7 +349,7 @@ EOF
 
 ***Note***: If you intend to setup a HA Cluster, you should take care of setting up the VIP beforehand (be it by creating a Load Balancer in a Cloud Provider, or using a bare-metal solution based on something like [Keepalived](https://www.keepalived.org/)). That VIP (or DNS) should go into the `controlPlaneEndpoint`, as changing this after creating the Cluster is an elaborate endeavour.
 
-Here, we are also passing along a specific node-ip to guarantee the internal interface is gonna be used as the node we're using has multiple interfaces/IPs, and we're skipping kube-proxy install because we intend to use cilium CNI replacing kube-proxy.
+We are specifying a particular node-IP to ensure usage of the internal interface, as our node has multiple interfaces/IPs. We are also skipping the kube-proxy installation because we plan to use Cilium CNI, which will replace kube-proxy.
 
 **10:** Initialize the Cluster:
 ```bash
