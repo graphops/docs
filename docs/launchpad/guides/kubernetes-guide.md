@@ -4,7 +4,7 @@
 
 ## Introduction
 
-[Kubernetes](https://kubernetes.io/ is the container orchestration system emerging as the victor of the container wars.
+[Kubernetes](https://kubernetes.io/) is the container orchestration system emerging as the victor of the container wars.
 Some of its characteristics that stand out are:
 
 - being opensource
@@ -28,7 +28,9 @@ Setting up, and bootstrapping a cluster involves installing and configuring all 
 
 This guide utilizes [Kubeadm](https://kubernetes.io/docs/reference/setup-tools/kubeadm/) - a tool used to bootstrap and manage the lifecycle of a Kubernetes cluster (upgrade versions, add/remove nodes). It automates the process of setting up a cluster and provides a consistent way of doing it while preserving almost as much control over the setup as a purely manual one.
 
-## Prerequisites
+## Overview
+
+### Prerequisites
 
 - At least a node configured with your Linux OS of choice and swap disabled - recent Kubernetes versions allow the host to have swap enabled, but that is a new feature not yet in GA (General Availability) and requires extra setup.
 - The [container runtime](https://kubernetes.io/docs/setup/production-environment/container-runtimes/) of choice. We favored CRI-O, and would recommend that one. 
@@ -41,7 +43,7 @@ This guide utilizes [Kubeadm](https://kubernetes.io/docs/reference/setup-tools/k
 
 Lastly, there is one networking setup requirement, or choice: there needs to be an endpoint for the control-plane API (an IP address, and optionally, a DNS that resolves to that IP). In the special case of a single-node cluster, picking the IP of the listening interface fits the bill. But, more generally, one would either setup a Load Balancer if setting up the cluster on a Cloud Provider, and use that Load Balancer's IP / DNS, or in case of a multi-node control-plane in bare metal, one may setup something such as [Keepalived](https://keepalived.readthedocs.io/en/latest/introduction.html) to have a floating IP suitable to be used as the control-plane endpoint.
 
-## Bootstrapping a cluster with Kubeadm
+### Bootstrapping a cluster with Kubeadm
 
 A feature that stands out in *kubeadm* is the ability to customize almost every option of the underlying components. That configuration is passed via flags to *kubeadm*, or ingested via YAML files.
 *Kubeadm* always bootstraps a cluster as a single control-plane node, and other nodes are added after the bootstrapping.
@@ -51,9 +53,10 @@ Create a cluster-config.yaml file as the following:
 ```yaml
 apiVersion: kubeadm.k8s.io/v1beta3
 kind: InitConfiguration
-kubeletExtraArgs:
-  cgroup-driver: systemd
-taints: []
+nodeRegistration:
+  kubeletExtraArgs:
+    cgroup-driver: systemd
+  taints: []
 ---
 apiVersion: kubeadm.k8s.io/v1beta3
 kind: ClusterConfiguration
@@ -169,7 +172,7 @@ NAME   STATUS   ROLES           AGE   VERSION
 demo   Ready    control-plane   10s   v1.25.9
 ```
 
-## Installing a CNI
+### Installing a CNI
 
 Kubernetes follows a very modular API interface based design. Some of those components, like the CSI (https://kubernetes.io/blog/2019/01/15/container-storage-interface-ga/ ) CNI (https://kubernetes.io/docs/concepts/extend-kubernetes/compute-storage-net/network-plugins/) or Ingress controller, come together to form the core of most kubernetes platform setups.
 
@@ -193,7 +196,7 @@ and then proceed to install cilium with default options by running:
 /usr/local/bin/cilium install
 ```
 
-## Adding more control-plane nodes
+### Adding more control-plane nodes
 
 If you have gone with the default topology setup, *kubeadm* should be instantiating *etcd* instances co-located with your control-plane nodes. Given that and the fact that *etcd* is a majority quorum based system, it's specially important that for a high-availability setup you'll keep an ***odd*** (i.e: one, thee, five, ...) number of control-plane nodes. As such, the minimum number of control-plane nodes that can offer high-availability would be three.
 
@@ -203,7 +206,9 @@ To add more control-plane nodes you need to first get the hosts ready for such b
 
 and then execute, on that node, the appropriate `kubeadm join` command as shown in the previous `kubeadm init` output.
 For a control-plane node, that takes the form: 
-`kubeadm join <endpoint> --token <secret> --discovery-token-ca-cert-hash sha256:<hash> --control-plane --certificate-key <secret>`
+```bash
+kubeadm join <endpoint> --token <secret> --discovery-token-ca-cert-hash sha256:<hash> --control-plane --certificate-key <secret>
+```
 
 *Note*: the `kubeadm join` commands shown after bootstrapping the cluster or, rather, the secrets uploaded and displayed are temporary and expire after a certain time. In case you lost them or they've expired, you can re-upload new certificates and display the new ones, on the bootstrapping control-plane node, by running:
 ```bash
@@ -211,14 +216,16 @@ kubeadm init phase upload-certs --upload-certs
 kubeadm token create --print-join-command
 ```
 
-## Adding worker nodes
+### Adding worker nodes
 
 To add worker nodes to your cluster, first get them ready for such by:
 - preparing the node OS as required
 - provisioning the required tools and software as in the first bootstrapping node (container runtime engine, kubelet, kubeadm, kubectl, ...)
 
 Next, you can run the appropriate `kubeadm join` command that was displayed at cluster bootstrap. It has the form:
-`kubeadm join <endpoint> --token <secret> --discovery-token-ca-cert-hash sha256:<hash>`
+```bash
+kubeadm join <endpoint> --token <secret> --discovery-token-ca-cert-hash sha256:<hash>
+```
 
 In case you haven't saved that output, you can run (on one of the existing control-plane cluster members) the following command:
 ```bash
@@ -226,3 +233,89 @@ kubeadm token create --print-join-command
 ```
 
 which will display you the appropriate kubeadm join command and the relevant secrets, again.
+
+## QuickStart on Ubuntu 22.04 with CRI-O
+
+*Note*: This guide assumes you'll be running these commands as root.
+
+### Prerequisites
+
+**1:** Enable the required kernel modules on boot:
+```bash
+cat <<EOF > /etc/modules-load.d/crio-network.conf
+overlay
+br_netfilter
+EOF
+```
+
+and load them now:
+```bash
+modprobe overlay
+modprobe br_netfilter
+```
+
+**2:** Set appropriate networking sysctl toggles:
+```bash
+cat <<EOF > /etc/sysctl.d/99-kubernetes.conf
+net.bridge.bridge-nf-call-iptables  = 1
+net.ipv4.ip_forward                 = 1
+net.bridge.bridge-nf-call-ip6tables = 1
+EOF
+```
+
+and apply them immediately:
+```bash
+sysctl --system
+```
+
+**3:** Disable swap:
+```bash
+swapoff -a
+```
+
+and take care to disable swap setup on boot, in case it is enabled (maybe on /etc/fstab)
+
+### Install packages
+
+**4:** Install dependencies:
+```bash
+apt-get update
+apt-get install -y apt-transport-https ca-certificates curl gpg
+```
+
+**5:** Set variables for CRI-O commands:
+```bash
+export OS="xUbuntu_22.04"
+export VERSION="1.28"
+```
+
+**6:** Install CRI-O:
+```bash
+echo "deb [signed-by=/usr/share/keyrings/libcontainers-archive-keyring.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable.list
+echo "deb [signed-by=/usr/share/keyrings/libcontainers-crio-archive-keyring.gpg] https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$VERSION/$OS/ /" > /etc/apt/sources.list.d/devel:kubic:libcontainers:stable:cri-o:$VERSION.list
+
+mkdir -p /usr/share/keyrings
+curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable/$OS/Release.key | gpg --dearmor -o /usr/share/keyrings/libcontainers-archive-keyring.gpg
+curl -L https://download.opensuse.org/repositories/devel:/kubic:/libcontainers:/stable:/cri-o:/$VERSION/$OS/Release.key | gpg --dearmor -o /usr/share/keyrings/libcontainers-crio-archive-keyring.gpg
+
+apt-get update
+apt-get install cri-o cri-o-runc
+
+systemctl daemon-reload
+```
+
+**7:** Install kubernetes pacakges:
+```bash
+curl -fsSL https://pkgs.k8s.io/core:/stable:/v${VERSION}/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v${VERSION}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+apt-get update
+apt-get install -y kubelet kubeadm kubectl
+```
+
+**8:** Hold package versions so they don't auto-update:
+```bash
+apt-mark hold kubelet kubeadm kubectl
+```
+
+### Initialize the Cluster
+
