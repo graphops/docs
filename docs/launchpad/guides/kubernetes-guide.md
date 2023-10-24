@@ -232,7 +232,7 @@ In case you haven't saved that output, you can run (on one of the existing contr
 kubeadm token create --print-join-command
 ```
 
-which will display you the appropriate kubeadm join command and the relevant secrets, again.
+which will display the appropriate kubeadm join command and the relevant secrets, again.
 
 ## QuickStart on Ubuntu 22.04 with CRI-O
 
