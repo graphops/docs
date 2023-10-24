@@ -433,6 +433,7 @@ nodeRegistration:
     node-ip: 10.110.0.5
 controlPlane:
   certificateKey: <ca certificate key>
+EOF
 ```
 
 The `<token>`,`<ca cert hash>` and `<ca certificate key>` will have been output by kubeadm at the initialization step (previous step 10). If you don't have them anymore or the token has expired, you can get a new certificateKey with:
@@ -458,6 +459,7 @@ kubeadm join --config /tmp/join-config.yaml
 
 **2:** Create a kubeadm join config:
 ```bash
+cat << EOF > /tmp/join-config.yaml
 apiVersion: kubeadm.k8s.io/v1beta3
 kind: JoinConfiguration
 discovery:
@@ -471,6 +473,7 @@ nodeRegistration:
     cgroup-driver: systemd
     node-ip: 10.110.0.7
   taints: []
+EOF
 ```
 
 The `<token>` and `<ca cert hash>` will have been output by kubeadm at the initialization step (previous step 10). If you don't have them anymore or the token has expired, you can obtain them again by running on a control-plane node:
