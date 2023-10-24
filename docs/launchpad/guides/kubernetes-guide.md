@@ -302,6 +302,7 @@ apt-get update
 apt-get install cri-o cri-o-runc
 
 systemctl daemon-reload
+systemctl enable --now crio
 ```
 
 **7:** Install kubernetes pacakges:
@@ -319,3 +320,172 @@ apt-mark hold kubelet kubeadm kubectl
 
 ### Initialize the Cluster
 
+**9:** Create a kubeadm config for initializing the Cluster:
+```bash
+cat << EOF > /tmp/cluster-config.yaml
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: InitConfiguration
+nodeRegistration:
+  kubeletExtraArgs:
+    cgroup-driver: systemd
+    node-ip: 10.110.0.2
+  taints: []
+skipPhases:
+  - addon/kube-proxy
+---
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: ClusterConfiguration
+networking:
+  serviceSubnet: "10.96.0.0/16"
+  podSubnet: "10.10.0.0/16"
+controllerManager:
+  extraArgs:
+    allocate-node-cidrs: "true"
+    node-cidr-mask-size: "20"
+kubernetesVersion: "v1.28.3"
+controlPlaneEndpoint: 10.110.0.2 
+EOF
+```
+
+***Note***: If you intend to setup a HA Cluster, you should take care of setting up the VIP beforehand (be it by creating a Load Balancer in a Cloud Provider, or using a bare-metal solution based on something like Keepalived). That VIP (or DNS) should go into the `controlPlaneEndpoint`, as changing this after creating the Cluster is an elaborate endeavor.
+
+Here, we are also passing along a specific node-ip to guarantee the internal interface is gonna be used as the node we're using has multiple interfaces/IPs, and we're skipping kube-proxy install because we intend to use cilium CNI replacing kube-proxy.
+
+**10:** Initialize the Cluster:
+```bash
+kubeadm init --upload-certs --config /tmp/cluster-config.yaml
+```
+
+**11:** Copy kubeconfig to ~/.kube/config:
+```bash
+mkdir ~/.kube
+cp /etc/kubernetes/admin.conf ~/.kube/config
+```
+
+**12:** Verify the cluster is online and ready with `kubectl get nodes`:
+```bash
+NAME                             STATUS   ROLES           AGE   VERSION
+ubuntu-s-2vcpu-4gb-amd-ams3-01   Ready    control-plane   85m   v1.28.3
+```
+
+### Install Cilium CNI
+
+**13:** Install cilium binary
+```bash
+CILIUM_CLI_VERSION=$(curl -s https://raw.githubusercontent.com/cilium/cilium-cli/master/stable.txt)
+CLI_ARCH=amd64
+cd /usr/local/bin
+curl -L --fail --remote-name-all https://github.com/cilium/cilium-cli/releases/download/${CILIUM_CLI_VERSION}/cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+sha256sum --check cilium-linux-${CLI_ARCH}.tar.gz.sha256sum
+sudo tar xzvfC cilium-linux-${CLI_ARCH}.tar.gz /usr/local/bin
+rm cilium-linux-${CLI_ARCH}.tar.gz{,.sha256sum}
+```
+
+**14:** Install cilium CNI with `cilium install`:
+```bash
+ℹ  Using Cilium version 1.14.2
+🔮 Auto-detected cluster name: kubernetes
+🔮 Auto-detected kube-proxy has not been installed
+ℹ  Cilium will fully replace all functionalities of kube-proxy
+```
+
+**15:** Wait a minute and verify it has been deployed successfully with `cilium status`:
+```bash
+    /¯¯\
+ /¯¯\__/¯¯\    Cilium:             OK
+ \__/¯¯\__/    Operator:           OK
+ /¯¯\__/¯¯\    Envoy DaemonSet:    disabled (using embedded mode)
+ \__/¯¯\__/    Hubble Relay:       disabled
+    \__/       ClusterMesh:        disabled
+
+Deployment             cilium-operator    Desired: 1, Ready: 1/1, Available: 1/1
+DaemonSet              cilium             Desired: 1, Ready: 1/1, Available: 1/1
+Containers:            cilium             Running: 1
+                       cilium-operator    Running: 1
+Cluster Pods:          2/2 managed by Cilium
+Helm chart version:    1.14.2
+Image versions         cilium             quay.io/cilium/cilium:v1.14.2@sha256:6263f3a3d5d63b267b538298dbeb5ae87da3efacf09a2c620446c873ba807d35: 1
+                       cilium-operator    quay.io/cilium/operator-generic:v1.14.2@sha256:52f70250dea22e506959439a7c4ea31b10fe8375db62f5c27ab746e3a2af866d: 1
+```
+
+Congratulations! :tada:
+
+### Add more nodes
+
+#### Control-Plane nodes
+
+**1:** On each node, repeat the previous steps for prerequisites and package installs (steps 1 to 8)
+
+**2:** Create a kubeadm join config:
+```bash
+cat << EOF > /tmp/join-config.yaml
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: JoinConfiguration
+discovery:
+  bootstrapToken:
+    token: <token>
+    apiServerEndpoint: <control plane endpoint>
+    caCertHashes:
+      - <ca cert hash>
+nodeRegistration:
+  kubeletExtraArgs:
+    cgroup-driver: systemd
+    node-ip: 10.110.0.5
+controlPlane:
+  certificateKey: <ca certificate key>
+```
+
+The `<token>`,`<ca cert hash>` and `<ca certificate key>` will have been output by kubeadm at the initialization step (previous step 10). If you don't have them anymore or the token has expired, you can get a new certificateKey with:
+```bash
+kubeadm init phase upload-certs --upload-certs
+```
+
+and obtain the token and certificate hash with:
+```bash
+kubeadm token create --print-join-command
+```
+
+We're setting node-ip here because our nodes have multiple IPs and we want to specify which interface the services should listen on.
+
+**3:** On each node, provided each join-config.yaml has been adjusted if required, join the node with:
+```bash
+kubeadm join --config /tmp/join-config.yaml
+```
+
+#### Worker nodes
+
+**1:** On each node, repeat the previous steps for prerequisites and package installs (steps 1 to 8)
+
+**2:** Create a kubeadm join config:
+```bash
+apiVersion: kubeadm.k8s.io/v1beta3
+kind: JoinConfiguration
+discovery:
+  bootstrapToken:
+    token: <token>
+    apiServerEndpoint: 10.110.0.2:6443
+    caCertHashes:
+      - <ca cert hash>
+nodeRegistration:
+  kubeletExtraArgs:
+    cgroup-driver: systemd
+    node-ip: 10.110.0.7
+  taints: []
+```
+
+The `<token>` and `<ca cert hash>` will have been output by kubeadm at the initialization step (previous step 10). If you don't have them anymore or the token has expired, you can obtain them again by running on a control-plane node:
+```bash
+kubeadm token create --print-join-command
+```
+
+We're setting node-ip here because our nodes have multiple IPs and we want to specify which interface the services should listen on.
+
+**3:** On each node, provided each join-config.yaml has been adjusted if required, join the node with:
+```bash
+kubeadm join --config /tmp/join-config.yaml
+```
+
+**4:** Label the new worker nodes, by running on a control-plane node:
+```bash
+kubectl label node <node_name> node-role.kubernetes.io/worker=""
+```
