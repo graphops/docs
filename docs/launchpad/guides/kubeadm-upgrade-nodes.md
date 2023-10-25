@@ -62,6 +62,8 @@ kubectl uncordon <node-name>
 
 **9:** Possibly, upgrade CNI. Particularly if it's a minor version upgrade there may be a need to update the CNI to a new version as well according to the vendor's release notes for the upgrade process
 
+## Upgrade remaining Control-Plane Nodes
+
 For the remaining control-plane nodes, execute steps 1 to 8, one at a time but:
 
 - step 2 is skipped, no need to plan the upgrade anymore
