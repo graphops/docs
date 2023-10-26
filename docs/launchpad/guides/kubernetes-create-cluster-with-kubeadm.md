@@ -1,6 +1,6 @@
 ---
 ---
-# Kubernetes Guide
+# Kubernetes Guide - Bootstrapping with Kubeadm
 
 ## Introduction
 
@@ -44,6 +44,8 @@ This guide utilizes [Kubeadm](https://kubernetes.io/docs/reference/setup-tools/k
 Lastly, there is one networking setup requirement, or choice: there needs to be an endpoint for the control-plane API (an IP address, and optionally, a DNS that resolves to that IP). In the special case of a single-node cluster, picking the IP of the listening interface fits the bill. But, more generally, one would either setup a Load Balancer if setting up the cluster on a Cloud Provider, and use that Load Balancer's IP / DNS, or in case of a multi-node control-plane in bare metal, one may setup something such as [Keepalived](https://keepalived.readthedocs.io/en/latest/introduction.html) to have a floating IP suitable to be used as the control-plane endpoint.
 
 ### Bootstrapping a cluster with Kubeadm
+
+*Note*: This guide provides a generalized overview of installing Kubernetes, offering insights into one of many potential approaches. Please note that specific steps may vary based on the operating system, package manager, and software versions utilized. It is intended to serve as a conceptual reference, rather than a comprehensive, step-by-step manual. Adaptations and modifications might be necessary to suit your specific environment and requirements.
 
 A feature that stands out in *kubeadm* is the ability to customize almost every option of the underlying components. That configuration is passed via flags to *kubeadm*, or ingested via YAML files.
 *Kubeadm* always bootstraps a cluster as a single control-plane node, and other nodes are added after the bootstrapping.
@@ -305,7 +307,7 @@ systemctl daemon-reload
 systemctl enable --now crio
 ```
 
-**7:** Install kubernetes pacakges:
+**7:** Install kubernetes packages:
 ```bash
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v${VERSION}/deb/Release.key | sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
 echo "deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v${VERSION}/deb/ /" | sudo tee /etc/apt/sources.list.d/kubernetes.list
