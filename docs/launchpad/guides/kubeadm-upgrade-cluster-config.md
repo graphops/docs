@@ -26,6 +26,6 @@ kubeadm upgrade apply v1.28.3
 ```
 *Note*: When using `kubectl upgrade apply`, a version must be specified. If you do not intend to upgrade the Kubernetes version, simply specify the currently installed version. This allows you to apply changes without altering the Kubernetes version.
 
-Steps **2** and **3** will need to be performed against every single control-plane node, one by one. Once those steps are performed you should see `etcd` and `kubeapi-server` pods restarted. After you perform these steps, the changes you made in the `kubeadm-config` ConfigMap the new configuration will be active.
+Steps **2** and **3** will need to be performed against every single node, both control-planes and worker nodes as applicable depending on the changes. Once those steps are performed you should see `etcd` and `kubeapi-server` pods restarted. After you perform these steps, the changes you made in the `kubeadm-config` ConfigMap the new configuration will be active.
 
 *Note*: When making modifications that affect `etcd`, it’s crucial to confirm that the changes have been successfully applied. Ensure that the new `etcd` pod is integrated into the cluster and maintains a minimum quorum of two before proceeding to apply changes to the subsequent control plane. This step is vital for sustaining the stability and resilience of the cluster during the update process.
