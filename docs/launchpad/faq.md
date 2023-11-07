@@ -16,6 +16,7 @@ Here are answers to some commonly asked questions. If you have a question that i
     - [When you setup `postgres`, how do you configure the `zfs` storage parameters?](#when-you-setup-postgres-how-do-you-configure-the-zfs-storage-parameters)
     - [Is there a way to inject a pretuned postgres config into the chart?](#is-there-a-way-to-inject-a-pretuned-postgres-config-into-the-chart)
     - [Why are my stateful pods in `Pending` state and their expected `pvc` showing `WaitForFirstConsumer` errors?](#why-are-my-stateful-pods-in-pending-state-and-their-expected-pvc-showing-waitforfirstconsumer-errors)
+    - [Do I need to use Cilium for Launchpad?](#do-i-need-to-use-cilium-for-launchpad)
   - [Need More Help?](#need-more-help)
 
 ---
@@ -83,6 +84,15 @@ Normal  WaitForFirstConsumer  6m52s                   persistentvolume-controlle
 **A:** Using [`volumeBindingMode: WaitForFirstConsumer`](https://kubernetes.io/docs/concepts/storage/storage-classes/#volume-binding-mode) although needed for both `openebs-rawfile-localpv` and `openebs-zfs-localpv` seems to misbehave when there is a `storageClass` set as default in the cluster (the `storageClass` definition has the following annotation: `storageclass.kubernetes.io/is-default-class: "true"`). Making sure there is no default `storageClass` should fix this issue.
 
 ---
+
+### Do I need to use Cilium for Launchpad?
+
+**Q: Do I need a specific CNI (Cilium, Calico etc) in order to use Launchpad?**
+
+**A:** The Launchpad stack will work regardless of CNI used and in more general terms should work will all Kubernetes clusters - so you can customize your cluster how you prefer. In our [Kubernetes guide](guides/kubernetes-create-cluster-with-kubeadm.md) we use Cilium due to its use of [eBPF](https://ebpf.io/what-is-ebpf/) technology. This advanced approach offers a significant boost in efficiency, especially noticeable when managing a large number of nodes. It scales well and ensures lower latency, which is crucial for high-performance requirements. While Calico does enjoy a broader base of community support and is a strong choice with its iptables routing, Cilium has the upper advantage due to its performance and its more expansive set of features.
+
+It's important to acknowledge that while Cilium has better performance and features than Calico, it is a bit trickier to set up. Our decision isn't influenced by Launchpad; it's purely a preference based on the operational benefits that Cilium brings to our infrastructure.
+
 
 ## Need More Help?
 
