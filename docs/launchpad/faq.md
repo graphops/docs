@@ -87,7 +87,7 @@ Normal  WaitForFirstConsumer  6m52s                   persistentvolume-controlle
 
 ### Do I need to use Cilium for Launchpad?
 
-**Q: Do I need a specific CNI(Cilium, Calico etc) in order to use Launchpad?**
+**Q: Do I need a specific CNI (Cilium, Calico etc) in order to use Launchpad?**
 
 **A:** The Launchpad stack will work regardless of CNI used and in more general terms should work will all Kubernetes clusters - so you can customize your cluster how you prefer. In our [Kubernetes guide](guides/kubernetes-create-cluster-with-kubeadm.md) we use Cilium due to its use of [eBPF](https://ebpf.io/what-is-ebpf/) technology. This advanced approach offers a significant boost in efficiency, especially noticeable when managing a large number of nodes. It scales well and ensures lower latency, which is crucial for high-performance requirements. While Calico does enjoy a broader base of community support and is a strong choice with its iptables routing, Cilium has the upper advantage due to its performance and its more expansive set of features.
 
