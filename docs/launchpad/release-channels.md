@@ -8,7 +8,7 @@ Due to the intricate nature of managing indexing operations for multiple blockch
 
 For a reminder of the various components within Launchpad and their intricate connections, we recommend revisiting our [Intro](intro.md).
 
-This guide offers a comprehensive walkthrough, outlining the steps, automated and manual, required to introduce a new version release of an application, ie. Erigon, into the 'launchpad-charts' repository as a **canary** release and ultimately transitioning it to a **stable** state within its designated 'launchpad-namespace,' such as Ethereum. 
+This guide offers a comprehensive walkthrough, outlining the steps, automated and manual, required to introduce a new version release of an application, ie. Erigon, into the `launchpad-charts` repository as a **canary** release and ultimately transitioning it to a **stable** state within its designated `launchpad-namespace`, such as Ethereum. 
 
 The diagram below provides a visual representation illustrating the interdependence and impact of various components and workflows.
 
@@ -29,9 +29,9 @@ Below you can find a more comprehensive breakdown of the process, divided into a
   - Workflow runs, updates semver tags
 
 **operator**
-  - Tests the new `canary` chart release to verify it is working properly, if it is adds commit to PR to set the `stable` chart release version
-  - Updates their helmfile reference to point at new namespace reference and runs changes against `eth-goerli` namespace using `task releases:apply -- eth-goerli`
-  - If the previous task runs successfully and workloads appear healthy, the operator updates their helmfile reference for `eth-mainnet` namespace and runs `task releases:apply -- eth-mainnet`
+  - Tests the new `canary` chart release to verify it is working properly, if it is adds commit to PR to set the `stable` chart release version. Following the merge of this PR, the new `stable` chart release is automatically issued in draft mode. This step provides the operator with an opportunity to review and manually publish the final release, ensuring precise control and quality assurance in the deployment process.
+  - Run `task releases:apply -- eth-goerli` which should pick changes from latest `ethereum` canary tag that would contain new `erigon` canary chart version.
+  - If the previous task runs successfully and workloads appear healthy, the operator updates their helmfile reference to `ethereum-canary/latest` for `eth-mainnet` namespace and runs `task releases:apply -- eth-mainnet`.
   - If `task releases:apply -- eth-mainnet` succeeds and all workloads are healthy, operator  manually tags the `ethereum` namespace as `stable`
 
 :::note
