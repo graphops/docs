@@ -30,7 +30,7 @@ Below you can find a more comprehensive breakdown of the process, divided into a
 
 **operator**
   - Tests the new `canary` chart release to verify it is working properly, if it is adds commit to PR to set the `stable` chart release version. Following the merge of this PR, the new `stable` chart release is automatically issued in draft mode. This step provides the operator with an opportunity to review and manually publish the final release, ensuring precise control and quality assurance in the deployment process.
-  - Run `task releases:apply -- eth-goerli` which should pick changes from latest `ethereum` canary tag that would contain new `erigon` canary chart version.
+  - Run `task releases:apply -- eth-goerli` which should pick changes from latest `ethereum` canary tag that would contain new `erigon` canary chart version (after renovate has run and has picked those up, which it does in 15m intervals).
   - If the previous task runs successfully and workloads appear healthy, the operator updates their helmfile reference to `ethereum-canary/latest` for `eth-mainnet` namespace and runs `task releases:apply -- eth-mainnet`.
   - If `task releases:apply -- eth-mainnet` succeeds and all workloads are healthy, operator  manually tags the `ethereum` namespace as `stable`
 
