@@ -12,7 +12,7 @@ Launchpad uses the [loki-distributed](https://github.com/grafana/helm-charts/tre
 
 *Note*: The example setups we'll show will be based on an architecture that makes use of the following components: querier, distributor, ingester, queryFrontend, gateway, compactor, ruler, indexGateway. Different architectures are possible so adjust to your needs as necessary.
 
-For an HA one thing that we will need to do is setup the several components with multiple replicas each, and loki-distributed values can be set for that purpose like in the following example snippet:
+For an HA setup, deploying several components with multiple replicas each, loki-distributed values can be set like in the following example snippet:
 ```yaml
 querier:
   replicas: 2
@@ -53,7 +53,7 @@ loki:
           replication_factor: 2
 ```
 
-*Warning*: If you use a compactor there should only be at most one instance of it.
+*Note*: If you use a compactor, only one will run at a time and it's not critical so you don't really need more than one instance of it.
 
 Besides increasing the number of replicas, ingester `replication_factor` is of particular relevance as the Distributor will distribute the write load to multiple ingesters and will require a quorum of them to have acknowledged the write (replication_factor / 2 + 1). For lowering the chances of loosing logs, a replication_factor of at least two should be used (Loki default is 3).
 
@@ -372,6 +372,8 @@ releases:
       prometheusRule:
         enabled: true
 ```
+
+*Warning*: Never try to run more than one instance of compactor. If your object storage does not support locking, it will lead to error states.
 
 where we added the bitnami repository, and a release to deploy the thanos chart from that repository. From the values used in this example, notice the `query.dnsDiscovery` and `query.replicaLabel` keys, as those values need to match the ones used in thanos prometheus sidecar, deployed in the `kube-prometheus-stack` release with the Monitoring Namespace.
 
