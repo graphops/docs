@@ -158,6 +158,7 @@ compactor:
 ```
 
 Here we are setting up object storage in the `structuredConfig` section, but to keep the credentials secret, we are adding env vars from secrets to several components and an extra command line argument `-config.expand-env=true`, the purpose of which is being able to use ENV vars in the `structuredConfig` section. With that argument, the components will replace the values such as `${S3_ACCESS_KEY_ID}` by the corresponding ENV var value upon processing the config.
+
 Besides setting up object storage, we're also configuring TSDB index schema in substitution of the default boltdb-shipper, which is a more recent and more efficient alternative to it. Doing so is not mandatory but recommended.
 
 Putting it all together and adding a few more standard options such as persistence (PVC) to some components, and enabling ServiceMonitor and Prometheus Rules, a Launchpad Monitoring namespace `helmfile.yaml` Loki config could look like:
