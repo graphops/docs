@@ -57,7 +57,7 @@ loki:
 
 Besides increasing the number of replicas, ingester `replication_factor` is of particular relevance as the Distributor will distribute the write load to multiple ingesters and will require a quorum of them to have acknowledged the write (replication_factor / 2 + 1). For lowering the chances of loosing logs, a replication_factor of at least two should be used (Loki default is 3).
 
-For storage, Loki only really supports object storage and that is then a hard requirement (note, this holds even if you don't intend to use HA and don't have more than one replica for any component, as it's still the case the storage must be shared by multiple components).
+Loki's storage fundamentally requires object storage, regardless of whether HA is used or if there's more than one replica for any component, as multiple components need to share this storage.
 
 Object storage can be setup as shown in the following snippet:
 ```yaml
