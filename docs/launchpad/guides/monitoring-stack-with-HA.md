@@ -514,7 +514,8 @@ grafana:
       password: "$__env{DATABASE_PASSWORD}"
 ```
 
-Finally, we need to adjust prometheus to increase replicas and use thanos sidecar.
+Finally, we need to adjust Prometheus to increase replicas and use Thanos sidecar.
+
 A workable set of values for accomplishing that looks like:
 
 ```yaml
