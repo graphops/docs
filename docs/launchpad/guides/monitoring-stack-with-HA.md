@@ -376,7 +376,7 @@ releases:
 
 *Warning*: Never try to run more than one instance of compactor. If your object storage does not support locking, it will lead to error states.
 
-where we added the bitnami repository, and a release to deploy the thanos chart from that repository. From the values used in this example, notice the `query.dnsDiscovery` and `query.replicaLabel` keys, as those values need to match the ones used in thanos prometheus sidecar, deployed in the `kube-prometheus-stack` release with the Monitoring Namespace.
+Where we added the bitnami repository, and a release to deploy the Thanos chart from that repository. From the values used in this example, notice the `query.dnsDiscovery` and `query.replicaLabel` keys, as those values need to match the ones used in Thanos Prometheus sidecar, deployed in the `kube-prometheus-stack` release with the Monitoring Namespace.
 
 There is one extra thing needed for Thanos, a secret with the bucket credentials as referred previously with `<<thanos-objstore-secret>>`. That secret need to have a key called `objstore.yml`, and its value content should be yaml and have keys like these:
 
