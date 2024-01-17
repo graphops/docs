@@ -4,7 +4,7 @@
 
 ## Prerequisites
 - A fully functional working Kubernetes cluster
-- Two object storage buckets: one for Logs data, with Loki, and one for Metrics data, with Thanos
+- Two object storage buckets: one for Logs data, used by Loki, and one for Metrics data, used by Thanos
 
 ## Configuring Loki for HA
 
