@@ -319,7 +319,7 @@ helmfiles:
             namespace: monitoring
 ```
 
-We've also added setting up ruler with alertmanager's endpoint (which can be deployed by the Monitoring Namespace as well, as will be seen in the Metrics section).
+We've also added setting up Ruler with Alertmanager's endpoint (which can be deployed by the Monitoring Namespace as well, as will be seen in the Metrics section).
 
 
 ## Setting up a Prometheus Stack with HA
