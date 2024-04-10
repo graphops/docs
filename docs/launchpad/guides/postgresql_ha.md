@@ -39,7 +39,7 @@ metadata:
     namespace: postgres-operator # any namespace can be used
 data:
     AWS_ENDPOINT: http://your-object-storage-endpoint.com
-    AWS_S3_FORCE_PATH_STYLE: "true" # needed if you're object storage solution uses path style bucket naming convention instead of DNS ie. Ceph
+    AWS_S3_FORCE_PATH_STYLE: "true" # needed if your object storage solution uses path style bucket naming convention instead of DNS ie. Ceph
     USE_WALG_BACKUP: "true"
     USE_WALG_RESTORE: "true"
     WALG_DISABLE_S3_SSE: "true"
