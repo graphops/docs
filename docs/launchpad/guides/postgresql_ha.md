@@ -1,14 +1,14 @@
 ---
 ---
-# PostgreSQL HA Overview
+# Overview of High Availability in PostgreSQL
 
 :::note
 This guide is currently under development. We will be expanding it shortly to include additional concepts and detailed instructions. Stay tuned for updates!
 :::
 
 ## Prerequisites
-- A fully functional working Kubernetes cluster
-- An object storage buckets: for WAL (Write Ahead Logs) archiving and basebackups
+- A fully functional working Kubernetes cluster.
+- Object storage buckets for WAL (Write-Ahead Logs) archiving and base backups.
 
 ## Configuring Postgresql with Zalando's Operator
 
