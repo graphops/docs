@@ -187,7 +187,7 @@ To start a cluster as a standby from archived WAL files, add the following `stan
 apiVersion: "acid.zalan.do/v1"
 kind: postgresql
 metadata:
-  name: primary-subgraph-data-clone
+  name: primary-subgraph-data-standby
 spec:
   standby:
     s3_wal_path: "s3://<bucketname>/spilo/<source_db_cluster>/<UID>/wal/<PGVERSION>"
