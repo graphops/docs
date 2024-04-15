@@ -131,6 +131,99 @@ Important mentions about WAL files that can impact the availability of your clus
 - Whenever taking a basebackup (new replica, standby, etc), WAL files accumulate at a fast pace and exhaust disk space. Beware of that.
 :::
 
+## Setting up Clones and Standby Clusters
+
+A Clone is a PIT copy of the production database that one would use for testing for development or for major upgrades - think of it as an independent staging area. The postgres-operator allows for two ways to create clones:
+
+- Clone from an S3 bucket (recommended)
+- Clone directly from a live instance
+
+To clone from an S3 bucket you need to define a new PostgreSQL CRD resource with `spec.clone` section defined. Example:
+
+```yaml
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: primary-subgraph-data-clone
+spec:
+  clone:
+    # can be found in the metadata.uid of the source cluster Postgresql resource def
+    uid: "efd12e58-5786-11e8-b5a7-06148230260c"
+    # name of the cluster being cloned
+    cluster: "primary-subgraph-data"
+    # the new cluster will be cloned using the latest backup available before the timestamp
+    timestamp: "2024-04-12T12:40:33+00:00"
+    s3_wal_path: "s3://custom/path/to/bucket"
+    s3_endpoint: <your-s3-endpoint>
+    s3_force_path_style: true
+  env:
+    - name: CLONE_AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: primary-subgraph-data-bucket-secret
+          key: AWS_ACCESS_KEY_ID
+    - name: CLONE_AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: primary-subgraph-data-bucket-secret
+          key: AWS_SECRET_ACCESS_KEY
+```
+
+Cloning directly from your source DB cluster is done via `pg_basebackup`. To use this feature simply define your clone's PostgreSQL CRD as above and leave out the `timestamp` field from the clone section.
+
+:::critical
+The operator will connect to the service of the source cluster by name. If the cluster is called test, then the connection string will look like host=test port=5432), which means that you can clone only from clusters within the same namespace.
+
+To set up a new standby or clone PostgreSQL instance that streams from a live instance, you must ensure that the new instance has the correct credentials. This involves [copying the credentials from the source cluster's secrets](https://github.com/zalando/postgres-operator/blob/master/docs/user.md#providing-credentials-of-source-cluster) to successfully bootstrap the standby cluster or clone.
+:::
+
+A Standby Cluster is a cluster that first clones a database, and keeps replicating changes afterwards. It can exist in a different location than its source database, but unlike cloning, the PostgreSQL version between source and target cluster has to be the same. A Standby Cluster is a great way to ensure you have a disaster recovery plan if you main database fails.
+
+Similarly to cloning you can start a Standby Cluster by streaming changes from archived WAL files or by streaming changes directly from your primary database. 
+
+To start a cluster as a standby from archived WAL files, add the following `standby` section in the Postgres CR definition:
+
+```yaml
+apiVersion: "acid.zalan.do/v1"
+kind: postgresql
+metadata:
+  name: primary-subgraph-data-clone
+spec:
+  standby:
+    # can be found in the metadata.uid of the source cluster Postgresql resource def
+    uid: "efd12e58-5786-11e8-b5a7-06148230260c"
+    # name of the cluster being cloned
+    cluster: "primary-subgraph-data"
+    # the new cluster will be cloned using the latest backup available before the timestamp
+    timestamp: "2024-04-12T12:40:33+00:00"
+    s3_wal_path: "s3://custom/path/to/bucket"
+    s3_endpoint: <your-s3-endpoint>
+    s3_force_path_style: true
+  env:
+    - name: STANDBY_AWS_ACCESS_KEY_ID
+      valueFrom:
+        secretKeyRef:
+          name: primary-subgraph-data-bucket-secret
+          key: AWS_ACCESS_KEY_ID
+    - name: STANDBY_AWS_SECRET_ACCESS_KEY
+      valueFrom:
+        secretKeyRef:
+          name: primary-subgraph-data-bucket-secret
+          key: AWS_SECRET_ACCESS_KEY
+```
+
+To start a cluster as a standby from a remote primary, add the following `standby` options in the PostgreSQL CRD definition:
+
+```yaml
+spec:
+  standby:
+    standby_host: "acid-minimal-cluster.default"
+    standby_port: "5433"
+```
+
+### Promoting a standby cluster to a database cluster
+
+To promote a standby clusters to a proper database cluster you have to ensure it stops replicating changes from the source, and start accept writes itself. To promote, remove the standby section from the postgres cluster manifest. A rolling update will be triggered removing the STANDBY_* environment variables from the pods, followed by a Patroni config update that promotes the cluster.
 
 ## Monitoring
 
