@@ -154,7 +154,7 @@ spec:
     # the new cluster will be cloned using the latest backup available before the timestamp
     timestamp: "2024-04-12T12:40:33+00:00"
     # the below s3_ parameters are required only when using non AWS S3 object storage
-    s3_wal_path: "s3://custom/path/to/bucket"
+    s3_wal_path: "s3://<bucketname>/spilo/<source_db_cluster>/<UID>/wal"
     s3_endpoint: <your-s3-endpoint>
     s3_force_path_style: true
   env:
