@@ -153,6 +153,7 @@ spec:
     cluster: "primary-subgraph-data"
     # the new cluster will be cloned using the latest backup available before the timestamp
     timestamp: "2024-04-12T12:40:33+00:00"
+    # the below s3_ parameters are required only when using non AWS S3 object storage
     s3_wal_path: "s3://custom/path/to/bucket"
     s3_endpoint: <your-s3-endpoint>
     s3_force_path_style: true
@@ -216,7 +217,7 @@ spec:
 ```
 
 :::note
-For both clones and standby clusters, specifying both S3 storage and remote live clusters as data sources is not possible; attempting to configure both simultaneously will result in an error. You must choose either S3 or a remote live cluster as the source but not both.
+For standby clusters, specifying both S3 storage and remote live clusters as data sources is not possible; attempting to configure both simultaneously will result in an error. You must choose either S3 or a remote live cluster as the source but not both.
 :::
 
 ### Promoting a standby cluster to a database cluster
