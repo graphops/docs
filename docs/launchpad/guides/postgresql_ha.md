@@ -26,7 +26,7 @@ This guide takes an indexer through the different steps needed to configure HA i
 
 ## Configuring Postgresql with Zalando's Operator
 
-Launchpad leverages the [Zalando postgres-operator](https://github.com/zalando/postgres-operator) for seamless creation and management of [PostgreSQL](https://www.postgresql.org/) databases within Kubernetes, facilitating highly-available clusters with [Patroni](https://github.com/zalando/patroni). Configuration is streamlined through Postgres manifests (CRDs), enhancing CI/CD pipeline integration by removing the need for direct Kubernetes API access and promoting infrastructure-as-code practices.
+Launchpad leverages the [Zalando postgres-operator](https://github.com/zalando/postgres-operator) for seamless creation and management of [PostgreSQL](https://www.postgresql.org/) databases within Kubernetes, facilitating highly-available clusters with [Patroni](https://github.com/zalando/patroni).
 
 Following the deployment of the [`postgres-operator` namespace](https://github.com/graphops/launchpad-namespaces/blob/main/postgres-operator/README.md), you're set to initiate PostgreSQL database creation.
 
@@ -62,7 +62,7 @@ store:
 
 The above ensures that write requests will be handled by the primary instance and read requests will be handled by replica instances.
 
-:::critical
+:::warning
 Before setting up your `graph-node-query` nodes with read-only replicas beware that there is a ongoing [issue](https://github.com/graphprotocol/graph-node/issues/4326) that makes query results not deterministic because the read replicas can trail behind the main database, usually up to 30s.
 :::
 
@@ -123,7 +123,7 @@ graph-database:
                     value: '00 00 * * sun'
 ```
 
-:::critical
+:::tip
 Important mentions about WAL files that can impact the availability of your cluster:
 
 - Should a replica experience a failure, it's important to note that WAL files will be retained and not deleted until either the replica has been successfully recovered, or removed. This retention policy is crucial for ensuring data integrity and consistency across the database cluster. However, it can lead to rapid disk space consumption, posing a risk of exhausting available storage.
@@ -171,7 +171,7 @@ spec:
 
 Cloning directly from your source DB cluster is done via `pg_basebackup`. To use this feature simply define your clone's PostgreSQL CRD as above and leave out the `timestamp` field from the clone section.
 
-:::critical
+:::info
 The operator will connect to the service of the source cluster by name. If the cluster is called test, then the connection string will look like host=test port=5432), which means that you can clone only from clusters within the same namespace.
 
 To set up a new standby or clone PostgreSQL instance that streams from a live instance, you must ensure that the new instance has the correct credentials. This involves [copying the credentials from the source cluster's secrets](https://github.com/zalando/postgres-operator/blob/master/docs/user.md#providing-credentials-of-source-cluster) to successfully bootstrap the standby cluster or clone.
@@ -190,15 +190,9 @@ metadata:
   name: primary-subgraph-data-clone
 spec:
   standby:
-    # can be found in the metadata.uid of the source cluster Postgresql resource def
-    uid: "efd12e58-5786-11e8-b5a7-06148230260c"
-    # name of the cluster being cloned
-    cluster: "primary-subgraph-data"
-    # the new cluster will be cloned using the latest backup available before the timestamp
-    timestamp: "2024-04-12T12:40:33+00:00"
-    s3_wal_path: "s3://custom/path/to/bucket"
+    s3_wal_path: "s3://<bucketname>/spilo/<source_db_cluster>/<UID>/wal/<PGVERSION>"
     s3_endpoint: <your-s3-endpoint>
-    s3_force_path_style: true
+    s3_force_path_style: true # optional but needed if your object storage solution uses path style bucket naming convention instead of DNS ie. Ceph
   env:
     - name: STANDBY_AWS_ACCESS_KEY_ID
       valueFrom:
@@ -217,13 +211,17 @@ To start a cluster as a standby from a remote primary, add the following `standb
 ```yaml
 spec:
   standby:
-    standby_host: "acid-minimal-cluster.default"
+    standby_host: "<your-source-db-host>.<namespace>"
     standby_port: "5433"
 ```
 
+:::note
+For both clones and standby clusters, specifying both S3 storage and remote live clusters as data sources is not possible; attempting to configure both simultaneously will result in an error. You must choose either S3 or a remote live cluster as the source but not both.
+:::
+
 ### Promoting a standby cluster to a database cluster
 
-To promote a standby clusters to a proper database cluster you have to ensure it stops replicating changes from the source, and start accept writes itself. To promote, remove the standby section from the postgres cluster manifest. A rolling update will be triggered removing the STANDBY_* environment variables from the pods, followed by a Patroni config update that promotes the cluster.
+To promote a standby cluster to a proper database cluster you have to ensure it stops replicating changes from the source, and starts accepting writes instead. To promote, remove the standby section from the postgres cluster manifest. A rolling update will be triggered removing the STANDBY_* environment variables from the pods, followed by a Patroni config update that promotes the cluster.
 
 ## Monitoring
 
