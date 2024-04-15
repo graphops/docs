@@ -207,7 +207,7 @@ spec:
           key: AWS_SECRET_ACCESS_KEY
 ```
 
-To start a cluster as a standby from a remote primary, add the following `standby` options in the PostgreSQL CRD definition instead of the `s3_` options:
+To start a cluster as a standby from a remote primary, add the following `standby` options in the PostgreSQL CRD definition, instead of the `s3_` options:
 
 ```yaml
 spec:
