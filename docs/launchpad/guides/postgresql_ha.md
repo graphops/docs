@@ -327,3 +327,9 @@ spec:
     matchNames:
     - <your-database-namespace>
 ```
+
+## Useful commands
+
+When using Zalando's operator, the pods running the PostgreSQL database come installed with useful scripts and CLIs as they are running the [Spilo image](https://github.com/zalando/spilo). One such functionality is `patronictl` which is used to manage and interact with your database cluster.
+
+You can use the `patroni reinit <cluster_name> <member_name>` in the event one of the cluster members needs to be reinitialized after falling out of sync with the primary due to corruption or other issues that prevent it from catching up through normal replication. It can also be used to clean a member that has been problematic or to refresh its data completely for consistency checks. This command resets a replica by wiping its existing data and then resynchronizing it from the current leader or another specified member of the cluster.
