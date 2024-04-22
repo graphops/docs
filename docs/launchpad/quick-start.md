@@ -76,7 +76,7 @@ Remember that each cluster might have specific setup steps or requirements, espe
 
 - [x] We now have our own private git repo containing the declarative configuration for our cluster deployments
 - [x] We have installed all the tooling dependencies on our local machine, which will be used to control the cluster
-- [ ] Next: Copy `sample.helmfile.yaml` to `helmfile.yaml` and edit it to customize and deploy Namespaces on the Kubernetes cluster
+- [ ] Next: Copy `sample.helmfile.yaml` to `helmfile.yaml` and edit it to select which Namespaces you would like to deploy on your Kubernetes cluster
 
 ### Customize your helmfiles
 
@@ -97,6 +97,8 @@ helmfiles:
   - path: namespaces/monitoring.yaml
   - path: namespaces/eth-sepolia.yaml
   - path: namespaces/eth-mainnet.yaml
+  - path: namespaces/arbitrum-sepolia.yaml
+  - path: namespaces/graph-arbitrum-sepolia.yaml
 ```
 
 This structure allows you to manage deployments modularly. You can add or remove entries in this list to include new namespaces or exclude those you no longer need. Each path points to a specific helmfile that defines resources to be deployed within that namespace. For instance, looking at `namespaces/storage.yaml`:
@@ -170,7 +172,98 @@ You can now use `task indexer:forward-grafana` to securely access your remote cl
 If you have existing external blockchain nodes that you would like to use instead of deploying them into your cluster, you can skip this section, but make sure that you can access those nodes securely (e.g. via an internal network, or using HTTPS and authentication).
 :::
 
-Launchpad comes with Namespace definitions for a number of blockchain networks, including Ethereum Mainnet, Ethereum Sepolia Testnet, Gnosis Chain Mainnet, Polygon mainnet, Abitrum Mainnet, Celo Mainnet and others. Using those Namespaces, you can easily deploy blockchain nodes for the networks you want to index into your cluster.
+Launchpad comes with Namespace definitions for a number of blockchain networks, including Ethereum Mainnet, Ethereum Sepolia Testnet, Gnosis Chain Mainnet, Polygon mainnet, Abitrum One, Arbitrum Sepolia, Celo Mainnet and others. Using those Namespaces, you can easily deploy blockchain nodes for the networks you want to index into your cluster.
+
+#### (optional, arbitrum-sepolia) Install Arbitrum Nitro and Proxyd for Arbitrum Sepolia
+
+Make sure that your `helmfile.yaml` includes a path that directing to `namespaces/arbitrum-sepolia.yaml`. Afterward, carefully examine the settings within `namespaces/arbitrum-sepolia.yaml` to confirm they are accurate and align with your specific needs:
+
+```yaml
+helmfiles:
+  - path: git::https://github.com/graphops/launchpad-namespaces.git@arbitrum/helmfile.yaml?ref=arbitrum-canary/latest
+    selectorsInherited: true
+    values:
+    - flavor: goerli
+      helmDefaults:
+        <<: *helmDefaults
+      arbitrum-nitro:
+        values:
+          nitro:
+            config:
+              chain: 421614
+              parentChainUrl: <<your-l1-chain-url>> ## if setup with default ethereum ns values this would be http://proxyd-proxyd.eth-sepolia:8545 
+              parentChainBeaconUrl: <<your-l1-consensus-layer-url>> ## if setup with defaul ethereum ns values this would be http://nimbus.eth-sepolia:5052
+```
+
+
+Deploy by syncing your cluster with the declarative `helmfile.yaml`:
+
+```shell
+task releases:apply -- arbitrum-sepolia
+```
+
+### Install the Graph Arbitrum Sepolia Indexer Stack
+
+Make sure that your `helmfile.yaml` includes a path that directing to `namespaces/graph-arbitrum-sepolia.yaml`. Afterward, carefully examine the settings within `namespaces/graph-arbitrum-sepolia.yaml` to confirm they are accurate and align with your specific needs.
+
+```yaml
+helmfiles:
+  - path: git::https://github.com/graphops/launchpad-namespaces.git@graph/helmfile.yaml?ref=graph-canary/latest
+    selectorsInherited: true
+    values:
+    - helmDefaults:
+        <<: *helmDefaults
+      flavor: "arbitrum-sepolia"
+    - graph-network-indexer:
+        values:
+          indexerDefaults:
+            config:
+              indexer-address: "<<your indexer arbitrum address>>"
+          indexerAgent:
+            config:
+              public-indexer-url: "<<your public index URL>>"
+      graph-operator-mnemonic:
+        values:
+          resources:
+            ### RECOMMENDED, safe to commit
+            sealed-secret:
+              apiVersion: bitnami.com/v1alpha1
+              kind: SealedSecret
+              metadata:
+                name: graph-operator-mnemonic
+                namespace: graph-arbitrum-sepolia
+              spec:
+                template:
+                  metadata:
+                    name: graph-operator-mnemonic
+                    namespace: graph-arbitrum-sepolia
+                  type: Opaque
+                encryptedData:
+                  mnemonic: <<your encrypted mnemonic>> # Generate a SealedSecret encryptedData key with the "utils:seal-secrets" task, e.g.: task utils:seal-secrets -- -n graph-goerli -s graph-operator-mnemonic -k mnemonic -v "your mnemonic words"
+      graph-database:
+        values:
+          resources:
+            postgres-cr-primary-subgraph-data:
+              spec:
+                volume:
+                  storageClass: "<<your storage class>>"
+            postgres-cr-indexer-metadata:
+              spec:
+                volume:
+                  storageClass: "<<your storage class>>"
+```
+
+Proceed to deploy:
+
+```shell
+task releases:apply -- graph-arbitrum-sepolia
+```
+
+### 🎉 Milestone: Graph Indexer running and accessible
+
+- [x] We (optionally) configured and deployed blockchain nodes into our cluster
+- [x] We configured and deployed the Graph Indexing stack into our cluster
+- [ ] Next: Use the remote-toolbox to allocate to subgraphs and begin serving requests
 
 ## Updates
 
