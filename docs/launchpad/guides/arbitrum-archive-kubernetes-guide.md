@@ -6,14 +6,16 @@
 This Quick Start guide has not yet been updated for Launchpad V2.
 :::
 
-This guide is intended to be an end to end walk-through of running an Arbitrum Archive Mainnet Node in an existing Kubernetes cluster.
+This guide is intended to be an end to end walk-through of setting up an Indexer running on the Graph Protocol Mainnet on the Arbitrum One network.
+
 Sync times are reported to be in the range of 1 week on dedicated hardware. The node consists of 2 parts, the classic part and the nitro hardfork. The classic part is only required to request archive data for blocks before the hardfork and takes the aforementioned 1 weeks to sync from scratch. The nitro history is shorter and can be quickly synced within 3 days.
 
-Arbitrum Nitro has a built-in proxy to redirect queries with block numbers below it’s genesis block (they’re sent to the Arbitrum Classic node)
+Newer versions of Arbitrum Nitro require beaconchain url
+Arbitrum Nitro has a built-in proxy to redirect queries with block numbers below it’s genesis block (they’re sent to the Arbitrum Classic node).
 
 ## Prerequisites
 
-All the [Launchpad Prerequisites](../prerequisites) apply if running a Kubernetes cluster using `Launchpad`, so be sure to read them first. This guide can be used with existing Kubernetes clusters as well.
+All the [Launchpad Prerequisites](../prerequisites) apply, so be sure to read them first.
 
 You will need:
 - an `ethereum-mainnet` RPC endpoint
@@ -28,20 +30,22 @@ You will need:
 ```shell
 task launchpad:pull-upstream-starter
 ``` 
-3. Pull in `latest-core` changes
-```shell
-task launchpad:update-core
-``` 
-4. **blockchain node data snapshot** Arbitrum Classic provides functionality to download data from a snapshot. Review all files in `[<your-private-copy-of-launchpad-starter>/helmfiles/release-names/arbitrum-mainnet/`](https://github.com/graphops/launchpad-starter/blob/main/helmfiles/release-values/arbitrum-mainnet/) before deploying the chart
+1. **blockchain node data snapshot** The [Arbitrum-One namespace](https://github.com/graphops/launchpad-namespaces/blob/main/arbitrum-one/README.md) contains default configurations for both Arbitrum Classic and Arbitrum Nitro to download data from a snapshot. The snapshots have been set by default:
+- for Arbitrum Classic
 ```yaml
 arbitrum:
   restoreSnapshot:
     enable: true
-    snapshotUrl: https://a-link-to-your-snapshot-archive.tar.gz
-    mode: streaming # or multipart depending on chain
+    snapshotUrl: https://snapshot.arbitrum.foundation/arb1/classic-archive.tar
 ```
-
-5. **connect to eth-mainnet-rpc-node** Both Arbitrum Classic and Arbitrum Nitro connect to l1 via the following commands:
+- for Arbitrum Nitro
+```yaml
+nitro:
+  restoreSnapshot:
+    enabled: true
+    snapshotUrl: "https://snapshot.arbitrum.foundation/arb1/nitro-archive.tar"
+```
+1. **connect to eth-mainnet-rpc-node** Both Arbitrum Classic and Arbitrum Nitro connect to l1 via the following commands:
 - for Arbitrum Nitro - update values in [`<your-private-copy-of-launchpad-starter>/helmfiles/release-names/arbitrum-mainnet/arbitrum-classic-archive-trace-mainnet.yaml`](https://github.com/graphops/launchpad-starter/blob/main/helmfiles/release-values/arbitrum-mainnet/arbitrum-classic-archive-trace-mainnet.yaml) as needed. Example:
 ```yaml
 arbitrum:
