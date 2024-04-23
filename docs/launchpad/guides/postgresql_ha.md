@@ -2,10 +2,6 @@
 ---
 # Overview of High Availability in PostgreSQL
 
-:::note
-This guide is currently under development. We will be expanding it shortly to include additional concepts and detailed instructions. Stay tuned for updates!
-:::
-
 One of the prerequisites of running an indexer stack is currently using PostgreSQL as a database for storing indexer metadata and subgraph data. To ensure redundancy of data and operations and enable systems to continue functioning despite individual component failures we want to account for the following areas as they relate to running PostgreSQL:
 
 - **Automatic Failover**: the ability to automatically switch operations to standby replicas if the primary database server fails, ensuring service continuity.

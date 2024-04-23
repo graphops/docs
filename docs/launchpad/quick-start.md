@@ -76,16 +76,32 @@ Remember that each cluster might have specific setup steps or requirements, espe
 
 - [x] We now have our own private git repo containing the declarative configuration for our cluster deployments
 - [x] We have installed all the tooling dependencies on our local machine, which will be used to control the cluster
-- [ ] Next: Copy `sample.helmfile.yaml` to `helmfile.yaml` and edit it to customize and deploy Namespaces on the Kubernetes cluster
+- [ ] Next: Copy `sample.helmfile.yaml` to `helmfile.yaml` and edit it to select which Namespaces you would like to deploy on your Kubernetes cluster
 
-### Customize your helmfile.yaml
+### Customize your helmfiles
 
-If you don't have an `helmfile.yaml` file yet, you can start with copying the existing sample one (`sample.helmfile.yaml`):
+To get started with Helmfile, if you don’t already have a `helmfile.yaml`, you can begin by copying the provided sample configuration file named `sample.helmfile.yaml`:
+
 ```shell
 cp sample.helmfile.yaml helmfile.yaml
 ```
 
-and edit it with your editor of choice. Under that file, there is an `helmfiles:` section declaring Namespaces to be deployed on the cluster, looking like this:
+After copying, open `helmfile.yaml` in your preferred text editor to make necessary modifications. Within this file, you will find a `helmfiles:` section which organizes deployment configurations by namespace through multiple helmfile paths:
+
+```yaml
+helmfiles:
+  - path: namespaces/storage.yaml
+  - path: namespaces/sealed-secrets.yaml
+  - path: namespaces/postgres-operator.yaml
+  - path: namespaces/ingress.yaml
+  - path: namespaces/monitoring.yaml
+  - path: namespaces/eth-sepolia.yaml
+  - path: namespaces/eth-mainnet.yaml
+  - path: namespaces/arbitrum-sepolia.yaml
+  - path: namespaces/graph-arbitrum-sepolia.yaml
+```
+
+This structure allows you to manage deployments modularly. You can add or remove entries in this list to include new namespaces or exclude those you no longer need. Each path points to a specific helmfile that defines resources to be deployed within that namespace. For instance, looking at `namespaces/storage.yaml`:
 
 ```yaml
 helmfiles:
@@ -94,17 +110,9 @@ helmfiles:
     values:
       - helmDefaults:
           <<: *helmDefaults
-
-  - path: git::https://github.com/graphops/launchpad-namespaces.git@monitoring/helmfile.yaml?ref=monitoring-stable/latest
-    selectorsInherited: true
-
-  - path: git::https://github.com/graphops/launchpad-namespaces.git@ingress/helmfile.yaml?ref=ingress-stable/latest
-    selectorsInherited: true
-    values:
-      - kubeVersion: *kubeVersion
 ```
 
-You can override values, and select which Namespaces you are interested in. Refer to Namespaces documentation available here for more examples on how to configure them, or to see which ones are available: [Namespaces](https://github.com/graphops/launchpad-namespaces).
+In the example above, values can be set to override the default configurations in a given Namespace, allowing for customization according to specific requirements. Refer to Namespaces documentation available here for more examples on how to configure them, or to see which ones are available: [Namespaces](https://github.com/graphops/launchpad-namespaces).
 
 ### Syncing your `helmfile.yaml` with the cluster
 
@@ -138,7 +146,7 @@ cert-manager-resources          ingress                 true    true            
 sealed-secrets                  sealed-secrets          true    true            launchpad.graphops.xyz/namespace:sealed-secrets                                         sealed-secrets/sealed-secrets                   2.1
 ```
 
-First, update configuration in your `helmfile.yaml` for the base namespaces. You will likely need to configure storage and ingress with your own values.
+First, update the Helmfile configuration for the base namespaces. You will likely need to configure storage and ingress settings in their respective files, `namespaces/storage.yaml` and `namespaces/ingress.yaml`, by customizing them with your specific values.
 
 In particular, the storage namespace may be a requirement even for other base namespaces, so lets install that one first by running `task releases:apply -- launchpad.graphops.xyz/namespace=storage`
 
@@ -164,65 +172,53 @@ You can now use `task indexer:forward-grafana` to securely access your remote cl
 If you have existing external blockchain nodes that you would like to use instead of deploying them into your cluster, you can skip this section, but make sure that you can access those nodes securely (e.g. via an internal network, or using HTTPS and authentication).
 :::
 
-Launchpad comes with Namespace definitions for a number of blockchain networks, including Ethereum Mainnet, Ethereum Goerli Testnet, Gnosis Chain Mainnet, Polygon mainnet, Abitrum Mainnet, Avalanche Mainnet, Celo Mainnet and others. Using those Namespaces, you can easily deploy blockchain nodes for the networks you want to index into your cluster.
+Launchpad comes with Namespace definitions for a number of blockchain networks, including Ethereum Mainnet, Ethereum Sepolia Testnet, Gnosis Chain Mainnet, Polygon mainnet, Abitrum One, Arbitrum Sepolia, Celo Mainnet and others. Using those Namespaces, you can easily deploy blockchain nodes for the networks you want to index into your cluster.
 
-#### (optional, eth-goerli) Install Erigon, Nimbus and Proxyd for Ethereum Goerli
+#### (optional, arbitrum-sepolia) Install Arbitrum Nitro and Proxyd for Arbitrum Sepolia
 
-Update your `helmfile.yaml` to add the ethereum Namespace and ensure the values are correct:
+Make sure that your `helmfile.yaml` includes a path that directing to `namespaces/arbitrum-sepolia.yaml`. Afterward, carefully examine the settings within `namespaces/arbitrum-sepolia.yaml` to confirm they are accurate and align with your specific needs:
 
 ```yaml
 helmfiles:
-  - path: git::https://github.com/graphops/launchpad-namespaces.git@ethereum/helmfile.yaml
+  - path: git::https://github.com/graphops/launchpad-namespaces.git@arbitrum/helmfile.yaml?ref=arbitrum-canary/latest
     selectorsInherited: true
     values:
     - flavor: goerli
       helmDefaults:
         <<: *helmDefaults
-    - erigon:
+      arbitrum-nitro:
         values:
-          statefulNode:
-            volumeClaimSpec:
-              storageClassName: "<<your storage class>>"
-            jwt:
-              existingSecret:
-                name: jwt
-                key: jwt
-      nimbus:
-        values:
-          nimbus:
-            volumeClaimSpec:
-              storageClassName: "<<your storage class>>"
-            jwt:
-              existingSecret:
-                name: jwt
-                key: jwt
+          nitro:
+            config:
+              chain: 421614
+              parentChainUrl: <<your-l1-chain-url>> ## if setup with default ethereum ns values this would be http://proxyd-proxyd.eth-sepolia:8545 
+              parentChainBeaconUrl: <<your-l1-consensus-layer-url>> ## if setup with defaul ethereum ns values this would be http://nimbus.eth-sepolia:5052
 ```
 
-You will need to generate a JWT and create a kubernetes secret accordingly, to be used by Erigon and Nimbus.
 
 Deploy by syncing your cluster with the declarative `helmfile.yaml`:
 
 ```shell
-task releases:apply -- eth-goerli
+task releases:apply -- arbitrum-sepolia
 ```
 
-### Install the Graph Goerli Indexer Stack
+### Install the Graph Arbitrum Sepolia Indexer Stack
 
-Update your `helmfile` to include the graph Namespace, and configure the values accordingly:
+Make sure that your `helmfile.yaml` includes a path that directing to `namespaces/graph-arbitrum-sepolia.yaml`. Afterward, carefully examine the settings within `namespaces/graph-arbitrum-sepolia.yaml` to confirm they are accurate and align with your specific needs.
 
 ```yaml
 helmfiles:
-  - path: git::https://github.com/graphops/launchpad-namespaces.git@graph/helmfile.yaml
+  - path: git::https://github.com/graphops/launchpad-namespaces.git@graph/helmfile.yaml?ref=graph-canary/latest
     selectorsInherited: true
     values:
     - helmDefaults:
         <<: *helmDefaults
-      flavor: "goerli"
+      flavor: "arbitrum-sepolia"
     - graph-network-indexer:
         values:
           indexerDefaults:
             config:
-              indexer-address: "<<your indexer ethereum address>>"
+              indexer-address: "<<your indexer arbitrum address>>"
           indexerAgent:
             config:
               public-indexer-url: "<<your public index URL>>"
@@ -235,12 +231,12 @@ helmfiles:
               kind: SealedSecret
               metadata:
                 name: graph-operator-mnemonic
-                namespace: graph-goerli
+                namespace: graph-arbitrum-sepolia
               spec:
                 template:
                   metadata:
                     name: graph-operator-mnemonic
-                    namespace: graph-goerli
+                    namespace: graph-arbitrum-sepolia
                   type: Opaque
                 encryptedData:
                   mnemonic: <<your encrypted mnemonic>> # Generate a SealedSecret encryptedData key with the "utils:seal-secrets" task, e.g.: task utils:seal-secrets -- -n graph-goerli -s graph-operator-mnemonic -k mnemonic -v "your mnemonic words"
@@ -260,7 +256,7 @@ helmfiles:
 Proceed to deploy:
 
 ```shell
-task releases:apply -- graph-goerli
+task releases:apply -- graph-arbitrum-sepolia
 ```
 
 ### 🎉 Milestone: Graph Indexer running and accessible
