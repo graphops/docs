@@ -2,16 +2,18 @@
 ---
 # Celo Archive Mainnet Node Guide
 
-:::warning
-This Quick Start guide has not yet been updated for Launchpad V2.
-:::
-
+## Introduction
 This guide is intended to be an end to end walk-through of running an Celo Archive Mainnet Node in an existing Kubernetes cluster.
+
+## Sync Duration
 Sync times are reported to be in the range of 4 days on dedicated hardware.
 
-## Prerequisites
+## Setup Environment
+This guide assumes operation within a Kubernetes cluster:
+- For setups using Launchpad, follow the steps outlined [here](#kubernetes-cluster-using-launchpad).
+- For setups using Helm only, refer to the instructions [here](#deploying-with-helm-in-a-kubernetes-cluster-outside-launchpad).
 
-All the [Launchpad Prerequisites](../prerequisites) apply if running a Kubernetes cluster using `Launchpad`, so be sure to read them first. This guide can be used with existing Kubernetes clusters as well.
+## Prerequisites
 
 For Celo workload you will need:
 - CPU: 4 Cores / 8 Threads
@@ -20,18 +22,18 @@ For Celo workload you will need:
 
 ## If running a Kubernetes cluster using `Launchpad`
 
-1. Check that the cluster is running and healthy - review [Quick Start](../quick-start/) guide for more info.
-2. In your private infra repo pull in latest `launchpad-starter` changes
+All the [Launchpad Prerequisites](../prerequisites) apply if running a Kubernetes cluster using `Launchpad`, so be sure to read them first. This guide can be used with existing Kubernetes clusters as well.
+
+1. Confirm your cluster is operational by consulting our [Quick Start](../quick-start/) guide.
+
+2. In your private infra repo pull in latest `launchpad-starter` changes:
 ```shell
 task launchpad:pull-upstream-starter
 ``` 
-3. Pull in `latest-core` changes
-```shell
-task launchpad:update-core
-```
-4. Check default values- double-check values and update as needed in [`<your-private-copy-of-launchpad-starter>/helmfiles/release-names/arbitrum-mainnet/celo-archive-trace-mainnet-0.yaml`](https://github.com/graphops/launchpad-starter/blob/main/helmfiles/release-values/arbitrum-mainnet/celo-archive-trace-mainnet-0.yaml)
 
-5. Deploy celo-mainnet namespace
+1. Check default values and update as needed in [`<your-private-copy-of-launchpad-starter>/helmfiles/namespaces/celo-mainnet.yaml`](https://github.com/graphops/launchpad-starter/blob/main/namespaces/celo-mainnet.yaml)
+
+2. Deploy celo-mainnet namespace
 ```shell
 task releases:apply celo-mainnet
 ``` 
@@ -40,7 +42,7 @@ task releases:apply celo-mainnet
 
 You can find blockchain related helm packages [here](https://github.com/graphops/launchpad-charts/tree/main/charts)
 
-Create a values `celo-mainnet.yaml` file with the following contents or similar:
+1. Prepare your configuration file, `celo-mainnet.yaml`, to override chart default values as necessary. Example:
 ```yaml
 celo:
   extraArgs:
@@ -54,12 +56,9 @@ celo:
     - --http.api=eth,net,web3,debug,admin,personal
 ```
 
-Deploy helm-chart:
+2. Add the Helm repository and deploy:
 
-```sh
+```shell
 helm repo add graphops http://graphops.github.io/launchpad-charts
-```
-
-```sh
 helm install --dry-run celo graphops/celo:latest --namespace celo-mainnet --values celo-mainnet.yaml
 ```
