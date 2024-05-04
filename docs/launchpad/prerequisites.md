@@ -41,7 +41,9 @@ Currently, Launchpad comes with support for Linux and MacOS clients. Windows is 
 
 The Launchpad project requires a certain level of familiarity with [Kubernetes](https://kubernetes.io/) and its intricacies. The extent of this Kubernetes expertise depends on your choice of cluster. Opting for a managed cluster from a leading Cloud Provider requires less intensive Kubernetes knowledge, as operating such a cluster is more straightforward, necessitating only a fundamental grasp of different Kubernetes resource types.
 
-However, it's essential to note that managed clusters can be very costly when running blockchains. In contrast, selecting a self-managed cluster demands a deeper understanding, encompassing all components necessary for cluster provisioning and management - for more details on this please checkout our [Kubernetes guide](guides/kubernetes-create-cluster-with-kubeadm.md). Regardless of your choice, you'll need to create a Kubernetes cluster. This can involve setting up a self-managed cluster, as outlined in our [Fedora CoreOS guide](guides/install-fcos.md), or opting for a managed cluster provided by a major Cloud Provider like AWS or GCP.
+However, it's essential to note that managed clusters can be very costly when running blockchains. In contrast, selecting a self-managed cluster demands a deeper understanding, encompassing all components necessary for cluster provisioning and management. Regardless of your choice, you'll need to create a Kubernetes cluster. 
+
+For a detailed exploration of setting up a Kubernetes cluster yourself, please refer to our [Kubernetes guide](advanced-tutorials/kubernetes-create-cluster-with-kubeadm.md). If you choose to set up a self-managed cluster, you might consider using Fedora CoreOS as one of the possible options, detailed in our [Fedora CoreOS guide](advanced-tutorials/install-fcos.md), among other methods.
 
 ## Operational knowledge of Helm
 

@@ -183,7 +183,7 @@ helmfiles:
   - path: git::https://github.com/graphops/launchpad-namespaces.git@arbitrum/helmfile.yaml?ref=arbitrum-canary/latest
     selectorsInherited: true
     values:
-    - flavor: goerli
+    - flavor: sepolia
       helmDefaults:
         <<: *helmDefaults
       arbitrum-nitro:
@@ -239,7 +239,7 @@ helmfiles:
                     namespace: graph-arbitrum-sepolia
                   type: Opaque
                 encryptedData:
-                  mnemonic: <<your encrypted mnemonic>> # Generate a SealedSecret encryptedData key with the "utils:seal-secrets" task, e.g.: task utils:seal-secrets -- -n graph-goerli -s graph-operator-mnemonic -k mnemonic -v "your mnemonic words"
+                  mnemonic: <<your encrypted mnemonic>> # Generate a SealedSecret encryptedData key with the "utils:seal-secrets" task, e.g.: task utils:seal-secrets -- -n graph-arbitrum-sepolia -s graph-operator-mnemonic -k mnemonic -v "your mnemonic words"
       graph-database:
         values:
           resources:
