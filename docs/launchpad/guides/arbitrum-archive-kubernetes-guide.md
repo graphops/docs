@@ -5,10 +5,6 @@
 ## Introduction
 This guide provides an end-to-end walkthrough for setting up an Indexer on the Graph Protocol Mainnet for the Arbitrum One network. It details the steps for deploying both Arbitrum Classic and Arbitrum Nitro.
 
-## Sync Duration
-- **Arbitrum Classic**: Approximately 1 week is required to sync on dedicated hardware.
-- **Arbitrum Nitro**: Typically syncs within 3 days due to a shorter historical data span.
-
 ## Architecture Overview
 Arbitrum Nitro includes a built-in proxy that automatically redirects queries for blocks older than its genesis to the Arbitrum Classic node.
 
