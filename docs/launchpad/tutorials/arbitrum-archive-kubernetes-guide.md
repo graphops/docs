@@ -2,112 +2,113 @@
 ---
 # Arbitrum Archive Mainnet Node Guide
 
-:::warning
-This Quick Start guide has not yet been updated for Launchpad V2.
-:::
+## Introduction
+This guide provides an end-to-end walkthrough for setting up an Indexer on the Graph Protocol Mainnet for the Arbitrum One network. It details the steps for deploying both Arbitrum Classic and Arbitrum Nitro.
 
-This guide is intended to be an end to end walk-through of running an Arbitrum Archive Mainnet Node in an existing Kubernetes cluster.
-Sync times are reported to be in the range of 1 week on dedicated hardware. The node consists of 2 parts, the classic part and the nitro hardfork. The classic part is only required to request archive data for blocks before the hardfork and takes the aforementioned 1 weeks to sync from scratch. The nitro history is shorter and can be quickly synced within 3 days.
+## Architecture Overview
+Arbitrum Nitro includes a built-in proxy that automatically redirects queries for blocks older than its genesis to the Arbitrum Classic node.
 
-Arbitrum Nitro has a built-in proxy to redirect queries with block numbers below it’s genesis block (they’re sent to the Arbitrum Classic node)
+## Setup Environment
+This guide assumes operation within a Kubernetes cluster:
+- For setups using Launchpad, follow the steps outlined [here](#kubernetes-cluster-using-launchpad).
+- For setups using Helm only, refer to the instructions [here](#deploying-with-helm-in-a-kubernetes-cluster-outside-launchpad).
 
 ## Prerequisites
+Before you begin, ensure you have the following:
+- An `ethereum-mainnet` RPC endpoint.
+- CPU: 4 Cores / 8 Threads.
+- RAM: 16 GiB.
+- Storage: 3 TiB NVMe SSD.
 
-All the [Launchpad Prerequisites](../prerequisites) apply if running a Kubernetes cluster using `Launchpad`, so be sure to read them first. This guide can be used with existing Kubernetes clusters as well.
+## Kubernetes Cluster Using Launchpad
 
-You will need:
-- an `ethereum-mainnet` RPC endpoint
-- CPU: 4 Cores / 8 Threads
-- RAM: 16 GiB
-- Storage: 3 TiB NVMe SSD
+Ensure all [Launchpad Prerequisites](../prerequisites) are met before proceeding.
 
-## If running a Kubernetes cluster using `Launchpad`
+### Initial Configuration
 
-1. Check that the cluster is running and healthy - review [Quick Start](../quick-start/) guide for more info.
-2. In your private infra repo pull in latest `launchpad-starter` changes
+1. Confirm your cluster is operational by consulting our [Quick Start](../quick-start/) guide.
+2. In your private infra repo pull in latest `launchpad-starter` changes:
 ```shell
 task launchpad:pull-upstream-starter
 ``` 
-3. Pull in `latest-core` changes
-```shell
-task launchpad:update-core
-``` 
-4. **blockchain node data snapshot** Arbitrum Classic provides functionality to download data from a snapshot. Review all files in `[<your-private-copy-of-launchpad-starter>/helmfiles/release-names/arbitrum-mainnet/`](https://github.com/graphops/launchpad-starter/blob/main/helmfiles/release-values/arbitrum-mainnet/) before deploying the chart
+
+### Data Restoration and Configuration
+
+1. **Blockchain node data snapshot** The [Arbitrum-One namespace](https://github.com/graphops/launchpad-namespaces/blob/main/arbitrum-one/README.md) contains default configurations for both Arbitrum Classic and Arbitrum Nitro to download data from a snapshot. The snapshots have been set by default:
+- for [Arbitrum Classic](https://github.com/graphops/launchpad-namespaces/blob/585f4a0aa711b27adedd2493daa57b28f01eeca1/arbitrum/values/one/arbitrum-classic.yaml.gotmpl#L20-L24)
 ```yaml
-arbitrum:
-  restoreSnapshot:
-    enable: true
-    snapshotUrl: https://a-link-to-your-snapshot-archive.tar.gz
-    mode: streaming # or multipart depending on chain
+restoreSnapshot:
+  enabled: true
+  snapshotUrl: https://snapshot.arbitrum.foundation/arb1/classic-archive.tar
+```
+- for [Arbitrum Nitro](https://github.com/graphops/launchpad-namespaces/blob/585f4a0aa711b27adedd2493daa57b28f01eeca1/arbitrum/values/one/arbitrum-nitro.yaml.gotmpl#L11-L13)
+```yaml
+restoreSnapshot:
+  enabled: true
+  snapshotUrl: https://snapshot.arbitrum.foundation/arb1/nitro-archive.tar
+```
+you can overwrite both of these values in [`<your-private-copy-of-launchpad-starter>/namespaces/arbitrum-one.yaml`](https://github.com/graphops/launchpad-starter/blob/main/namespaces/arbitrum-one.yaml)
+
+2. **Connect to eth-mainnet-rpc-node** Both Arbitrum Classic and Arbitrum Nitro connect to l1, and recent versions of Arbitrum Nitro require connection to a beacon chain RPC:
+- for **Arbitrum Classic** - update values in [`<your-private-copy-of-launchpad-starter>/namespaces/arbitrum-one.yaml`](https://github.com/graphops/launchpad-starter/blob/main/namespaces/arbitrum-one.yaml) as needed. Example:
+```yaml
+arbitrum-classic:
+  values:
+    arbitrum:
+      config:
+        parentChainUrl: http://your-eth-mainnet-url:8545  ## changeme
+```
+- for **Arbitrum Nitro** - update values in [`<your-private-copy-of-launchpad-starter>/helmfiles/namespaces/arbitrum-one.yaml`](https://github.com/graphops/launchpad-starter/blob/main/namespaces/arbitrum-one.yaml) as needed. Example:
+```yaml
+arbitrum-nitro:
+  values:
+    nitro:
+      config:
+        parentChainUrl: http://your-eth-mainnet-url:8545  ## changeme
+        parentChainBeaconUrl: http://your-eth-consensus-node-url:5052  ## changeme
 ```
 
-5. **connect to eth-mainnet-rpc-node** Both Arbitrum Classic and Arbitrum Nitro connect to l1 via the following commands:
-- for Arbitrum Nitro - update values in [`<your-private-copy-of-launchpad-starter>/helmfiles/release-names/arbitrum-mainnet/arbitrum-classic-archive-trace-mainnet.yaml`](https://github.com/graphops/launchpad-starter/blob/main/helmfiles/release-values/arbitrum-mainnet/arbitrum-classic-archive-trace-mainnet.yaml) as needed. Example:
-```yaml
-arbitrum:
-  extraArgs:
-    - --node.chain-id=42161  # determines Arbitrum network - 42161 mainnet
-    - --l1.url=http://a-link-to-your-eth-mainnet-url:8545
-```
-- for Arbitrum Nitro - update values in [`<your-private-copy-of-launchpad-starter>/helmfiles/release-names/arbitrum-mainnet/arbitrum-nitro-archive-trace-mainnet.yaml`](https://github.com/graphops/launchpad-starter/blob/main/helmfiles/release-values/arbitrum-mainnet/arbitrum-nitro-archive-trace-mainnet.yaml) as needed. Example:
-```yaml
-nitro:
-  extraArgs:
-    - --http.api=net,web3,eth,debug
-    - --l2.chain-id=42161  # determines Arbitrum network - 42161 mainnet
-    - --l1.url=http://a-link-to-your-eth-mainnet-url:8545
-    - --node.rpc.classic-redirect=http://arbitrum-classic-archive-trace-mainnet-0:8547/
-    - --init.url=https://snapshot.arbitrum.io/mainnet/nitro.tar
-```
+## Deploying with helm in a Kubernetes Cluster Outside Launchpad
 
-## Deploying with helm in a Kubernetes cluster outside Launchpad
-
-You can find blockchain related helm packages ['here'](https://github.com/graphops/launchpad-charts/tree/main/charts)
-
-Given that Arbitrum needs both Nitro and classic to run use the following commands:
+You can find blockchain related helm packages [here](https://github.com/graphops/launchpad-charts/tree/main/charts)
 
 ### Deploy Arbitrum Classic
 
 We'll first deploy Arbitrum Classic as Arbitrum Nitro needs to connect to the Classic endpoint. 
 
-Create a values `arbitrum-classic.yaml` file with the following contents
+1. Prepare your configuration file, `arbitrum-classic.yaml`, with the necessary RPC URL and optional snapshot URL:
 ```yaml
 arbitrum:
-  extraArgs:
-    - --node.chain-id=42161  # determines Arbitrum network - 42161 mainnet
-    - --l1.url=http://a-link-to-your-eth-mainnet-url:8545
+  config:
+    parentChainUrl: http://your-eth-mainnet-url:8545  ## changeme
   restoreSnapshot:
-    enable: true
-    snapshotUrl: https://a-link-to-your-snapshot-archive.tar.gz
-    mode: streaming # or multipart depending on chain
+    enabled: true
+    snapshotUrl: https://a-link-to-your-snapshot-archive.tar.gz ## specify only if overriding default
 ```
 
-Deploy helm-chart:
+2. Add the Helm repository and deploy:
 
 ```sh
 helm repo add graphops http://graphops.github.io/launchpad-charts
-```
-
-```sh
-helm install --dry-run arbitrum-classic graphops/arbitrum-classic:latest --namespace arbitrum-mainnet --value arbitrum-classic.yaml
+helm install --dry-run arbitrum-classic graphops/arbitrum-classic:latest --namespace arbitrum-one --value arbitrum-classic.yaml
 ```
 
 ### Deploy Arbitrum Nitro
 
-
-Create a values `arbitrum-nitro.yaml` file with the following contents
+1. Prepare your configuration file, `arbitrum-nitro.yaml`, with the necessary RPC URLs, classic node URLs and optional snapshot URL:
 ```yaml
 nitro:
-  extraArgs:
-    - --http.api=net,web3,eth,debug
-    - --l2.chain-id=42161  # determines Arbitrum network - 42161 mainnet
-    - --l1.url=http://a-link-to-your-eth-mainnet-url:8545
-    - --node.rpc.classic-redirect=http://arbitrum-classic:8547/  # replace `arbitrum-classic` with the name of your arbitrum-classic release deployed at the previous step
-    - --init.url=https://snapshot.arbitrum.io/mainnet/nitro.tar
+  config:
+    parentChainUrl: http://your-eth-mainnet-url:8545  ## changeme
+    parentChainBeaconUrl: http://your-eth-consensus-node-url:5052  ## changeme
+    classicUrl: http://arbitrum-classic:8547/  # replace `arbitrum-classic` with the name of your arbitrum-classic release deployed at the previous step
+  restoreSnapshot:
+    enabled: true
+    snapshotUrl: https://a-link-to-your-snapshot-archive.tar.gz ## specify only if overriding default
 ```
 
-Deploy helm-chart:
+2. Deploy using helm:
 
 ```sh
-helm install --dry-run arbitrum-nitro graphops/arbitrum-classic:latest --namespace arbitrum-mainnet --value arbitrum-nitro.yaml
+helm install --dry-run arbitrum-nitro graphops/arbitrum-classic:latest --namespace arbitrum-one --value arbitrum-nitro.yaml
 ```
