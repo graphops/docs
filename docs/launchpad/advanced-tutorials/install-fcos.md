@@ -148,4 +148,4 @@ If you've run the above command the folowing will happen on the host
 
 ## Next steps 
 
-The outlined steps mark the initial phase of grasping the workings of FCOS. For the different components that you'd need to include in your `butane` config to install Kuberneter follow [Advanced Kubernetes](../advanced/advanced-kubernetes).
+The outlined steps mark the initial phase of grasping the workings of FCOS. For the different components that you'd need to include in your `butane` config to install Kuberneter follow [Advanced Kubernetes](advanced-kubernetes.md).

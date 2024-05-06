@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 ---
 
 # Introduction
@@ -22,9 +22,10 @@ There are three major components to be aware of:
 - Preconfigured namespaces for core cluster functions (logging, monitoring, etc) and major blockchains
 - An automated dependency update pipeline for [`graphops/launchpad-charts`](https://github.com/graphops/launchpad-charts) and [`graphops/launchpad-namespaces`](https://github.com/graphops/launchpad-namespaces)
 
+Are you interested in exploring Launchpad but not ready to adopt the entire stack? Explore our [Modularity](modularity) page to discover how you can selectively integrate elements of Launchpad, like `launchpad-starter`, `launchpad-charts`, and `launchpad-namespaces`, to fit your specific needs without committing to a full end-to-end implementation.
+
 ## Next Steps
 
-- Read the [Prerequisites](prerequisites) section to understand what you need to bring
+- Read the [Prerequisites](prerequisites) section to understand what you need to started
 - Read the [Quick Start guide](quick-start) to get up and running
 - Look at the repositories above on GitHub to understand how they work
-- Review **Advanced Topics** to understand more advanced behavior

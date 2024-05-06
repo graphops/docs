@@ -66,7 +66,7 @@ const config = {
         items: [
           {
             type: 'doc',
-            docId: 'launchpad/intro',
+            docId: 'launchpad/docs-map',
             position: 'left',
             label: 'Launchpad',
           },

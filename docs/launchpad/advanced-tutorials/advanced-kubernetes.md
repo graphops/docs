@@ -6,7 +6,7 @@ This guide provides a general walkthrough for installing Kubernetes using Fedora
 
 ## Prerequisites
 
-Before proceeding with this guide, ensure you have a solid understanding of how FCOS works and the steps required to install and enable FCOS as detailed in [Install FCOS Guide](../guides/install-fcos).
+Before proceeding with this guide, ensure you have a solid understanding of how FCOS works and the steps required to install and enable FCOS as detailed in [Install FCOS Guide](install-fcos.md).
 
 Additionally, a clear grasp of the fundamental [Kubernetes architecture](https://devopscube.com/kubernetes-architecture-explained/) will greatly aid in navigating the guidance outlined ahead.
 
