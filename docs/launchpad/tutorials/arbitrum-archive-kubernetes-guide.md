@@ -90,7 +90,7 @@ arbitrum:
 
 ```sh
 helm repo add graphops http://graphops.github.io/launchpad-charts
-helm install --dry-run arbitrum-classic graphops/arbitrum-classic:latest --namespace arbitrum-one --value arbitrum-classic.yaml
+helm install --dry-run arbitrum-classic graphops/arbitrum-classic:latest --namespace arbitrum-one --values arbitrum-classic.yaml
 ```
 
 ### Deploy Arbitrum Nitro
@@ -110,5 +110,5 @@ nitro:
 2. Deploy using helm:
 
 ```sh
-helm install --dry-run arbitrum-nitro graphops/arbitrum-classic:latest --namespace arbitrum-one --value arbitrum-nitro.yaml
+helm install --dry-run arbitrum-nitro graphops/arbitrum-classic:latest --namespace arbitrum-one --values arbitrum-nitro.yaml
 ```

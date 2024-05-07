@@ -17,6 +17,8 @@ Here are answers to some commonly asked questions. If you have a question that i
     - [Is there a way to inject a pretuned postgres config into the chart?](#is-there-a-way-to-inject-a-pretuned-postgres-config-into-the-chart)
     - [Why are my stateful pods in `Pending` state and their expected `pvc` showing `WaitForFirstConsumer` errors?](#why-are-my-stateful-pods-in-pending-state-and-their-expected-pvc-showing-waitforfirstconsumer-errors)
     - [Do I need to use Cilium for Launchpad?](#do-i-need-to-use-cilium-for-launchpad)
+    - [How active is the Launchpad project?](#how-active-is-the-launchpad-project)
+    - [I'm not ready to use Launchpad but I use Kubernetes](#im-not-ready-to-use-launchpad-but-i-use-kubernetes)
   - [Need More Help?](#need-more-help)
 
 ---
@@ -93,6 +95,21 @@ Normal  WaitForFirstConsumer  6m52s                   persistentvolume-controlle
 
 It's important to acknowledge that while Cilium has better performance and features than Calico, it is a bit trickier to set up. Our decision isn't influenced by Launchpad; it's purely a preference based on the operational benefits that Cilium brings to our infrastructure.
 
+---
+
+### How active is the Launchpad project?
+
+**Q: How often is the Launchpad project updated?**
+
+**A:** The GraphOps team actively maintains the Launchpad project as it is integral to their indexing infrastructure. For details on how new versions of applications (ie. Erigon, Graph-node etc) are integrated into Launchpad Charts and Launchpad Namespaces, please refer to our [Release Channels documentation](release-channels.md). Additionally, you can learn about our criteria for supporting different Launchpad Namespaces by visiting the [Supported Namespaces page](supported-namespaces.md). These resources provide a comprehensive view of our update frequency and decision-making processes regarding the inclusion of new features and applications.
+
+--- 
+
+### I'm not ready to use Launchpad but I use Kubernetes
+
+**Q: Is this project relevant to me if I use Kubernetes to manage blockchain infrastructure?**
+
+**A:** Absolutely, the Launchpad project is designed with modularity at its core, making it highly adaptable for users who aren't ready to fully implement all of its components. You can benefit from using our Launchpad Charts with Helm to manage specific components of your blockchain infrastructure independently. Additionally, our charts are compatible with GitOps workflows, allowing you to integrate them seamlessly into your existing management practices. For further insights into how you can leverage the modular aspects of our project, please visit our [Modularity documentation](modularity.md).
 
 ## Need More Help?
 
