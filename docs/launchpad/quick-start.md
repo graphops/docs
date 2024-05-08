@@ -4,7 +4,18 @@ sidebar_position: 3
 
 # Quick Start
 
+We have designed Launchpad to be modular so that you can implement the whole project or parts of it as best suits your needs. Checkout [this page](modularity.md) for more info about the modularity of Launchpad. 
+
 Make sure you have all the [Prerequisites](prerequisites) before starting.
+
+To start jump to the relevant section based on how you're using the project:
+
+- [Using Launchpad End to End](#using-launchpad-end-to-end) 
+- [Using Launchpad Charts and Helmfile](#using-helmfile-and-launchpad-charts)
+
+## Using Launchpad end to end
+
+This section takes you through steps of getting started using all aspects of the Launchpad project.
 
 ### Install Taskfile
 
@@ -330,3 +341,331 @@ Launchpad comes with a built in task to do this:
 ```shell
 task launchpad:pull-upstream-starter
 ```
+
+## Using Helmfile and Launchpad Charts
+
+This guide will cover two primary ways to deploy blockchain-related resources in Kubernetes using Launchpad charts: deploying all components at once using Helmfile and deploying individual components directly using Helm charts.
+
+### Prerequisites
+
+Ensure you have [helm](https://github.com/helm/helm), [helmfile](https://github.com/helmfile/helmfile) and it's dependency [helm-diff](https://github.com/databus23/helm-diff) installed on your local machine. This guide assumes familiarity with basic Helm and Helmfile operations.
+
+Before proceeding with this guide, make sure the following tools are installed on your local machine:
+
+- [Helm](https://github.com/helm/helm): The package manager for Kubernetes, essential for managing and deploying applications.
+- [Helmfile](https://github.com/helmfile/helmfile): A tool to help streamline the use of Helm charts, enabling better management of Helm chart configurations.
+- [Helm-diff](https://github.com/databus23/helm-diff): A Helm plugin that helps visualize differences between your Helmfile configurations and what is actually deployed in your cluster. This plugin is a dependency for effectively using Helmfile.
+- (Optional)[Kustomize](https://github.com/kubernetes-sigs/kustomize): A tool for customizing Kubernetes configurations beyond what is available with Helm, useful for more complex deployment scenarios.
+This guide assumes you are familiar with basic operations of Helm and Helmfile.
+
+### Deploying using Launchpad-charts directly
+
+If you prefer to use individual components of Launchpad, such as Launchpad Charts, you can add the Launchpad Helm repository and install charts directly:
+
+```shell
+helm repo add graphops https://graphops.github.io/launchpad-charts
+helm install my-release graphops/<chart-name> --values <your-values-override.yaml>
+```
+
+#### Key Consideration
+
+Before proceeding, it is important to note that most Kubernetes clusters do not come pre-configured with a [Container Storage Interface (CSI)](https://kubernetes-csi.github.io/docs/) for handling storage volumes. This guide relies on the ability to create storage volumes. It is also necessary to have an Ingress controller installed and configured, as it is essential for managing traffic to and from your applications.
+
+### Deploying using Helmfile
+
+For a comprehensive deployment, managing all related Helm releases and their values via a single Helmfile offers simplicity and maintainability. This method is particularly effective when deploying complex stacks.
+
+### Deploy blockchain namespaces as desired
+
+:::note
+If you have existing external blockchain nodes that you would like to use instead of deploying them into your cluster, you can skip this section, but make sure that you can access those nodes securely (e.g. via an internal network, or using HTTPS and authentication).
+:::
+
+#### (optional, arbitrum-sepolia) Install Arbitrum Nitro and Proxyd for Arbitrum Sepolia
+
+The following `helmfile.yaml` provides an example configuration for deploying Arbitrum Nitro on the Arbitrum Sepolia network. For an easier setup process, we recommend utilizing the [Launchpad Arbitrum namespace](#optional-arbitrum-sepolia-install-arbitrum-nitro-and-proxyd-for-arbitrum-sepolia), which includes most of the necessary configurations pre-defined for your convenience.
+
+```yaml
+# helmfile.yaml
+repositories:
+  - name: graphops
+    url: https://graphops.github.io/launchpad-charts
+
+releases:
+  - name: arbitrum-nitro
+    namespace: arbitrum-sepolia
+    createNamespace: true
+    chart: graphops/arbitrum-nitro
+    version: 0.3.4
+    values:
+      - nitro:
+          config:
+            chain: 421614 # determines Arbitrum network - 421614 Sepolia
+            parentChainUrl: http://your-eth-sepolia-url:8545  ## changeme
+            parentChainBeaconUrl: http://your-eth-consensus-node-url:5052  ## changeme
+
+          volumeClaimSpec:
+            resources:
+              requests:
+                # -- The amount of disk space to provision for Arbitrum Nitro
+                storage: 1Ti
+            # -- The storage class to use when provisioning a persistent volume for Arbitrum-Nitro 
+            storageClassName: openebs-rawfile-localpv # change me as needed
+
+          restoreSnapshot:
+            enabled: false
+
+          extraLabels:
+            app.kubernetes.io/workload-type: blockchain-stateful
+            app.kubernetes.io/blockchain: arbitrum-nitro
+
+          # if using Prometheus for monitoring:
+          prometheus:
+            serviceMonitors:
+              enabled: true
+
+  - name: proxyd-nitro
+    namespace: arbitrum-sepolia
+    createNamespace: true
+    chart: graphops/proxyd
+    version: 0.5.3
+    values:
+      - backends:
+          arbitrum-nitro:
+            enabled: true
+            # -- Define the RPC URL for the backend
+            rpcUrl: http://arbitrum-nitro:8547
+            # -- Define the WS URL for the backend
+            wsUrl: ws://arbitrum-nitro:8548
+            # -- Define additional configuration keys for the backend (see [proxyd config](https://github.com/ethereum-optimism/optimism/blob/5d309e6a6d5e1ef6a88c1ce827b7e6d47f033bbb/proxyd/example.config.toml#L47))
+            extraConfig:
+              consensus_skip_peer_count: true
+            # -- Define which backend groups the backend is part of
+            groups:
+              - main
+
+          # if using Prometheus and Grafana for monitoring:
+          prometheus:
+            serviceMonitors:
+              enabled: true
+
+          grafana:
+            dashboards: true
+```
+
+
+Deploy by syncing your cluster with the declarative `helmfile.yaml`:
+
+```shell
+helmfile -f path/to/helmfile.yaml sync
+```
+
+### Install the Graph Arbitrum Sepolia Indexer Stack
+
+This section of the guide does not include the setup for `subgraph-data` and `indexer-metadata` PostgreSQL databases necessary for `graph-node` and `indexer-agent`. You are encouraged to explore [managed solutions](https://www.postgresql.org/support/professional_hosting/), use [Bitnami's chart](https://github.com/bitnami/charts/tree/main/bitnami/postgresql), or deploy [Zalando's Operator](https://github.com/zalando/postgres-operator/tree/master) as part of the Launchpad Namespaces which includes a ready-to-use Postgres setup or independently.
+
+Include the necessary configurations for `graph-node` and `indexer-agent` in your helmfile.yaml as shown in the previous sections, adjusting PostgreSQL references and other settings to fit your specific requirements.
+
+```yaml
+releases:
+  - name: graph-node
+    namespace: arbitrum-sepolia
+    createNamespace: true
+    chart: graphops/graph-node
+    version: 0.5.3
+    values:
+    # This is a values.yaml override file for https://github.com/graphops/launchpad-charts/tree/main/charts/graph-node
+    - graphNodeDefaults:
+        env:
+          # Graph Node configuration
+          IPFS: "https://ipfs.network.thegraph.com"
+          GRAPH_ALLOW_NON_DETERMINISTIC_FULLTEXT_SEARCH: "true"
+          # Database configuration
+          PRIMARY_SUBGRAPH_DATA_PGHOST: <your-subgraph-data-postgresql-host> ## change me
+          PRIMARY_SUBGRAPH_DATA_PGPORT: 5432
+          PRIMARY_SUBGRAPH_DATA_PGDATABASE: <your-subgraph-data-postgresql-db> ## change me
+
+        # Database sensitive/secret information
+        secretEnv:
+          PRIMARY_SUBGRAPH_DATA_PGUSER:
+            secretName: <your-secret-containing-subgraph-data-postgresql-username>
+            key: username
+          PRIMARY_SUBGRAPH_DATA_PGPASSWORD:
+            secretName: <your-secret-containing-subgraph-data-postgresql-password>
+            key: password
+
+      graphNodeGroups:
+        index:
+          replicaCount: 1 # scale me
+        query:
+          replicaCount: 1 # scale me
+      
+      chains:
+        mainnet:
+          enabled: true
+          shard: primary
+          provider:
+            - label: eth-mainnet
+              url: <your-eth-mainnet-RPC> ## change me
+              features: [archive, traces]
+
+        arbitrum-sepolia:
+          enabled: true
+          shard: primary
+          provider:
+            - label: arbitrum-sepolia
+              url: http://proxyd-proxyd.arbitrum-sepolia:8545
+              features: [archive, traces]
+
+      # if using Prometheus and Grafana for monitoring:
+      prometheus:
+        serviceMonitors:
+          enabled: true
+
+      grafana:
+        dashboards: true
+        datasources: true
+
+  - name: graph-network-indexer
+    namespace: arbitrum-sepolia
+    createNamespace: true
+    chart: graphops/graph-network-indexer
+    version: 0.2.5
+    values:
+      # This is a values.yaml override file for https://github.com/graphops/launchpad-charts/tree/main/charts/graph-network-indexer
+    - indexerDefaults:
+        config:
+          ethereum: "http://proxyd-proxyd.arbitrum-sepolia:8545"
+          ethereum-network: "arbitrum-sepolia"
+          network-subgraph-endpoint: "https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-arbitrum-sepolia"
+          graph-node-query-endpoint: "http://graph-node-query:8000"
+          graph-node-status-endpoint: "http://graph-node-block-ingestor:8030/graphql"
+          postgres-host: "<your-indexer-metadata-postgresql-host>" ## change me
+          postgres-database: "<your-indexer-metadata-postgresql-db>" ## change me
+
+      indexerAgent:
+        config:
+          collect-receipts-endpoint: "https://gateway-testnet-arbitrum.network.thegraph.com/collect-receipts"
+          network-subgraph-deployment: "QmT8UDGK7zKd2u2NQZwhLYHdA4KM55QsivkE3ouCuX6fEj" # find at https://github.com/graphprotocol/indexer/blob/main/docs/networks.md
+          epoch-subgraph-endpoint: "https://api.thegraph.com/subgraphs/name/graphprotocol/arbitrum-sepolia-ebo" # find at https://github.com/graphprotocol/indexer/blob/main/docs/networks.md
+          epoch-subgraph-deployment: "QmTpu2mVquoMpr4SWSM77nGkU3tcUS1Bhk1sVHpjDrAUAx"
+          graph-node-admin-endpoint: "http://graph-node-block-ingestor:8020"
+          public-indexer-url: "<your-public-indexer-url>" ## change me
+          index-node-ids: "graph-node-index-0" # if more than one graph-node index, specify as comma delimited list ie "graph-node-index-0, graph-node-index-1"
+
+        secretEnv:
+          INDEXER_AGENT_MNEMONIC:
+            secretName: <your-secret-containing-your-graph-operator-mnemonic>
+            key: mnemonic
+          INDEXER_AGENT_POSTGRES_USERNAME:
+            secretName: <your-secret-containing-indexer-metadata-postgresql-username>
+            key: username
+          INDEXER_AGENT_POSTGRES_PASSWORD:
+            secretName: <your-secret-containing-indexer-metadata-postgresql-password>
+            key: password
+
+
+      indexerService:
+        replicas: 1 # scale me
+
+        config:
+            client-signer-address: "0xe1EC4339019eC9628438F8755f847e3023e4ff9c" # find at https://github.com/graphprotocol/indexer/blob/main/docs/networks.md
+        
+        secretEnv:
+          INDEXER_SERVICE_MNEMONIC:
+            secretName: <your-secret-containing-your-graph-operator-mnemonic>
+            key: mnemonic
+          INDEXER_SERVICE_POSTGRES_USERNAME:
+            secretName: <your-secret-containing-indexer-metadata-postgresql-username>
+            key: username
+          INDEXER_SERVICE_POSTGRES_PASSWORD:
+            secretName: <your-secret-containing-indexer-metadata-postgresql-password>
+            key: password
+      # if using Prometheus and Grafana for monitoring:
+      prometheus:
+        serviceMonitors:
+          enabled: true
+
+      grafana:
+        dashboards: true
+
+  - name: subgraph-radio
+    namespace: arbitrum-sepolia
+    createNamespace: true
+    chart: graphops/subgraph-radio
+    version: 0.2.8
+    values:
+    - env:
+        GRAPH_NODE_STATUS_ENDPOINT: http://graph-node-block-ingestor:8030/graphql
+        INDEXER_MANAGEMENT_SERVER_ENDPOINT: http://graph-network-indexer-agent:8000
+        GRAPHCAST_NETWORK: "testnet"
+        REGISTRY_SUBGRAPH: https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arb-se
+        NETWORK_SUBGRAPH: https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-arbitrum-sepolia
+      secretEnv:
+        MNEMONIC:
+          secretName: <your-secret-containing-your-graph-operator-mnemonic>
+          key: mnemonic
+
+  - name: graph-toolbox
+    namespace: arbitrum-sepolia
+    createNamespace: true
+    chart: graphops/graph-toolbox
+    version: 0.1.0
+    values:
+    - config:
+        graphNode:
+          # -- URL to Graph Node Admin API
+          adminApiUrl: http://graph-node-block-ingestor:8020
+          existingConfigMap:
+            # -- The name of the ConfigMap that contains your Graph Node config.toml
+            configMapName: graph-node-config
+            # -- The name of the data key in the ConfigMap that contains your config.toml
+            configFileKey: config.toml
+        indexer:
+          # -- URL to Indexer Agent Management Server
+          indexerAgentManagementUrl: http://graph-network-indexer-agent:8000
+
+      aliases:
+        graphman: graphman --config /graphman-config/config.toml
+        indexer: graph-indexer indexer
+        psql-primary-subgraph-data: >
+          PGPASSWORD=$PRIMARY_SUBGRAPH_DATA_PGPASSWORD psql -w -U $PRIMARY_SUBGRAPH_DATA_PGUSER -d "host=$PRIMARY_SUBGRAPH_DATA_PGHOST,port=$PRIMARY_SUBGRAPH_DATA_PGPORT,dbname=$PRIMARY_SUBGRAPH_DATA_PGDATABASE"
+        psql-indexer-metadata: >
+          PGPASSWORD=$INDEXER_METDATA_PGPASSWORD psql -w -U $INDEXER_METADATA_PGUSER -d "host=$INDEXER_METADATA_PGHOST,port=$INDEXER_METADATA_PGPORT,dbname=$INDEXER_METADATA_PGDATABASE"
+
+      env:
+        PRIMARY_SUBGRAPH_DATA_PGHOST: <your-subgraph-data-postgresql-host> ## change me
+        PRIMARY_SUBGRAPH_DATA_PGPORT: 5432
+        PRIMARY_SUBGRAPH_DATA_PGDATABASE: <your-subgraph-data-postgresql-db> ## change me
+        INDEXER_METADATA_PGHOST: <your-indexer-metadata-postgresql-host> ## change me
+        INDEXER_METADATA_PGPORT: 5432
+        INDEXER_METADATA_PGDATABASE: <your-indexer-metadata-postgresql-db> ## change me
+
+      secretEnv:
+        PRIMARY_SUBGRAPH_DATA_PGUSER:
+          secretName: <your-secret-containing-subgraph-data-postgresql-username> ## change me
+          key: username
+        PRIMARY_SUBGRAPH_DATA_PGPASSWORD:
+          secretName: <your-secret-containing-subgraph-data-postgresql-password> ## change me
+          key: password
+        INDEXER_METADATA_PGUSER:
+          secretName: <your-secret-containing-indexer-metadata-postgresql-username> ## change me
+          key: username
+        INDEXER_METDATA_PGPASSWORD:
+          secretName: <your-secret-containing-indexer-metadata-postgresql-username> ## change me
+          key: password
+```
+
+Proceed to deploy:
+
+```shell
+helmfile -f path/to/helmfile.yaml sync
+```
+
+### 🎉 Milestone: Graph Indexer running and accessible
+
+Once your deployments are successfully applied, your Graph Indexer should be operational, with blockchain nodes (if deployed) and the Graph Indexing stack running in your Kubernetes cluster.
+
+- [x] We (optionally) configured and deployed blockchain nodes into our cluster
+- [x] We configured and deployed the Graph Indexing stack into our cluster
+- [ ] Next: Use the remote-toolbox to allocate to subgraphs and begin serving requests

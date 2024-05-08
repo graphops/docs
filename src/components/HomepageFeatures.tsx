@@ -27,7 +27,7 @@ const FeatureList: FeatureItem[] = [
         Launchpad provides a toolbox for smoothly operating your Graph Protocol Indexer on Kubernetes
       </>
     ),
-    link: "/launchpad/intro",
+    link: "/launchpad/docs-map",
   },
   {
     title: "Join Graphcast to coordinate with other Indexers using Radios",
