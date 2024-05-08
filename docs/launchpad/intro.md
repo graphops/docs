@@ -24,8 +24,9 @@ There are three major components to be aware of:
 
 Are you interested in exploring Launchpad but not ready to adopt the entire stack? Explore our [Modularity](modularity) page to discover how you can selectively integrate elements of Launchpad, like `launchpad-starter`, `launchpad-charts`, and `launchpad-namespaces`, to fit your specific needs without committing to a full end-to-end implementation.
 
-## Next Steps
+## Next steps
 
+- Visit our [Documentation Map](docs-map) for an overview of where to find all the information you need
 - Read the [Prerequisites](prerequisites) section to understand what you need to started
 - Read the [Quick Start guide](quick-start) to get up and running
 - Look at the repositories above on GitHub to understand how they work
