@@ -348,7 +348,15 @@ This guide will cover two primary ways to deploy blockchain-related resources in
 
 ### Prerequisites
 
-Ensure you have[helm](https://github.com/helm/helm) and [helmfile](https://github.com/helmfile/helmfile) installed on your local machine. This guide assumes familiarity with basic Helm and Helmfile operations.
+Ensure you have [helm](https://github.com/helm/helm), [helmfile](https://github.com/helmfile/helmfile) and it's dependency [helm-diff](https://github.com/databus23/helm-diff) installed on your local machine. This guide assumes familiarity with basic Helm and Helmfile operations.
+
+Before proceeding with this guide, make sure the following tools are installed on your local machine:
+
+- [Helm](https://github.com/helm/helm): The package manager for Kubernetes, essential for managing and deploying applications.
+- [Helmfile](https://github.com/helmfile/helmfile): A tool to help streamline the use of Helm charts, enabling better management of Helm chart configurations.
+- [Helm-diff](https://github.com/databus23/helm-diff): A Helm plugin that helps visualize differences between your Helmfile configurations and what is actually deployed in your cluster. This plugin is a dependency for effectively using Helmfile.
+- (Optional)[Kustomize](https://github.com/kubernetes-sigs/kustomize): A tool for customizing Kubernetes configurations beyond what is available with Helm, useful for more complex deployment scenarios.
+This guide assumes you are familiar with basic operations of Helm and Helmfile.
 
 ### Deploying using Launchpad-charts directly
 
@@ -361,7 +369,7 @@ helm install my-release graphops/<chart-name> --values <your-values-override.yam
 
 #### Key Consideration
 
-Core Services: Ensure that core services like Prometheus, Grafana, Ingress, Secret Management and Storage are properly set up as they are crucial for monitoring and managing traffic to and from your applications.
+Before proceeding, it is important to note that most Kubernetes clusters do not come pre-configured with a [Container Storage Interface (CSI)](https://kubernetes-csi.github.io/docs/) for handling storage volumes. This guide relies on the ability to create storage volumes. It is also necessary to have an Ingress controller installed and configured, as it is essential for managing traffic to and from your applications.
 
 ### Deploying using Helmfile
 
