@@ -22,7 +22,7 @@ kubeadm upgrade plan
 
 **3:** Perform the upgrade:
 
-*Note*: If you have local patches applied to your Kubernetes setup (ie. altering the kube-scheduler or kube-controller-manager configurations for better performance under specific workloads or hardware configurations), ensure they are included or updated appropriately during the upgrade process. To do this pass the `--patches /path/to/your/patches` flag to your `kubeadm upgrade apply command`.
+*Note*: If you have local patches applied to your Kubernetes setup (ie. altering the kube-scheduler or kube-controller-manager configurations for better performance under specific workloads or hardware configurations), ensure they are included or updated appropriately during the upgrade process. To do this pass the `--patches /path/to/your/patches` flag to your `kubeadm upgrade apply` command.
 
 ```bash
 kubeadm upgrade apply v1.28.3
