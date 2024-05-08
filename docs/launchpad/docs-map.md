@@ -4,7 +4,9 @@ sidebar_position: 1
 
 # Launchpad Documentation
 
-Everything you need to know about the Launchpad project.
+Launchpad is a comprehensive toolkit designed for running a Graph Protocol Indexer on Kubernetes, aimed at providing the fastest route to production for multi-chain indexing with robust security and performance defaults. Suitable for environments ranging from a single node cluster to those scaling up to twenty nodes, Launchpad comprises an opinionated set of tools on your local machine. These tools are layered to offer a declarative workflow for managing your deployment stack. Key components of Launchpad include the Launchpad Starter ([`graphops/launchpad-starter`](https://github.com/graphops/launchpad-starter)), which serves as the initial setup point for new deployments; Launchpad Charts ([`graphops/launchpad-charts`](https://github.com/graphops/launchpad-charts)), a collection of Helm Charts for blockchains and web3 applications; and Launchpad Namespaces ([`graphops/launchpad-namespaces`](https://github.com/graphops/launchpad-namespaces)), which are preconfigured Kubernetes Namespaces that utilize Helmfile for enhanced management.
+
+Here's a guide to help you navigate this documentation based on the information you're seeking:
 
 ## First steps
 

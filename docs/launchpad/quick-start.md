@@ -360,12 +360,12 @@ helm install my-release graphops/<chart-name> --values <your-values-override.yam
 ```
 
 #### Key Consideration
+
 Core Services: Ensure that core services like Prometheus, Grafana, Ingress, Secret Management and Storage are properly set up as they are crucial for monitoring and managing traffic to and from your applications.
 
 ### Deploying using Helmfile
 
 For a comprehensive deployment, managing all related Helm releases and their values via a single Helmfile offers simplicity and maintainability. This method is particularly effective when deploying complex stacks.
-
 
 ### Deploy blockchain namespaces as desired
 
@@ -375,7 +375,7 @@ If you have existing external blockchain nodes that you would like to use instea
 
 #### (optional, arbitrum-sepolia) Install Arbitrum Nitro and Proxyd for Arbitrum Sepolia
 
-The following `helmfile.yaml` is an example of the full config needed to deploy Arbitrum Nitro on the Arbitrum Sepolia network:
+The following `helmfile.yaml` provides an example configuration for deploying Arbitrum Nitro on the Arbitrum Sepolia network. For an easier setup process, we recommend utilizing the [Launchpad Arbitrum namespace](#optional-arbitrum-sepolia-install-arbitrum-nitro-and-proxyd-for-arbitrum-sepolia), which includes most of the necessary configurations pre-defined for your convenience.
 
 ```yaml
 # helmfile.yaml
@@ -416,11 +416,6 @@ releases:
             serviceMonitors:
               enabled: true
 
-          grafana:
-            dashboards: false # needs fixing
-
-          
-
   - name: proxyd-nitro
     namespace: arbitrum-sepolia
     createNamespace: true
@@ -454,12 +449,12 @@ releases:
 Deploy by syncing your cluster with the declarative `helmfile.yaml`:
 
 ```shell
-helmfile -f path/to/your-custom-helmfile.yaml sync
+helmfile -f path/to/helmfile.yaml sync
 ```
 
 ### Install the Graph Arbitrum Sepolia Indexer Stack
 
-This section of the guide does not include the setup for `subgraph-data` and `indexer-metadata` PostgreSQL databases necessary for `graph-node` and `indexer-agent`. You are encouraged to explore [managed solution](https://www.postgresql.org/support/professional_hosting/), use [Bitnami's chart](https://github.com/bitnami/charts/tree/main/bitnami/postgresql), or deploy [Zalando's Operator](https://github.com/zalando/postgres-operator/tree/master) as part of the Launchpad Namespaces which include a ready-to-use Postgres setup or independently.
+This section of the guide does not include the setup for `subgraph-data` and `indexer-metadata` PostgreSQL databases necessary for `graph-node` and `indexer-agent`. You are encouraged to explore [managed solutions](https://www.postgresql.org/support/professional_hosting/), use [Bitnami's chart](https://github.com/bitnami/charts/tree/main/bitnami/postgresql), or deploy [Zalando's Operator](https://github.com/zalando/postgres-operator/tree/master) as part of the Launchpad Namespaces which includes a ready-to-use Postgres setup or independently.
 
 Include the necessary configurations for `graph-node` and `indexer-agent` in your helmfile.yaml as shown in the previous sections, adjusting PostgreSQL references and other settings to fit your specific requirements.
 
@@ -656,7 +651,7 @@ releases:
 Proceed to deploy:
 
 ```shell
-helmfile -f path/to/your-custom-helmfile.yaml sync
+helmfile -f path/to/helmfile.yaml sync
 ```
 
 ### 🎉 Milestone: Graph Indexer running and accessible
