@@ -227,7 +227,6 @@ pub struct Config {
         value_name = "SUBGRAPH",
         env = "REGISTRY_SUBGRAPH",
         help = "Subgraph endpoint to the Graphcast Registry",
-        default_value = "https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-goerli"
     )]
     pub registry_subgraph: String,
     #[clap(
@@ -242,7 +241,6 @@ pub struct Config {
         value_name = "SUBGRAPH",
         env = "NETWORK_SUBGRAPH",
         help = "Subgraph endpoint to The Graph network subgraph",
-        default_value = "https://gateway.testnet.thegraph.com/network"
     )]
     pub network_subgraph: String,
     #[clap(
