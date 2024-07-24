@@ -50,13 +50,11 @@ All work on your infrastructure will take place in this new repo. We recommend c
 
 Next, we should install all of the local tooling dependencies (like Helm or Kubectl) that we will need.
 
-We can easily do that by running the launchpad:setup command.
+We can easily do that by running the `launchpad:update-deps` command.
 
 ```shell
 # You may need to use sudo for this command
-task launchpad:setup
-
-# For now, this will just run launchpad:deps, which will install all the local tooling dependencies
+task launchpad:update-deps
 ```
 
 ### Connect your Local environment to your Kubernetes cluster
@@ -127,22 +125,6 @@ In the example above, values can be set to override the default configurations i
 
 ### Syncing your `helmfile.yaml` with the cluster
 
-Next we need to install key non-Graph components of our stack, including monitoring and logging systems.
-
-Let's see what the `releases:apply-base` task is actually doing by running `task help -- releases:apply-base`:
-
-```shell
-task: releases:apply-base
-  
-Apply current helmfile state filtered by all base layer services
-  
-commands:
-  
-• task releases:apply -- launchpad.graphops.xyz/layer=base
-```
-
-As you can see, `releases:apply-base` just calls `releases:apply` filter for all namespaces with the label `launchpad.graphops.xyz/layer=base`.
-
 You can list all the releases present in the helmfile.yaml, and their labels, by running `task releases:list`:
 ```shell
 NAME                            NAMESPACE               ENABLED INSTALLED       LABELS                                                                                  CHART                                           VERSION       
@@ -164,7 +146,11 @@ In particular, the storage namespace may be a requirement even for other base na
 Next, let's go ahead and install all the remaining cluster services. You will be prompted to install each namespace, with a summary of changes to be made.
 
 ```shell
-task releases:apply-base
+task releases:apply -- monitoring
+task releases:apply -- storage
+task releases:apply -- sealed-secrets
+task releases:apply -- postgres-operator
+task releases:apply -- ingress
 ```
 
 ### 🎉 Milestone: Kubernetes and core systems running!
@@ -334,9 +320,9 @@ For full implementation details and other comprehensive notes about `launchpad-n
 
 ### Pulling in starter changes
 
-From time to time, you may want to update your infra repo with the latest changes from our starter. 
+From time to time, you may want to update your infra repo with the latest changes from our starter.
 
-Launchpad comes with a built in task to do this:
+Launchpad comes with a built in task to do this, but it does require you to handle any rebase conflicts:
 
 ```shell
 task launchpad:pull-upstream-starter
