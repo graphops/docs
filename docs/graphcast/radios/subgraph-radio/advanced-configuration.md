@@ -113,8 +113,8 @@ Example .env file:
 ```bash
 PRIVATE_KEY="a2b3c1d4e5f6890e7f6g5h4i3j2k1l0m"
 GRAPH_NODE_STATUS_ENDPOINT="http://127.0.0.42:8030/graphql"
-REGISTRY_SUBGRAPH="https://api.thegraph.com/subgraphs/name/randomuser/graphcast-registry-mainnet"
-NETWORK_SUBGRAPH="https://api.thegraph.com/subgraphs/name/graphprotocol/graph-mainnet"
+REGISTRY_SUBGRAPH="https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/5tHgjCNF4XxAzp9ja8dU3j9JrqU7zctXj6DnxWpwAzc6"
+NETWORK_SUBGRAPH="https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp"
 GRAPHCAST_NETWORK=mainnet
 INDEXER_ADDRESS="0xa1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6"
 ```
@@ -127,8 +127,8 @@ Pass the configuration options directly as command-line arguments.
 docker run ghcr.io/graphops/subgraph-radio \
   --private-key "a2b3c1d4e5f6890e7f6g5h4i3j2k1l0m" \
   --graph-node-status-endpoint "http://127.0.0.42:8030/graphql" \
-  --registry-subgraph "https://api.thegraph.com/subgraphs/name/randomuser/graphcast-registry-mainnet" \
-  --network-subgraph "https://api.thegraph.com/subgraphs/name/graphprotocol/graph-mainnet" \
+  --registry-subgraph "https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/5tHgjCNF4XxAzp9ja8dU3j9JrqU7zctXj6DnxWpwAzc6" \
+  --network-subgraph "https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp" \
   --graphcast-network mainnet \
   --indexer-address "0xa1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6"
 ```
@@ -141,8 +141,8 @@ Example TOML configuration file (`config.toml`):
 [graph_stack]
 graph_node_status_endpoint = 'http://127.0.0.42:8030/graphql'
 indexer_address = '0xa1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6'
-registry_subgraph = 'https://api.thegraph.com/subgraphs/name/randomuser/graphcast-registry-mainnet'
-network_subgraph = 'https://api.thegraph.com/subgraphs/name/graphprotocol/graph-mainnet'
+registry_subgraph = 'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/5tHgjCNF4XxAzp9ja8dU3j9JrqU7zctXj6DnxWpwAzc6'
+network_subgraph = 'https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp'
 private_key = 'a2b3c1d4e5f6890e7f6g5h4i3j2k1l0m'
 ```
 
@@ -154,8 +154,8 @@ Example YAML configuration file (`config.yaml`):
 graph_stack:
   graph_node_status_endpoint: "http://127.0.0.42:8030/graphql"
   indexer_address: "0xa1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d6"
-  registry_subgraph: "https://api.thegraph.com/subgraphs/name/randomuser/graphcast-registry-mainnet"
-  network_subgraph: "https://api.thegraph.com/subgraphs/name/graphprotocol/graph-mainnet"
+  registry_subgraph: "https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/5tHgjCNF4XxAzp9ja8dU3j9JrqU7zctXj6DnxWpwAzc6"
+  network_subgraph: "https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp"
   private_key: "a2b3c1d4e5f6890e7f6g5h4i3j2k1l0m"
 ```
 
