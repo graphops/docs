@@ -1,7 +1,7 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
-const lightCodeTheme = require("prism-react-renderer/themes/github");
-const darkCodeTheme = require("prism-react-renderer/themes/palenight");
+const lightCodeTheme = require("prism-react-renderer").themes.github;
+const darkCodeTheme = require("prism-react-renderer").themes.palenight;
 // Override code block theme
 const customDarkTheme = {
   ...darkCodeTheme,
@@ -21,7 +21,22 @@ const config = {
   projectName: "docs", // Usually your repo name.
   trailingSlash: false,
   // Waiting for docusauras canary to be released for mermaid support: https://docusaurus.io/docs/next/markdown-features/diagrams
-  themes: ['@docusaurus/theme-mermaid'],
+  themes: ["@docusaurus/theme-mermaid", 
+    [
+      "@easyops-cn/docusaurus-search-local",
+      /** @type {import("@easyops-cn/docusaurus-search-local")} */
+      ({
+          hashed: true, 
+          language: ['en'],
+          indexDocs: true, 
+          indexBlog: false,
+          docsRouteBasePath: '/', 
+          blogRouteBasePath: '/blog',
+          highlightSearchTermsOnTargetPage: true,
+          explicitSearchResultPath: true,
+      }),
+    ],
+  ],
   markdown: {
     mermaid: true,
   },
@@ -152,7 +167,7 @@ const config = {
       prism: {
         theme: lightCodeTheme,
         darkTheme: customDarkTheme,
-        additionalLanguages: ["solidity", "json5", "toml"],
+        additionalLanguages: ["solidity", "json5", "toml", "bash"],
       },
       // metadata: [ // TODO: Take screenshot for rendering previews
       //   {property: "og:image", content: "/img/image.png"},
