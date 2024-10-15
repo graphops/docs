@@ -39,11 +39,11 @@ You will need to prepare the following environment variables:
 
 #### Example message table
 
-| id  | message                                                                                                                                                                                                                                                                                   |
-| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1   | {"nonce": 1686182179, "network": "mainnet", "payload": {"content": "0x3f...", "identifier": "QmVhiE4nax9i86UBnBmQCYDzvjWuwHShYh7aspGPQhU5Sj"}, "signature": "dff1...", "block_hash": "276e...", "identifier": "QmVhiE4nax9i86UBnBmQCYDzvjWuwHShYh7aspGPQhU5Sj", "block_number": 17431860} |
-| 2   | {"nonce": 1686182183, "network": "goerli", "payload": {"content": "0xc0...", "identifier": "QmacQnSgia4iDPWHpeY6aWxesRFdb8o5DKZUx96zZqEWrB"}, "signature": "dbd2...", "block_hash": "0198...", "identifier": "QmacQnSgia4iDPWHpeY6aWxesRFdb8o5DKZUx96zZqEWrB", "block_number": 9140860}   |
-| ... | ...                                                                                                                                                                                                                                                                                       |
+| id  | message                                                                                                                                                                                                                                                                                     |
+| --- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | `{"nonce": 1686182179, "network": "mainnet", "payload": {"content": "0x3f...", "identifier": "QmVhiE4nax9i86UBnBmQCYDzvjWuwHShYh7aspGPQhU5Sj"}, "signature": "dff1...", "block_hash": "276e...", "identifier": "QmVhiE4nax9i86UBnBmQCYDzvjWuwHShYh7aspGPQhU5Sj", "block_number": 17431860}` |
+| 2   | `{"nonce": 1686182183, "network": "goerli", "payload": {"content": "0xc0...", "identifier": "QmacQnSgia4iDPWHpeY6aWxesRFdb8o5DKZUx96zZqEWrB"}, "signature": "dbd2...", "block_hash": "0198...", "identifier": "QmacQnSgia4iDPWHpeY6aWxesRFdb8o5DKZUx96zZqEWrB", "block_number": 9140860}`   |
+| ... | ...                                                                                                                                                                                                                                                                                         |
 
 ## Advanced Configuration
 
