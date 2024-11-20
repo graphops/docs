@@ -523,17 +523,20 @@ releases:
         config:
           ethereum: "http://proxyd-proxyd.arbitrum-sepolia:8545"
           ethereum-network: "arbitrum-sepolia"
-          network-subgraph-endpoint: "https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-arbitrum-sepolia"
+          network-subgraph-endpoint: "https://gateway-arbitrum.network.thegraph.com/api/{{ .Values.secretEnv.api_key }}/subgraphs/id/3xQHhMudr1oh69ut36G2mbzpYmYxwqCeU6wwqyCDCnqV"
           graph-node-query-endpoint: "http://graph-node-query:8000"
           graph-node-status-endpoint: "http://graph-node-block-ingestor:8030/graphql"
           postgres-host: "<your-indexer-metadata-postgresql-host>" ## change me
           postgres-database: "<your-indexer-metadata-postgresql-db>" ## change me
 
+        secretEnv:
+          api_key: <your-secret-graph-network-api-key>
+
       indexerAgent:
         config:
           collect-receipts-endpoint: "https://gateway-testnet-arbitrum.network.thegraph.com/collect-receipts"
           network-subgraph-deployment: "QmT8UDGK7zKd2u2NQZwhLYHdA4KM55QsivkE3ouCuX6fEj" # find at https://github.com/graphprotocol/indexer/blob/main/docs/networks.md
-          epoch-subgraph-endpoint: "https://api.thegraph.com/subgraphs/name/graphprotocol/arbitrum-sepolia-ebo" # find at https://github.com/graphprotocol/indexer/blob/main/docs/networks.md
+          epoch-subgraph-endpoint: "https://gateway-arbitrum.network.thegraph.com/api/{{ .Values.secretEnv.api_key }}/subgraphs/id/BhnsdeZihU4SuokxZMLF4FQBVJ3jgtZf6v51gHvz3bSS" # find at https://github.com/graphprotocol/indexer/blob/main/docs/networks.md
           epoch-subgraph-deployment: "QmTpu2mVquoMpr4SWSM77nGkU3tcUS1Bhk1sVHpjDrAUAx"
           graph-node-admin-endpoint: "http://graph-node-block-ingestor:8020"
           public-indexer-url: "<your-public-indexer-url>" ## change me
@@ -549,6 +552,7 @@ releases:
           INDEXER_AGENT_POSTGRES_PASSWORD:
             secretName: <your-secret-containing-indexer-metadata-postgresql-password>
             key: password
+          api_key: <your-secret-graph-network-api-key>
 
 
       indexerService:
@@ -585,12 +589,13 @@ releases:
         GRAPH_NODE_STATUS_ENDPOINT: http://graph-node-block-ingestor:8030/graphql
         INDEXER_MANAGEMENT_SERVER_ENDPOINT: http://graph-network-indexer-agent:8000
         GRAPHCAST_NETWORK: "testnet"
-        REGISTRY_SUBGRAPH: https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-arb-se
-        NETWORK_SUBGRAPH: https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-arbitrum-sepolia
+        REGISTRY_SUBGRAPH: "https://gateway-arbitrum.network.thegraph.com/api/{{ .Values.secretEnv.api_key }}/subgraphs/id/5tHgjCNF4XxAzp9ja8dU3j9JrqU7zctXj6DnxWpwAzc6"
+        NETWORK_SUBGRAPH: "https://gateway-arbitrum.network.thegraph.com/api/{{ .Values.secretEnv.api_key }}/subgraphs/id/3xQHhMudr1oh69ut36G2mbzpYmYxwqCeU6wwqyCDCnqV"
       secretEnv:
         MNEMONIC:
           secretName: <your-secret-containing-your-graph-operator-mnemonic>
           key: mnemonic
+          api_key: <your-secret-graph-network-api-key>
 
   - name: graph-toolbox
     namespace: arbitrum-sepolia

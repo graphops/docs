@@ -37,8 +37,8 @@ docker pull ghcr.io/graphops/subgraph-radio:latest
 ```bash
 docker run \
     -e GRAPHCAST_NETWORK="mainnet" \
-    -e REGISTRY_SUBGRAPH="https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet" \
-    -e NETWORK_SUBGRAPH="https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-mainnet" \
+    -e REGISTRY_SUBGRAPH="https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/5tHgjCNF4XxAzp9ja8dU3j9JrqU7zctXj6DnxWpwAzc6" \
+    -e NETWORK_SUBGRAPH="https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp" \
     -e PRIVATE_KEY="PRIVATE_KEY" \
     -e GRAPH_NODE_STATUS_ENDPOINT="http://graph-node:8030/graphql" \
     -e RUST_LOG="warn,hyper=warn,graphcast_sdk=info,subgraph_radio=info" \
@@ -59,8 +59,8 @@ services:
     restart: unless-stopped
     environment:
       GRAPHCAST_NETWORK: "mainnet"
-      REGISTRY_SUBGRAPH: "https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-mainnet"
-      NETWORK_SUBGRAPH: "https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-mainnet"
+      REGISTRY_SUBGRAPH: "https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/5tHgjCNF4XxAzp9ja8dU3j9JrqU7zctXj6DnxWpwAzc6"
+      NETWORK_SUBGRAPH: "https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/DZz4kDTdmzWLWsV373w2bSmoar3umKKH9y82SUKr5qmp"
       PRIVATE_KEY: "PRIVATE_KEY"
       GRAPH_NODE_STATUS_ENDPOINT: "http://graph-node:8030/graphql"
       RUST_LOG: "warn,hyper=warn,graphcast_sdk=info,subgraph_radio=info"

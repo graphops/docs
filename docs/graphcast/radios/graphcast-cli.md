@@ -17,8 +17,8 @@ The Graphcast CLI is configured using config variables. You will need to prepare
 | `PRIVATE_KEY`       | Private key to the Graphcast ID wallet (precendence over mnemonics).<br/>Example: `PRIVATE_KEY=YOUR_PRIVATE_KEY`                                                |
 | `MNEMONIC`          | Mnemonic to the Graphcast ID wallet (first address of the wallet is used; Only one of private key or mnemonic is needed).<br/>Example: `MNEMONIC=YOUR_MNEMONIC` |
 | `GRAPH_ACCOUNT`     | Graph account corresponding to Graphcast operator.<br/>Example: `GRAPH_ACCOUNT=YOUR_GRAPH_ACCOUNT`                                                              |
-| `REGISTRY_SUBGRAPH` | Subgraph endpoint to the Graphcast Registry.<br/>Default: `https://api.thegraph.com/subgraphs/name/hopeyen/graphcast-registry-goerli`                           |
-| `NETWORK_SUBGRAPH`  | Subgraph endpoint to The Graph network subgraph.<br/>Default: `https://api.thegraph.com/subgraphs/name/graphprotocol/graph-network-goerli`                      |
+| `REGISTRY_SUBGRAPH` | Subgraph endpoint to the Graphcast Registry.<br/>Default: `https://gateway-arbitrum.network.thegraph.com/api/{api-key}/subgraphs/id/9bnkkKmSqX3FpoxnBVNFcQfmdSJt2Zc8PrsY1ek64jPr`                           |
+| `NETWORK_SUBGRAPH`  | Subgraph endpoint to The Graph network subgraph.<br/>Default: `https://gateway-arbitrum.network.thegraph.com/api/[api-key]/subgraphs/id/3xQHhMudr1oh69ut36G2mbzpYmYxwqCeU6wwqyCDCnqV`                      |
 | `GRAPHCAST_NETWORK` | Supported Graphcast networks: mainnet, testnet.<br/>Default: `testnet`                                                                                          |
 | `LOG_LEVEL`         | Logging configuration to set as RUST_LOG.<br/>Default: `info`                                                                                                   |
 | `LOG_FORMAT`        | Support logging formats: pretty, json, full, compact.<br/>Default: `pretty`                                                                                     |
